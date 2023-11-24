@@ -74,6 +74,8 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   max-width: 350px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .card:hover,
