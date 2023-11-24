@@ -1,6 +1,7 @@
 import { useBlockNumber } from "wagmi"
 import BlockDetails from "./BlockDetails"
 import styles from '../styles/Home.module.css';
+import BlockBid from "./BlockBid";
 
 const BlockNumber = () => {
     const { data } = useBlockNumber({
@@ -15,6 +16,8 @@ const BlockNumber = () => {
             Block number: {' '}
             <code className={styles.code}>{data?.toString()}</code>
         </p>
+        <h2>Bid on a Block</h2>
+        <BlockBid />
         <h2>Upcoming Blocks</h2>
         <div className={styles.grid}>
             {upcomingBlocks.map(n => <BlockDetails key={n} blockNumber={n} />)}
