@@ -1,5 +1,4 @@
 import { fromHex } from "viem"
-import { useChainId } from "wagmi";
 import useBlock from "../hooks/useBlock"
 import styles from '../styles/Home.module.css';
 import { goerli } from "viem/chains";
@@ -11,14 +10,14 @@ const BlockDetails = (
         blockNumber: bigint | undefined
     }
 ) => {
+    const { data, isLoading } = useBlock(blockNumber)
     if (blockNumber === undefined) {
         return <></>
     }
 
-    const { data, isLoading } = useBlock(blockNumber)
     const href = `${goerli.blockExplorers.etherscan.url}/block/${blockNumber.toString()}`
 
-    return <a className={styles.card} href="" target="_blank" rel="noopener noreferrer">
+    return <a className={styles.card} href={href} target="_blank" rel="noopener noreferrer">
         <h2>Block number: {blockNumber.toString()} &rarr;</h2>
         {isLoading ? <>
             <p>Loading...</p>

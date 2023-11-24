@@ -1,7 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import BlockNumber from '../components/blockNumber';
+import BlockNumber from '../components/BlockNumber';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
