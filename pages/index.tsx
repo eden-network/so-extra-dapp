@@ -2,6 +2,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import BlockNumber from '../components/BlockNumber';
+import SlotNumber from '../components/SlotNumber';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
@@ -24,6 +25,8 @@ const Home: NextPage = () => {
         </h1>
 
         <BlockNumber />
+        <SlotNumber />
+
       </main>
 
       <footer className={styles.footer}>
