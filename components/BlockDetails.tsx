@@ -16,15 +16,16 @@ const BlockDetails = (
     }
 
     const href = `${goerli.blockExplorers.etherscan.url}/block/${blockNumber.toString()}`
+    const blockTimestamp = data !== undefined ? new Date(parseInt(data.timestamp.toString()) * 1000) : undefined
+    const extraData = data !== undefined ? fromHex(data.extraData, 'string') : undefined
 
     return <a className={styles.card} href={href} target="_blank" rel="noopener noreferrer">
         <h2>Block number: {blockNumber.toString()} &rarr;</h2>
         {isLoading ? <>
             <p>Loading...</p>
         </> : <>
-            <p>Block hash: {data?.hash?.toString()}</p>
-            <p>Extra data: {data?.extraData.toString()}</p>
-            <p>{data?.extraData && fromHex(data.extraData, 'string')}</p>
+            {blockTimestamp && (<p>{blockTimestamp.toString()}</p>)}
+            {extraData && (<h2>{extraData}</h2>)}
         </>}
     </a>
 }

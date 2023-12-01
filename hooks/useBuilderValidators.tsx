@@ -24,7 +24,6 @@ const useBuilderValidators = () => {
         fetch(url)
             .then((r: Response) => r.json())
             .then((data: ValidatorsResponse[]) => {
-                console.log(data)
                 setIsLoading(false)
                 setData(data)
             })
@@ -33,10 +32,6 @@ const useBuilderValidators = () => {
                 setIsLoading(false)
             })
     }, [])
-
-    useEffect(() => {
-        console.log(data)
-    }, [data])
 
     return {
         data: data,

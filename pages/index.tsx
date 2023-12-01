@@ -21,7 +21,7 @@ const Home: NextPage = () => {
         <ConnectButton />
 
         <h1 className={styles.title}>
-          Welcome to So Extra
+          So Extra
         </h1>
 
         <BlockNumber />

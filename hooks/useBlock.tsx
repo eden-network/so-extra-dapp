@@ -28,10 +28,6 @@ const useBlock = (blockNumber: bigint | undefined) => {
             })
     }, [publicClient, blockNumber])
 
-    useEffect(() => {
-        console.log(block)
-    }, [block])
-
     return {
         data: block,
         isLoading
