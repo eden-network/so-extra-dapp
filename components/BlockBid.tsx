@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { parseEther, stringToBytes } from "viem"
-import { useAccount, useBalance, useWalletClient } from "wagmi"
+import { keccak256, parseEther, parseGwei, serializeTransaction, stringToBytes } from "viem"
+import { useAccount, useBalance, useChainId, useWalletClient } from "wagmi"
 
 const BlockBid = () => {
     const [extraData, setExtraData] = useState<string>("")
@@ -8,9 +8,9 @@ const BlockBid = () => {
     const MAX_BYTES_LENGTH = 32
 
     const [bidAmount, setBidAmount] = useState<number>(0.05)
-    const [blockNumber, setBlockNumber] = useState<number>()
 
-    const [signedTx, setSignedTx] = useState<string>()
+    const [unsignedTx, setUnsignedTx] = useState<string>("")
+    const [signedTx, setSignedTx] = useState<string>("")
 
     const handleExtraDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const text = event.target.value
@@ -25,16 +25,13 @@ const BlockBid = () => {
         setBidAmount(event.target.value as unknown as number)
     }
 
-    const handleBlockNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setBlockNumber(event.target.value as unknown as number)
-    }
-
     const handleSignedTxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSignedTx(event.target.value)
     }
 
     const { address, status } = useAccount()
     const {data: walletClient } = useWalletClient()
+    const chainId = useChainId()
 
     const handleButtonClick = async () => {
         if (walletClient === undefined || walletClient === null) {
@@ -43,13 +40,24 @@ const BlockBid = () => {
         }
 
         const request = await walletClient.prepareTransactionRequest({
+            chainId,
             account: address,
             to: address,
+            // gasPrice: parseGwei('420'),
             value: parseEther(bidAmount.toString())
         })
         console.log(request)
-        const signature = await walletClient.signTransaction(request)
-        console.log(signature)
+        const serialized = serializeTransaction(request)
+        const serializedHash = keccak256(serialized)
+        setUnsignedTx(serialized)
+        // setUnsignedTx(serializedHash)
+        // const hash = await walletClient.sendTransaction(request)
+        // console.log(hash)
+        const tmp = await (window as any).ethereum.request({ method: 'eth_sign', params: [ address, serializedHash ] })
+        console.log(tmp)
+        setSignedTx(tmp)
+        // const signature = await walletClient.signTransaction(request)
+        // console.log(signature)
     }
 
     const handleButtonClickForSignedTx = async () => {
@@ -58,7 +66,7 @@ const BlockBid = () => {
             return
         }
 
-        const hash = walletClient.sendRawTransaction({
+        const hash = await walletClient.sendRawTransaction({
             serializedTransaction: signedTx as `0x${string}`
         })
         console.log(hash)
@@ -75,20 +83,19 @@ const BlockBid = () => {
             <p>{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
         </div>
         <div>
-            <label htmlFor="block-number">Block number:</label>
-            <input id="block-number" type="number" value={blockNumber} onChange={handleBlockNumberChange.bind(this)}></input>
-        </div>
-        <div>
             <label htmlFor="bid-amount">Bid Amount:</label>
             <input id="bid-amount" type="number" value={bidAmount} onChange={handleBidAmountChange.bind(this)}></input>
+            <p>Your bid is valid for the next 100 blocks</p>
         </div>
         <div>
-            <button onClick={handleButtonClick} type="submit">Bid {bidAmount} ETH</button>
+            <button onClick={handleButtonClick} type="submit">Sign Tx for Bid {bidAmount} ETH</button>
         </div>
         <div>
-            <p>{address}</p>
+            <p>Account: {address}</p>
             <p>{status}</p>
             <p>{balance?.formatted} {balance?.symbol}</p>
+            <p>Unsigned tx: {unsignedTx}</p>
+            <p>Signed tx: {signedTx}</p>
         </div>
         <div>
             <label htmlFor="signed-tx">Signed Tx:</label>
