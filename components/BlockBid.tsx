@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { keccak256, parseEther, parseGwei, serializeTransaction, stringToBytes } from "viem"
-import { useAccount, useBalance, useChainId, useWalletClient } from "wagmi"
+import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes } from "viem"
+import { useAccount, useBalance, useChainId, useNetwork, usePrepareSendTransaction, useWalletClient } from "wagmi"
 
 const BlockBid = () => {
     const [extraData, setExtraData] = useState<string>("")
@@ -30,8 +30,9 @@ const BlockBid = () => {
     }
 
     const { address, status } = useAccount()
-    const {data: walletClient } = useWalletClient()
+    const { data: walletClient } = useWalletClient()
     const chainId = useChainId()
+    const { chain } = useNetwork()
 
     const handleButtonClick = async () => {
         if (walletClient === undefined || walletClient === null) {
@@ -39,25 +40,30 @@ const BlockBid = () => {
             return
         }
 
+        // create request with viem
         const request = await walletClient.prepareTransactionRequest({
-            chainId,
+            chain: chain,
             account: address,
             to: address,
-            // gasPrice: parseGwei('420'),
+            gasPrice: parseGwei('420'),
             value: parseEther(bidAmount.toString())
         })
-        console.log(request)
-        const serialized = serializeTransaction(request)
-        const serializedHash = keccak256(serialized)
+        
+        // augment with chain id (required)
+        const augmentedTx = { ...request, chainId }
+        const serialized = serializeTransaction(augmentedTx)
         setUnsignedTx(serialized)
-        // setUnsignedTx(serializedHash)
-        // const hash = await walletClient.sendTransaction(request)
-        // console.log(hash)
-        const tmp = await (window as any).ethereum.request({ method: 'eth_sign', params: [ address, serializedHash ] })
+
+        // ensure serialized tx is valid
+        const tmp = parseTransaction(serialized)
         console.log(tmp)
-        setSignedTx(tmp)
-        // const signature = await walletClient.signTransaction(request)
-        // console.log(signature)
+
+        // sign with metamask (required advanced setting enabled)
+        const serializedHash = keccak256(serialized)
+        const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [ address, serializedHash ] })
+        const signature = hexToSignature(hexSignature)
+        const serializedSignedTx = serializeTransaction(augmentedTx, signature)
+        setSignedTx(serializedSignedTx)
     }
 
     const handleButtonClickForSignedTx = async () => {
@@ -94,8 +100,8 @@ const BlockBid = () => {
             <p>Account: {address}</p>
             <p>{status}</p>
             <p>{balance?.formatted} {balance?.symbol}</p>
-            <p>Unsigned tx: {unsignedTx}</p>
-            <p>Signed tx: {signedTx}</p>
+            <p>Unsigned tx: {unsignedTx.substring(0, 10)}...</p>
+            <p>Signed tx: {signedTx.substring(0, 10)}...</p>
         </div>
         <div>
             <label htmlFor="signed-tx">Signed Tx:</label>
