@@ -11,6 +11,7 @@ const BlockBid = () => {
 
     const [unsignedTx, setUnsignedTx] = useState<string>("")
     const [signedTx, setSignedTx] = useState<string>("")
+    const [errorMessage, setErrorMessage] = useState<string>()
 
     const handleExtraDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const text = event.target.value
@@ -35,35 +36,47 @@ const BlockBid = () => {
     const { chain } = useNetwork()
 
     const handleButtonClick = async () => {
+        setErrorMessage(undefined)
         if (walletClient === undefined || walletClient === null) {
             console.error(`walletClient not found`)
             return
         }
 
         // create request with viem
-        const request = await walletClient.prepareTransactionRequest({
-            chain: chain,
-            account: address,
-            to: address,
-            gasPrice: parseGwei('420'),
-            value: parseEther(bidAmount.toString())
-        })
-        
-        // augment with chain id (required)
-        const augmentedTx = { ...request, chainId }
-        const serialized = serializeTransaction(augmentedTx)
-        setUnsignedTx(serialized)
+        try {
+            const request = await walletClient.prepareTransactionRequest({
+                chain: chain,
+                account: address,
+                to: address,
+                gasPrice: parseGwei('420'),
+                value: parseEther(bidAmount.toString())
+            })
 
-        // ensure serialized tx is valid
-        const tmp = parseTransaction(serialized)
-        console.log(tmp)
+            // augment with chain id (required)
+            const augmentedTx = { ...request, chainId }
+            const serialized = serializeTransaction(augmentedTx)
+            setUnsignedTx(serialized)
 
-        // sign with metamask (required advanced setting enabled)
-        const serializedHash = keccak256(serialized)
-        const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [ address, serializedHash ] })
-        const signature = hexToSignature(hexSignature)
-        const serializedSignedTx = serializeTransaction(augmentedTx, signature)
-        setSignedTx(serializedSignedTx)
+            // ensure serialized tx is valid
+            const tmp = parseTransaction(serialized)
+            console.log(tmp)
+
+            // sign with metamask (required advanced setting enabled)
+            try {
+                const serializedHash = keccak256(serialized)
+                const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, serializedHash] })
+                const signature = hexToSignature(hexSignature)
+                const serializedSignedTx = serializeTransaction(augmentedTx, signature)
+                setSignedTx(serializedSignedTx)
+            }
+            catch (error: any) {
+                throw error
+            }
+        }
+        catch (error: any) {
+            console.log(error)
+            setErrorMessage(error?.message)
+        }
     }
 
     const handleButtonClickForSignedTx = async () => {
@@ -94,7 +107,10 @@ const BlockBid = () => {
             <p>Your bid is valid for the next 100 blocks</p>
         </div>
         <div>
-            <button onClick={handleButtonClick} type="submit">Sign Tx for Bid {bidAmount} ETH</button>
+            <button onClick={handleButtonClick} type="submit">Step 1: Sign Tx for Bid {bidAmount} ETH</button>
+        </div>
+        <div>
+            <p>Error: {errorMessage}</p>
         </div>
         <div>
             <p>Account: {address}</p>
@@ -106,9 +122,9 @@ const BlockBid = () => {
         <div>
             <label htmlFor="signed-tx">Signed Tx:</label>
             <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
-        <div>
-            <button onClick={handleButtonClickForSignedTx} type="submit">sendRawTransaction</button>
-        </div>
+            <div>
+                <button onClick={handleButtonClickForSignedTx} type="submit">Step 2: Submit Signed Tx</button>
+            </div>
         </div>
     </fieldset>
 }
