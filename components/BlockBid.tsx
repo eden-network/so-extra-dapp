@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes } from "viem"
-import { useAccount, useBalance, useChainId, useNetwork, usePrepareSendTransaction, useWalletClient } from "wagmi"
+import { useAccount, useBalance, useChainId, useNetwork, useWalletClient } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
+import Image from 'next/image'
 
 const BlockBid = () => {
     const [extraData, setExtraData] = useState<string>("")
@@ -108,7 +109,7 @@ const BlockBid = () => {
                 htmlFor="extra-data"
             >Account:</label>
             <input
-                className="border w-full px-1"
+                className="border w-full px-3 py-1 rounded-full"
                 id="extra-data"
                 type="text"
                 value={address}
@@ -120,7 +121,7 @@ const BlockBid = () => {
                 htmlFor="extra-data"
             >Extra Data:</label>
             <input
-                className="border w-full px-1"
+                className="border w-full px-3 py-1 rounded-full"
                 id="extra-data"
                 type="text"
                 value={extraData}
@@ -136,7 +137,7 @@ const BlockBid = () => {
                 htmlFor="bid-amount"
             >Bid Amount:</label>
             <input
-                className="border w-full px-1"
+                className="border w-full px-3 py-1 rounded-full"
                 id="bid-amount"
                 type="number"
                 value={bidAmount}
@@ -148,10 +149,15 @@ const BlockBid = () => {
         </div>
         <div>
             <button
-                className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
+                className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
                 onClick={handleButtonClick}
                 type="submit"
-            >Step 1: Sign Tx for Bid {bidAmount} ETH</button>
+            >
+                <div className="flex flex-row items-center justify-center">
+                    <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
+                    <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
+                </div>
+            </button>
             <p
                 className="text-sm"
             >Your bid is valid for the next 100 blocks</p>
@@ -164,10 +170,15 @@ const BlockBid = () => {
         <div>
             <div>
                 <button
-                    className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
+                    className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
                     onClick={handleButtonClickForSignedTx}
                     type="submit"
-                >Step 2: Submit Signed Tx</button>
+                >
+                    <div className="flex flex-row items-center justify-center">
+                        <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
+                        <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
+                    </div>
+                </button>
             </div>
         </div>
         <div>

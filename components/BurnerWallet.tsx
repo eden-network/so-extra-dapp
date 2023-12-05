@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
+import Image from 'next/image'
+import styles from '../styles/Home.module.css';
 
 const BurnerWallet = () => {
     const { address: walletAddress } = useAccount()
@@ -78,7 +80,7 @@ const BurnerWallet = () => {
                 htmlFor="burner-address"
             >Burner Address:</label>
             <input
-                className="border w-full px-1"
+                className="border w-full px-3 py-1 rounded-full"
                 id="burner-address"
                 type="text"
                 value={account?.address}
@@ -93,7 +95,7 @@ const BurnerWallet = () => {
                 htmlFor="deposit-amount"
             >Deposit Amount:</label>
             <input
-                className="border w-full px-1"
+                className="border w-full px-3 py-1 rounded-full"
                 id="deposit-amount"
                 type="text"
                 value={depositAmount}
@@ -105,10 +107,15 @@ const BurnerWallet = () => {
         </div>
         <div>
             <button
-                className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
+                className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
                 onClick={handleFundButtonClick}
                 type="submit"
-            >Fund My Burner Wallet</button>
+            >
+                <div className="flex flex-row items-center justify-center">
+                    <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
+                    <p className="font-semibold">Fund My Burner Wallet</p>
+                </div>
+            </button>
         </div>
     </div>
 }
