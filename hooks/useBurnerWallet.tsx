@@ -13,6 +13,7 @@ const useBurnerWallet = () => {
         'soExtra.privateKeys', []
     )
     const [account, setAccount] = useState<PrivateKeyAccount | undefined>(undefined)
+    const [privateKey, setPrivateKey] = useState<`0x${string}` | undefined>(undefined)
 
     const hasExistingBurnerWallet = () => {
         return localPrivateKeys.length > 0
@@ -31,11 +32,13 @@ const useBurnerWallet = () => {
             privateKey = localPrivateKeys[0].privateKey
             account = privateKeyToAccount(privateKey)
             setAccount(account)
+            setPrivateKey(privateKey)
         }
         else {
             privateKey = generatePrivateKey()
             account = privateKeyToAccount(privateKey)
             setAccount(account)
+            setPrivateKey(privateKey)
             setLocalPrivateKeys([
                 ...localPrivateKeys,
                 {
@@ -52,6 +55,7 @@ const useBurnerWallet = () => {
     })
 
     return {
+        privateKey: privateKey,
         account: account,
         balance: balance,
         hasExistingBurnerWallet,

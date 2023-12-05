@@ -12,7 +12,8 @@ const BlockBid = () => {
     const [bytesLength, setBytesLength] = useState<number>(0)
     const {
         account: burnerAccount,
-        balance: burnerBalance
+        balance: burnerBalance,
+        privateKey: burnerPrivateKey
     } = useBurnerWallet()
 
     const MAX_BYTES_LENGTH = 32
@@ -131,8 +132,8 @@ const BlockBid = () => {
         const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
         const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
         var ccrRlp
-        if (USING_BURNER && burnerAccount) {
-            ccrRlp = ccr.signWithPK(/** GET PK! */).rlpEncode()
+        if (USING_BURNER && burnerAccount && burnerPrivateKey) {
+            ccrRlp = ccr.signWithPK(burnerPrivateKey).rlpEncode()
         } else {
             const signingCallback = async (_hash: string) => {
                 const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
