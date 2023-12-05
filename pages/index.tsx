@@ -3,13 +3,12 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
 import BurnerWallet from '../components/BurnerWallet';
+import LeaderBoard from '../components/LeaderBoard';
 import RecentBlocks from '../components/RecentBlocks';
-import SlotNumber from '../components/SlotNumber';
-import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>So Extra</title>
         <meta
@@ -19,59 +18,66 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className={styles.main}>
-        <div className="border w-full flex flex-row gap-2 justify-between mb-6">
-          <div className="flex border">
+      <main className="p-6">
+        <div className="w-full flex flex-row gap-2 justify-between items-center mb-6">
+          <div className="flex-none justify-self-start">
+            <h1 className="text-xs">
+              todo: logo
+            </h1>
+          </div>
+          <div className="flex-1 text-center">
             <h1 className="text-5xl">
               So Extra
             </h1>
           </div>
-          <div className="flex border">
-            <h1 className="text-5xl">
-              So Extra
-            </h1>
-          </div>
-          <div className="flex border">
+          <div className="flex-none justify-self-end">
             <ConnectButton />
           </div>
         </div>
 
-        <div className="border flex flex-row gap-2">
-          <div className="flex-1 border">
-            <div className="flex flex-col gap-6">
-              <div className="flex-1 border">
-                <h2 className="text-2xl mb-2">
+        <div className="flex flex-row gap-2">
+          <div className="flex-1 p-4 max-w-sm">
+            <div className="flex flex-col gap-6 items-center">
+              <div className="flex-1 border rounded-xl p-4 max-w-sm">
+                <h2 className="text-2xl mb-2 text-center">
                   Burner Wallet
                 </h2>
                 <BurnerWallet />
               </div>
-              <div className="flex-1 border">
-                <h2 className="text-2xl mb-2">
+              <div className="flex-1 border rounded-xl p-4 max-w-sm">
+                <h2 className="text-2xl mb-2 text-center">
                   Bid on a Block
                 </h2>
                 <BlockBid />
               </div>
-              {/* <SlotNumber /> */}
             </div>
           </div>
-          <div className="flex-1 border">
-            <div className="flex flex-col">
-              <RecentBlocks />
+          <div className="flex-1 p-4 max-w-xl">
+            <div className="flex flex-col gap-6">
+              <div className="flex-1 border rounded-xl p-4 max-w-xl">
+                <h2 className="text-2xl mb-2 text-center">
+                  Recent Blocks
+                </h2>
+                <RecentBlocks />
+              </div>
             </div>
           </div>
-          <div className="flex-1 border">
-            <div className="flex flex-col">
-              <h2 className="text-2xl">
-                Leader Board
-              </h2>
+          <div className="flex-1 p-4 max-w-sm">
+            <div className="flex flex-col gap-6">
+              <div className="flex-1 border rounded-xl p-4 max-w-sm">
+                <h2 className="text-2xl mb-2 text-center">
+                  Leader Board
+                </h2>
+                <LeaderBoard />
+              </div>
             </div>
           </div>
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <a href="https://rainbow.me" rel="noopener noreferrer" target="_blank">
-          Made with ❤️ by your frens at 🌈
+      <footer className="p-6 text-center border-t">
+        <a href="https://twitter.com/MihaLotric" rel="noopener noreferrer" target="_blank">
+          @MihaLotric
         </a>
       </footer>
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { formatEther, parseEther } from "viem/utils"
+import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 
@@ -66,7 +66,7 @@ const BurnerWallet = () => {
             </p>
             <div>
                 <button
-                    className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded w-full"
+                    className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
                     onClick={handleButtonClick}
                     type="submit"
                 >Create My Burner Wallet</button>
@@ -105,7 +105,7 @@ const BurnerWallet = () => {
         </div>
         <div>
             <button
-                className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded w-full"
+                className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
                 onClick={handleFundButtonClick}
                 type="submit"
             >Fund My Burner Wallet</button>

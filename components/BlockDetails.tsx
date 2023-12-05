@@ -11,7 +11,7 @@ const BlockDetails = (
         blockNumber: bigint | undefined
     }
 ) => {
-    const [ didContentReveal, setDidContentReveal ] = useState(false)
+    const [ didContentReveal, setDidContentReveal ] = useState(true)
     const handleOnMouseEnter = () => {
         setDidContentReveal(true)
     }
@@ -26,14 +26,14 @@ const BlockDetails = (
     const extraData = data !== undefined ? fromHex(data.extraData, 'string') : undefined
 
     return <div
-        className="p-4 border founded hover:text-[#ff69f9] w-full"
+        className="p-4 border rounded-xl hover:border-[#ff69f9] hover:text-[#ff69f9] w-full"
         onMouseEnter={handleOnMouseEnter.bind(this)}
     >
         <p className="text-xs">
             <a
                 className="underline"
                 href={href}
-                target="_blank"
+                target="_blank" 
                 rel="noopener noreferrer"
             >{blockNumber.toString()}</a>
             {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
@@ -42,7 +42,7 @@ const BlockDetails = (
             <p>Loading...</p>
         </> : <>
             <p className={`${!didContentReveal && "bg-black"} rounded`}>
-                &nbsp;{extraData}
+                &nbsp;{didContentReveal && extraData}
             </p>
         </>}
     </div >

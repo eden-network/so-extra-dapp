@@ -22,7 +22,7 @@ const useBurnerWallet = () => {
         if (hasExistingBurnerWallet()) {
             createBurnerWallet()
         }
-    }, [])
+    }, [localPrivateKeys])
 
     const createBurnerWallet = () => {
         let privateKey: `0x${string}`;

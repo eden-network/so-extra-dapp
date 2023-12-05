@@ -6,11 +6,11 @@ import useBurnerWallet from "../hooks/useBurnerWallet"
 const BlockBid = () => {
     const [extraData, setExtraData] = useState<string>("")
     const [bytesLength, setBytesLength] = useState<number>(0)
-    const { 
+    const {
         account: burnerAccount,
         balance: burnerBalance
     } = useBurnerWallet()
-    
+
     const MAX_BYTES_LENGTH = 32
 
     const [bidAmount, setBidAmount] = useState<number>(0.05)
@@ -101,29 +101,29 @@ const BlockBid = () => {
         address
     })
 
-    return <fieldset className="flex flex-col gap-2 max-w-md">
+    return <div className="flex flex-col">
         <div>
-            <label 
+            <label
                 className="mr-2"
                 htmlFor="extra-data"
             >Account:</label>
-            <input 
+            <input
                 className="border w-full px-1"
                 id="extra-data"
                 type="text"
-                value={burnerAccount?.address}
+                value={address}
             />
         </div>
         <div>
-            <label 
+            <label
                 className="mr-2"
                 htmlFor="extra-data"
             >Extra Data:</label>
-            <input 
+            <input
                 className="border w-full px-1"
                 id="extra-data"
-                type="text" 
-                value={extraData} 
+                type="text"
+                value={extraData}
                 onChange={handleExtraDataChange.bind(this)}
             />
             <p
@@ -131,25 +131,25 @@ const BlockBid = () => {
             >{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
         </div>
         <div>
-            <label 
+            <label
                 className="mr-2"
                 htmlFor="bid-amount"
             >Bid Amount:</label>
             <input
                 className="border w-full px-1"
-                id="bid-amount" 
-                type="number" 
-                value={bidAmount} 
+                id="bid-amount"
+                type="number"
+                value={bidAmount}
                 onChange={handleBidAmountChange.bind(this)}
             />
             <p
                 className="text-sm text-right"
-            >{balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `Balance: - ETH` }</p>
+            >{balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `Balance: - ETH`}</p>
         </div>
         <div>
-            <button 
-                className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded w-full"
-                onClick={handleButtonClick} 
+            <button
+                className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
+                onClick={handleButtonClick}
                 type="submit"
             >Step 1: Sign Tx for Bid {bidAmount} ETH</button>
             <p
@@ -162,26 +162,24 @@ const BlockBid = () => {
             >Error: {errorMessage}</p>
         </div>}
         <div>
-            <p>Burner: {burnerAccount?.address}</p>
-            <p>{burnerBalance?.formatted} {burnerBalance?.symbol}</p>
-            <p>Account: {address}</p>
-            <p>{status}</p>
-            <p>{balance?.formatted} {balance?.symbol}</p>
-            <p>Unsigned tx: {unsignedTx.substring(0, 10)}...</p>
-            <p>Signed tx: {signedTx.substring(0, 10)}...</p>
-        </div>
-        <div>
-            <label htmlFor="signed-tx">Signed Tx:</label>
-            <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
             <div>
-                <button 
-                    className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded w-full"
-                    onClick={handleButtonClickForSignedTx} 
+                <button
+                    className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
+                    onClick={handleButtonClickForSignedTx}
                     type="submit"
                 >Step 2: Submit Signed Tx</button>
             </div>
         </div>
-    </fieldset>
+        <div>
+            <label htmlFor="signed-tx">Signed Tx:</label>
+            <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
+            <p>Burner: {burnerAccount?.address}</p>
+            <p>{burnerBalance?.formatted} {burnerBalance?.symbol}</p>
+            <p>Account: {address}</p>
+            <p>Unsigned tx: {unsignedTx.substring(0, 10)}...</p>
+            <p>Signed tx: {signedTx.substring(0, 10)}...</p>
+        </div>
+    </div>
 }
 
 export default BlockBid
