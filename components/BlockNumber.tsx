@@ -1,29 +1,22 @@
 import { useBlockNumber } from "wagmi"
 import BlockDetails from "./BlockDetails"
-import styles from '../styles/Home.module.css';
-import BlockBid from "./BlockBid";
 
 const BlockNumber = () => {
     const { data } = useBlockNumber({
         watch: true
     })
 
-    const pastBlocks = data !== undefined ? Array.from({ length: 12 }, (_, index) => data - BigInt(index)) : []
-    const upcomingBlocks = data !== undefined ? Array.from({ length: 12 }, (_, index) => data + BigInt(index) + BigInt(1)) : []
+    const pastBlocks = data !== undefined ? Array.from({ length: 48 }, (_, index) => data - BigInt(index)) : []
 
     return <>
-        <p className={styles.description}>
+        <h2 className="text-2xl mb-6">
             Block number: {' '}
-            <code className={styles.code}>{data?.toString()}</code>
-        </p>
-        <h2>Bid on a Block</h2>
-        <BlockBid />
-        <h2>Upcoming Blocks</h2>
-        <div className={styles.grid}>
-            {upcomingBlocks.map(n => <BlockDetails key={n} blockNumber={n} />)}
-        </div>
-        <h2>Recent Blocks</h2>
-        <div className={styles.grid}>
+            <span className="font-mono">{data?.toString()}</span>
+        </h2>
+        <h2 className="text-2xl mb-6">
+            Recent Blocks
+        </h2>
+        <div className="flex flex-col max-w-xl gap-2">
             {pastBlocks.map(n => <BlockDetails key={n} blockNumber={n} />)}
         </div>
     </>

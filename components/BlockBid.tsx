@@ -95,23 +95,51 @@ const BlockBid = () => {
         address
     })
 
-    return <fieldset>
+    return <fieldset className="flex flex-col gap-2 max-w-md">
         <div>
-            <label htmlFor="extra-data">Extra Data:</label>
-            <input id="extra-data" type="text" value={extraData} onChange={handleExtraDataChange.bind(this)}></input>
-            <p>{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
+            <label 
+                className="mr-2"
+                htmlFor="extra-data"
+            >Extra Data:</label>
+            <input 
+                className="border w-full px-1"
+                id="extra-data"
+                type="text" 
+                value={extraData} 
+                onChange={handleExtraDataChange.bind(this)}
+            />
+            <p
+                className="text-sm text-right"
+            >{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
         </div>
         <div>
-            <label htmlFor="bid-amount">Bid Amount:</label>
-            <input id="bid-amount" type="number" value={bidAmount} onChange={handleBidAmountChange.bind(this)}></input>
-            <p>Your bid is valid for the next 100 blocks</p>
+            <label 
+                className="mr-2"
+                htmlFor="bid-amount"
+            >Bid Amount:</label>
+            <input
+                className="border w-full px-1"
+                id="bid-amount" 
+                type="number" 
+                value={bidAmount} 
+                onChange={handleBidAmountChange.bind(this)}
+            />
         </div>
         <div>
-            <button onClick={handleButtonClick} type="submit">Step 1: Sign Tx for Bid {bidAmount} ETH</button>
+            <button 
+                className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded"
+                onClick={handleButtonClick} 
+                type="submit"
+            >Step 1: Sign Tx for Bid {bidAmount} ETH</button>
+            <p
+                className="text-sm"
+            >Your bid is valid for the next 100 blocks</p>
         </div>
-        <div>
-            <p>Error: {errorMessage}</p>
-        </div>
+        {errorMessage && <div>
+            <p
+                className=""
+            >Error: {errorMessage}</p>
+        </div>}
         <div>
             <p>Account: {address}</p>
             <p>{status}</p>
@@ -123,7 +151,11 @@ const BlockBid = () => {
             <label htmlFor="signed-tx">Signed Tx:</label>
             <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
             <div>
-                <button onClick={handleButtonClickForSignedTx} type="submit">Step 2: Submit Signed Tx</button>
+                <button 
+                    className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded"
+                    onClick={handleButtonClickForSignedTx} 
+                    type="submit"
+                >Step 2: Submit Signed Tx</button>
             </div>
         </div>
     </fieldset>
