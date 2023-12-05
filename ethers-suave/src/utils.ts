@@ -59,12 +59,12 @@ export function removeLeadingZeros(hex: string): string {
 	return '0x' + hex.slice(2).replace(/^00+/, '')
 }
 
-export function txToBundleBytes(signedTx): string {
+export function txToBundleBytes(signedTx: string): string {
 	return bundleToBytes(txToBundle(signedTx))
 }
 
 
-export function txToBundle(signedTx): IBundle {
+export function txToBundle(signedTx: string): IBundle {
 	return {
 		txs: [signedTx],
 		revertingHashes: [],
