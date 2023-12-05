@@ -2,7 +2,8 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
-import BlockNumber from '../components/BlockNumber';
+import BurnerWallet from '../components/BurnerWallet';
+import RecentBlocks from '../components/RecentBlocks';
 import SlotNumber from '../components/SlotNumber';
 import styles from '../styles/Home.module.css';
 
@@ -37,17 +38,25 @@ const Home: NextPage = () => {
 
         <div className="border flex flex-row gap-2">
           <div className="flex-1 border">
-            <div className="flex flex-col">
-              <h2 className="text-2xl">
-                Bid on a Block
-              </h2>
-              <BlockBid />
-              <SlotNumber />
+            <div className="flex flex-col gap-6">
+              <div className="flex-1 border">
+                <h2 className="text-2xl mb-2">
+                  Burner Wallet
+                </h2>
+                <BurnerWallet />
+              </div>
+              <div className="flex-1 border">
+                <h2 className="text-2xl mb-2">
+                  Bid on a Block
+                </h2>
+                <BlockBid />
+              </div>
+              {/* <SlotNumber /> */}
             </div>
           </div>
           <div className="flex-1 border">
             <div className="flex flex-col">
-              <BlockNumber />
+              <RecentBlocks />
             </div>
           </div>
           <div className="flex-1 border">

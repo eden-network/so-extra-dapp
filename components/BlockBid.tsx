@@ -3,11 +3,17 @@ import { Transaction, hexToSignature, keccak256, parseEther, parseGwei, parseTra
 import { useAccount, useBalance, useChainId, useNetwork, usePrepareSendTransaction, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
-import { SUAVE_CHAIN_ID } from '../ethers-suave/src/const'
+import useBurnerWallet from "../hooks/useBurnerWallet"
 
 const BlockBid = () => {
+    const USING_BURNER = true
     const [extraData, setExtraData] = useState<string>("")
     const [bytesLength, setBytesLength] = useState<number>(0)
+    const { 
+        account: burnerAccount,
+        balance: burnerBalance
+    } = useBurnerWallet()
+    
     const MAX_BYTES_LENGTH = 32
 
     const [bidAmount, setBidAmount] = useState<number>(0.05)
@@ -119,17 +125,22 @@ const BlockBid = () => {
             nonce: request.nonce,
             to: contractAdd,
         }
-        const signingCallback = async (_hash: string) => {
-            const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
-            const sig = hexToSignature(hexSig)
-            return { r: sig.r, s: sig.s, v: Number(sig.v)  } as SigSplit
-        }
         const executionNodeAdd = '0x03493869959c866713c33669ca118e774a30a0e5'
-        const confidentialBytes = txToBundleBytes(signedTx)
-        const cRecord = createConfidentialComputeRecord(suaveTx, executionNodeAdd)
-        const ccrRlp = await (new ConfidentialComputeRequest(cRecord, confidentialBytes))
-            .signWithAsyncCallback(signingCallback)
-            .then(ccr => ccr.rlpEncode())
+        const confidentialBytes = txToBundleBytes(signedTx as `0x${string}`)
+        const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
+        const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
+        var ccrRlp
+        if (USING_BURNER && burnerAccount) {
+            ccrRlp = ccr.signWithPK(/** GET PK! */).rlpEncode()
+        } else {
+            const signingCallback = async (_hash: string) => {
+                const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
+                const sig = hexToSignature(hexSig)
+                return { r: sig.r, s: sig.s, v: Number(sig.v)  } as SigSplit
+            }
+            ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
+        }
+        
         console.log(ccrRlp)
         const hash = await walletClient.transport.request({ method: 'eth_sendRawTransaction', params: [ccrRlp] })
             .catch((error: any) => {
@@ -146,6 +157,18 @@ const BlockBid = () => {
     })
 
     return <fieldset className="flex flex-col gap-2 max-w-md">
+        <div>
+            <label 
+                className="mr-2"
+                htmlFor="extra-data"
+            >Account:</label>
+            <input 
+                className="border w-full px-1"
+                id="extra-data"
+                type="text"
+                value={burnerAccount?.address}
+            />
+        </div>
         <div>
             <label 
                 className="mr-2"
@@ -174,10 +197,13 @@ const BlockBid = () => {
                 value={bidAmount} 
                 onChange={handleBidAmountChange.bind(this)}
             />
+            <p
+                className="text-sm text-right"
+            >{balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `Balance: - ETH` }</p>
         </div>
         <div>
             <button 
-                className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded"
+                className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded w-full"
                 onClick={handleButtonClick} 
                 type="submit"
             >Step 1: Sign Tx for Bid {bidAmount} ETH</button>
@@ -191,6 +217,8 @@ const BlockBid = () => {
             >Error: {errorMessage}</p>
         </div>}
         <div>
+            <p>Burner: {burnerAccount?.address}</p>
+            <p>{burnerBalance?.formatted} {burnerBalance?.symbol}</p>
             <p>Account: {address}</p>
             <p>{status}</p>
             <p>{balance?.formatted} {balance?.symbol}</p>
@@ -202,7 +230,7 @@ const BlockBid = () => {
             <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
             <div>
                 <button 
-                    className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded"
+                    className="bg-emerald-400 hover:bg-emerald-200 py-2 px-4 rounded w-full"
                     onClick={handleButtonClickForSignedTx} 
                     type="submit"
                 >Step 2: Submit Signed Tx</button>
