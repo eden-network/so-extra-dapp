@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Transaction, hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, Chain } from "viem"
+import { Transaction, hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, createPublicClient, http } from "viem"
 import { useAccount, useBalance, useChainId, useNetwork, usePrepareSendTransaction, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
@@ -15,6 +15,11 @@ const BlockBid = () => {
         balance: burnerBalance,
         privateKey: burnerPrivateKey
     } = useBurnerWallet()
+
+    const suaveTransport = http('https://rpc.rigil.suave.flashbots.net')
+    const suaveClient = createPublicClient({
+        transport: suaveTransport
+    })
 
     const MAX_BYTES_LENGTH = 32
 
@@ -142,9 +147,11 @@ const BlockBid = () => {
             }
             ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
         }
+
+        
         
         console.log(ccrRlp)
-        const hash = await walletClient.transport.request({ method: 'eth_sendRawTransaction', params: [ccrRlp] })
+        const hash = await suaveClient.transport.request({ method: 'eth_sendRawTransaction', params: [ccrRlp] })
             .catch((error: any) => {
                 console.log(error)
             })
