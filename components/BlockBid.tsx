@@ -1,6 +1,9 @@
 import { useState } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes } from "viem"
+import { Transaction, hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, Chain } from "viem"
 import { useAccount, useBalance, useChainId, useNetwork, usePrepareSendTransaction, useWalletClient } from "wagmi"
+import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
+import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
+import { SUAVE_CHAIN_ID } from '../ethers-suave/src/const'
 
 const BlockBid = () => {
     const [extraData, setExtraData] = useState<string>("")
@@ -84,10 +87,57 @@ const BlockBid = () => {
             console.error(`walletClient not found`)
             return
         }
+        // const c: Chain = { id: 16813125, name: 'Rigil', rpcUrls: {default: {http: ['https://rpc.rigil.suave.flashbots.net']}}, nativeCurrency: { name: 'rig', symbol: 'SUAVE', decimals: 18 } }
+        // await walletClient.addChain({chain: c})
+        const RIGIL_CHAIN_ID = 16813125
+        walletClient.switchChain({ id: RIGIL_CHAIN_ID })
+        const contractAdd = '0xa60F1B5cB70c0523A086BbCbe132C8679085ea0E' as `0x${string}`
+        const blockLimit = BigInt(100)
+        
+        const abiItem = parseAbiItem(
+            'function buyAd(uint64 blockLimit, string memory extra)',
+        )
+        const calldata = encodeFunctionData({
+            abi: [abiItem],
+            functionName: 'buyAd',
+            args: [blockLimit, extraData]
+          })
 
-        const hash = await walletClient.sendRawTransaction({
-            serializedTransaction: signedTx as `0x${string}`
+        const request = await walletClient.prepareTransactionRequest({
+            chain,
+            account: address,
+            to: contractAdd,
+            gasPrice: parseGwei('420'),
+            value: parseEther(bidAmount.toString()), 
+            gas: BigInt(1e7),
         })
+        const suaveTx = {
+            chainId: request.chain?.id,
+            data: calldata,
+            gasLimit: 1e7,
+            gasPrice: BigInt(1e9),
+            nonce: request.nonce,
+            to: contractAdd,
+        }
+        const signingCallback = async (_hash: string) => {
+            const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
+            const sig = hexToSignature(hexSig)
+            return { r: sig.r, s: sig.s, v: Number(sig.v)  } as SigSplit
+        }
+        const executionNodeAdd = '0x03493869959c866713c33669ca118e774a30a0e5'
+        const confidentialBytes = txToBundleBytes(signedTx)
+        const cRecord = createConfidentialComputeRecord(suaveTx, executionNodeAdd)
+        const ccrRlp = await (new ConfidentialComputeRequest(cRecord, confidentialBytes))
+            .signWithAsyncCallback(signingCallback)
+            .then(ccr => ccr.rlpEncode())
+        console.log(ccrRlp)
+        const hash = await walletClient.transport.request({ method: 'eth_sendRawTransaction', params: [ccrRlp] })
+            .catch((error: any) => {
+                console.log(error)
+            })
+        // const hash = await walletClient.sendRawTransaction({
+        //     serializedTransaction: ccrRlp as `0x${string}`
+        // })
         console.log(hash)
     }
 
