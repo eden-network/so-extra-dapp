@@ -2,6 +2,7 @@ import { fromHex } from "viem"
 import useBlock from "../hooks/useBlock"
 import { goerli } from "viem/chains";
 import TimeAgo from "react-timeago";
+import { useState } from "react";
 
 const BlockDetails = (
     {
@@ -10,6 +11,11 @@ const BlockDetails = (
         blockNumber: bigint | undefined
     }
 ) => {
+    const [ didContentReveal, setDidContentReveal ] = useState(false)
+    const handleOnMouseEnter = () => {
+        setDidContentReveal(true)
+    }
+
     const { data, isLoading } = useBlock(blockNumber)
     if (blockNumber === undefined) {
         return <></>
@@ -21,6 +27,7 @@ const BlockDetails = (
 
     return <div
         className="p-4 border founded hover:text-[#ff69f9] w-full"
+        onMouseEnter={handleOnMouseEnter.bind(this)}
     >
         <p className="text-xs">
             <a
@@ -34,7 +41,7 @@ const BlockDetails = (
         {isLoading ? <>
             <p>Loading...</p>
         </> : <>
-            <p className="bg-black rounded">
+            <p className={`${!didContentReveal && "bg-black"} rounded`}>
                 &nbsp;{extraData}
             </p>
         </>}
