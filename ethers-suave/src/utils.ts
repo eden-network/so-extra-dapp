@@ -84,14 +84,14 @@ export function createConfidentialComputeRecord(
 	executionNodeAddr: string, 
 ): ConfidentialComputeRecord {
 	const nonce = tx.nonce
-	const gasPrice = tx.isLondon() ? tx.maxFeePerGas : tx.gasPrice
+	const gasPrice = tx.maxFeePerGas ? tx.maxFeePerGas : tx.gasPrice
 	if (!gasPrice)
 		throw new Error('Invalid gas price')
 	const gas = tx.gasLimit
 	const to = tx.to || ethers.ZeroAddress
 	const value = tx.value
 	const data = tx.data
-	const chainId = '0x' + tx.chainId.toString(16)
+	const chainId = Number(tx.chainId)
 	return {
 		executionNode: executionNodeAddr,
 		nonce, 

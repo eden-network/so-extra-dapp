@@ -133,7 +133,7 @@ const BlockBid = () => {
         const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
         var ccrRlp
         if (USING_BURNER && burnerAccount && burnerPrivateKey) {
-            ccrRlp = ccr.signWithPK(burnerPrivateKey).rlpEncode()
+            ccrRlp = ccr.signWithPK(burnerPrivateKey.slice(2)).rlpEncode()
         } else {
             const signingCallback = async (_hash: string) => {
                 const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
