@@ -20,63 +20,53 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <div className="w-full flex flex-row gap-2 justify-between items-center mb-6 pt-6 px-6">
-          <div className="flex-none justify-self-start">
+        <div className="w-full flex flex-row items-center mb-0 pt-3">
+          <div className="flex-1 ml-6 -mb-3 justify-start">
             <Image src="/a.png" alt="So Extra" width="92" height="92" />
           </div>
-          <div className="flex-1 text-center">
+          <div className="flex-1 text-center justify-center">
             <h1 className="text-5xl font-bold">
               So Extra
             </h1>
           </div>
-          <div className="flex-none justify-self-end">
-            <ConnectButton />
+          <div className="flex-1 justify-end mr-3">
+            <div>
+              <ConnectButton />
+            </div>
           </div>
         </div>
 
-        <div className="">
-          <hr className="bg-red-500 w-full h-2 border-0 my-0" />
-          <hr className="bg-orange-500 w-full h-2 border-0 my-0" />
-          <hr className="bg-yellow-500 w-full h-2 border-0 my-0" />
-          <hr className="bg-green-500 w-full h-2 border-0 my-0" />
-          <hr className="bg-blue-500 w-full h-2 border-0 my-0" />
-          <hr className="bg-indigo-500 w-full h-2 border-0 my-0" />
-          <hr className="bg-violet-500 w-full h-2 border-0 my-0" />
+        <div>
+          <hr className="bg-red-500 w-full h-1 border-0 my-0" />
+          <hr className="bg-orange-500 w-full h-1 border-0 my-0" />
+          <hr className="bg-yellow-500 w-full h-1 border-0 my-0" />
+          <hr className="bg-green-500 w-full h-1 border-0 my-0" />
+          <hr className="bg-blue-500 w-full h-1 border-0 my-0" />
+          <hr className="bg-indigo-500 w-full h-1 border-0 my-0" />
+          <hr className="bg-violet-500 w-full h-1 border-0 my-0" />
         </div>
 
-        <div className="flex flex-row gap-2">
-          <div className="flex-1 p-4 max-w-sm">
+        <div className="flex flex-row gap-4 justify-center items-start p-4">
+          <div className="flex-1 max-w-sm justify-end">
             <div className="flex flex-col gap-6 items-center">
-              <div className="flex-1 border rounded-xl p-4 pt-2 max-w-sm">
-                <h2 className="text-2xl mb-4 text-center font-semibold">
-                  Burner Wallet
-                </h2>
+              <div className="flex-1 border rounded-2xl w-full">
                 <BurnerWallet />
               </div>
-              <div className="flex-1 border rounded-xl p-4 pt-2 max-w-sm">
-                <h2 className="text-2xl mb-4 text-center font-semibold">
-                  Bid on a Block
-                </h2>
+              <div className="flex-1 border rounded-2xl w-full">
                 <BlockBid />
               </div>
             </div>
           </div>
-          <div className="flex-1 p-4 max-w-xl">
+          <div className="flex-1 max-w-2xl justify-center">
             <div className="flex flex-col gap-6">
-              <div className="flex-1 border rounded-xl p-4 pt-2 max-w-xl">
-                <h2 className="text-2xl mb-4 text-center font-semibold">
-                  Recent Blocks
-                </h2>
+              <div className="flex-1 border rounded-2xl w-full">
                 <RecentBlocks />
               </div>
             </div>
           </div>
-          <div className="flex-1 p-4 max-w-sm">
+          <div className="flex-1 max-w-sm justify-start">
             <div className="flex flex-col gap-6">
-              <div className="flex-1 border rounded-xl p-4 pt-2 max-w-sm">
-                <h2 className="text-2xl mb-4 text-center font-semibold">
-                  Leader Board
-                </h2>
+              <div className="flex-1 border rounded-2xl w-full">
                 <LeaderBoard />
               </div>
             </div>

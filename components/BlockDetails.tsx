@@ -31,13 +31,13 @@ const BlockDetails = (
     }
 
     return <div
-        className="p-4 border rounded-xl hover:border-[#ff69f9] hover:text-[#ff69f9] w-full"
+        className="p-3 border rounded-lg hover:border-[#ff69f9] hover:text-[#ff69f9] w-full"
         onMouseEnter={handleOnMouseEnter.bind(this)}
     >
-        <div className="flex flex-row gap-2 items-center">
-            <div className="bg-green-500 w-12 h-12 rounded-full"></div>
+        <div className="flex flex-row gap-3 items-center">
+            <div className="bg-green-500 w-14 h-14 rounded-md"></div>
             <div>
-                <p className="text-xs">
+                <p className="text-sm mb-1">
                     {blockHash && <span>{ellipsis(blockHash)} &bull; </span>}
                     <a
                         className="underline"
@@ -47,13 +47,10 @@ const BlockDetails = (
                     >{blockNumber.toString()}</a>
                     {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
                 </p>
-                {isLoading ? <>
-                    <p>Loading...</p>
-                </> : <>
-                    <p className={`${!didContentReveal && "bg-black rounded"} text-lg`}>
-                        {didContentReveal && extraData}&nbsp;
-                    </p>
-                </>}
+                <p className={`${!didContentReveal && "bg-black rounded"} text-lg font-semibold`}>
+                    {isLoading && `Loading...`}
+                    {didContentReveal && extraData}&nbsp;
+                </p>
             </div>
         </div>
     </div>

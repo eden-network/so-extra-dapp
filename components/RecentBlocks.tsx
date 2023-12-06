@@ -8,8 +8,15 @@ const RecentBlocks = () => {
 
     const pastBlocks = data !== undefined ? Array.from({ length: 48 }, (_, index) => data - BigInt(index)) : []
 
-    return <div className="flex flex-col max-w-xl gap-4">
-        {pastBlocks.map(n => <BlockDetails key={n} blockNumber={n} />)}
+    return <div className="flex flex-col pb-3">
+        <div className="border-b pt-2 pb-3">
+            <h2 className="text-2xl text-center font-semibold">
+                Recent Blocks
+            </h2>
+        </div>
+        <div className="flex flex-col px-6 py-3 gap-3">
+            {pastBlocks.map(n => <BlockDetails key={n} blockNumber={n} />)}
+        </div>
     </div>
 }
 

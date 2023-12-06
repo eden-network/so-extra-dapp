@@ -3,7 +3,6 @@ import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from 'next/image'
-import styles from '../styles/Home.module.css';
 
 const BurnerWallet = () => {
     const { address: walletAddress } = useAccount()
@@ -53,7 +52,12 @@ const BurnerWallet = () => {
         catch {}
     }
 
-    return <div className="flex flex-col">
+    return <div className="flex flex-col pb-3">
+        <div className="border-b pt-2 pb-3">
+            <h2 className="text-2xl text-center font-semibold">
+                Burner Wallet
+            </h2>
+        </div>
         {displayOnboarding && <div className="flex flex-col gap-2">
             <p className="text-sm">
                 Welcome to the show.
@@ -74,9 +78,9 @@ const BurnerWallet = () => {
                 >Create My Burner Wallet</button>
             </div>
         </div>}
-        <div>
+        <div className="px-2 my-2">
             <label
-                className="mr-2"
+                className="px-3 font-semibold"
                 htmlFor="burner-address"
             >Burner Address:</label>
             <input
@@ -86,12 +90,12 @@ const BurnerWallet = () => {
                 value={account?.address}
             />
             <p
-                className="text-sm text-right"
+                className="text-sm text-right px-3"
             >Burner Balance: {balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `- ETH` }</p>
         </div>
-        <div>
+        <div className="px-2 my-2">
             <label
-                className="mr-2"
+                className="px-3 font-semibold"
                 htmlFor="deposit-amount"
             >Deposit Amount:</label>
             <input
@@ -102,12 +106,12 @@ const BurnerWallet = () => {
                 onChange={handleDepositAmountChange.bind(this)}
             />
             <p
-                className="text-sm text-right"
+                className="text-sm text-right px-3"
             >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted} ${walletBalance.symbol}` : `- ETH` }</p>
         </div>
-        <div>
+        <div className="px-2 my-2">
             <button
-                className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
+                className="py-2 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
                 onClick={handleFundButtonClick}
                 type="submit"
             >

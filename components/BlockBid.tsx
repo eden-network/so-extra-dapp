@@ -22,6 +22,7 @@ const BlockBid = () => {
     })
 
     const MAX_BYTES_LENGTH = 32
+    const BID_VALID_FOR_BLOCKS = BigInt(100)
 
     const [bidAmount, setBidAmount] = useState<number>(0.05)
 
@@ -105,7 +106,6 @@ const BlockBid = () => {
         const RIGIL_CHAIN_ID = 16813125
         walletClient.switchChain({ id: RIGIL_CHAIN_ID })
         const contractAdd = '0xa60F1B5cB70c0523A086BbCbe132C8679085ea0E' as `0x${string}`
-        const blockLimit = BigInt(100)
         
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
@@ -113,7 +113,7 @@ const BlockBid = () => {
         const calldata = encodeFunctionData({
             abi: [abiItem],
             functionName: 'buyAd',
-            args: [blockLimit, extraData]
+            args: [BID_VALID_FOR_BLOCKS, extraData]
           })
 
         const request = await walletClient.prepareTransactionRequest({
@@ -165,10 +165,15 @@ const BlockBid = () => {
         address
     })
 
-    return <div className="flex flex-col">
-        <div>
+    return <div className="flex flex-col pb-3">
+        <div className="border-b pt-2 pb-3">
+            <h2 className="text-2xl text-center font-semibold">
+                Bid on a Block
+            </h2>
+        </div>
+        <div className="px-2 my-2">
             <label
-                className="mr-2"
+                className="px-3 font-semibold"
                 htmlFor="extra-data"
             >Account:</label>
             <input
@@ -178,9 +183,9 @@ const BlockBid = () => {
                 value={address}
             />
         </div>
-        <div>
+        <div className="px-2 my-2">
             <label
-                className="mr-2"
+                className="px-3 font-semibold"
                 htmlFor="extra-data"
             >Extra Data:</label>
             <input
@@ -191,12 +196,12 @@ const BlockBid = () => {
                 onChange={handleExtraDataChange.bind(this)}
             />
             <p
-                className="text-sm text-right"
+                className="text-sm text-right px-3"
             >{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
         </div>
-        <div>
+        <div className="px-2 my-2">
             <label
-                className="mr-2"
+                className="px-3 font-semibold"
                 htmlFor="bid-amount"
             >Bid Amount:</label>
             <input
@@ -207,10 +212,10 @@ const BlockBid = () => {
                 onChange={handleBidAmountChange.bind(this)}
             />
             <p
-                className="text-sm text-right"
-            >{balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `Balance: - ETH`}</p>
+                className="text-sm text-right px-3"
+            >Wallet Balance: {balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `- ETH`}</p>
         </div>
-        <div>
+        <div className="px-2 my-2">
             <button
                 className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
                 onClick={handleButtonClick}
@@ -221,30 +226,28 @@ const BlockBid = () => {
                     <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
                 </div>
             </button>
+            <button
+                className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
+                onClick={handleButtonClickForSignedTx}
+                type="submit"
+            >
+                <div className="flex flex-row items-center justify-center">
+                    <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
+                    <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
+                </div>
+            </button>
+            <p
+                className="text-sm text-center"
+            >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
+        </div>
+        {errorMessage && 
+        <div className="px-2 my-2">
             <p
                 className="text-sm"
-            >Your bid is valid for the next 100 blocks</p>
-        </div>
-        {errorMessage && <div>
-            <p
-                className=""
             >Error: {errorMessage}</p>
         </div>}
-        <div>
-            <div>
-                <button
-                    className="my-2 py-2 px-4 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
-                    onClick={handleButtonClickForSignedTx}
-                    type="submit"
-                >
-                    <div className="flex flex-row items-center justify-center">
-                        <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
-                        <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
-                    </div>
-                </button>
-            </div>
-        </div>
-        <div>
+        <div className="px-2 my-2">
+            <p className="underline">Debug area</p>
             <label htmlFor="signed-tx">Signed Tx:</label>
             <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
             <p>Burner: {burnerAccount?.address}</p>
