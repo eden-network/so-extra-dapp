@@ -100,15 +100,18 @@ const BlockBid = () => {
             const tmp = parseTransaction(serialized)
             console.log(tmp)
 
-            // sign with metamask (required advanced setting enabled)
             try {
-                const serializedHash = keccak256(serialized)
-                // ccrRlp = ccr.signWithPK(burnerPrivateKey.slice(2)).rlpEncode()
-                const serializedSignedTx = await burnerAccount?.signTransaction(request)
-                console.log(serializedSignedTx)
-                // const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, serializedHash] })
-                // const signature = hexToSignature(hexSignature)
-                // const serializedSignedTx = serializeTransaction(augmentedTx, signature)
+                let serializedSignedTx;
+                if (useBurner) {
+                    serializedSignedTx = await burnerAccount?.signTransaction(augmentedTx)
+                }
+                else {
+                    const serializedHash = keccak256(serialized)
+                    // sign with metamask (required advanced setting enabled)
+                    const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, serializedHash] })
+                    const signature = hexToSignature(hexSignature)
+                    serializedSignedTx = serializeTransaction(augmentedTx, signature)
+                }
                 setSignedTx(serializedSignedTx!)
             }
             catch (error: any) {
