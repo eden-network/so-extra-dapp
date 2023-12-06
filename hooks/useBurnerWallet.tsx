@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import { generatePrivateKey, PrivateKeyAccount, privateKeyToAccount } from 'viem/accounts'
+import { goerli } from 'viem/chains'
 import { useBalance } from 'wagmi'
+import { rigil } from './useSuave'
 
 type PrivateKeyEntry = {
     address: `0x${string}`,
@@ -51,13 +53,20 @@ const useBurnerWallet = () => {
     }
 
     const { data: balance } = useBalance({
-        address: account?.address
+        address: account?.address,
+        chainId: goerli.id
+    })
+
+    const { data: rigilBalance } = useBalance({
+        address: account?.address,
+        chainId: rigil.id
     })
 
     return {
         privateKey: privateKey,
         account: account,
         balance: balance,
+        rigilBalance: rigilBalance,
         hasExistingBurnerWallet,
         createBurnerWallet
     }

@@ -5,18 +5,22 @@ import type { AppProps } from 'next/app';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { rigil } from '../hooks/useSuave'
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    goerli,
+    goerli, rigil
   ],
   [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'So Extra Dapp',
+  appName: 'So Extra',
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
-  chains,
+  chains: [
+    goerli,
+    // rigil // hide from ui
+  ],
 });
 
 const wagmiConfig = createConfig({

@@ -1,10 +1,11 @@
 import { useState } from "react"
-import { Transaction, hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, createPublicClient, http } from "viem"
-import { useAccount, useBalance, useChainId, useNetwork, usePrepareSendTransaction, useWalletClient } from "wagmi"
+import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, createPublicClient, http } from "viem"
+import { useAccount, useBalance, useChainId, useNetwork, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from 'next/image'
+import useSuave from "../hooks/useSuave"
 
 const BlockBid = () => {
     const [useBurner, setUseBurner] = useState<boolean>(false)
@@ -13,13 +14,11 @@ const BlockBid = () => {
     const {
         account: burnerAccount,
         balance: burnerBalance,
+        rigilBalance: burnerRigilBalance,
         privateKey: burnerPrivateKey
     } = useBurnerWallet()
 
-    const suaveTransport = http('https://rpc.rigil.suave.flashbots.net')
-    const suaveClient = createPublicClient({
-        transport: suaveTransport
-    })
+    const { suaveClient, rigil } = useSuave()
 
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
@@ -47,10 +46,12 @@ const BlockBid = () => {
         setSignedTx(event.target.value)
     }
 
-    const { address, status } = useAccount()
+    const { address } = useAccount()
     const { data: walletClient } = useWalletClient()
     const chainId = useChainId()
     const { chain } = useNetwork()
+
+    const { data: rigilBalance } = useBalance({ address, chainId: rigil.id })
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -59,14 +60,15 @@ const BlockBid = () => {
             return
         }
 
-        // create request with viem
         try {
+            // create request with viem
             const request = await walletClient.prepareTransactionRequest({
                 chain: chain,
                 account: address,
                 to: address,
-                gasPrice: parseGwei('420'),
-                value: parseEther(bidAmount.toString())
+                maxBaseFee: parseGwei('420'), // todo 
+                maxPriorityFee: parseGwei('420'), // todo
+                value: parseEther(bidAmount.toString()) // todo
             })
 
             // augment with chain id (required)
@@ -101,10 +103,7 @@ const BlockBid = () => {
             console.error(`walletClient not found`)
             return
         }
-        // const c: Chain = { id: 16813125, name: 'Rigil', rpcUrls: {default: {http: ['https://rpc.rigil.suave.flashbots.net']}}, nativeCurrency: { name: 'rig', symbol: 'SUAVE', decimals: 18 } }
-        // await walletClient.addChain({chain: c})
-        const RIGIL_CHAIN_ID = 16813125
-        walletClient.switchChain({ id: RIGIL_CHAIN_ID })
+        
         const contractAdd = '0xa60F1B5cB70c0523A086BbCbe132C8679085ea0E' as `0x${string}`
 
         const abiItem = parseAbiItem(
@@ -116,22 +115,25 @@ const BlockBid = () => {
             args: [BID_VALID_FOR_BLOCKS, extraData]
         })
 
-        const request = await walletClient.prepareTransactionRequest({
-            chain,
-            account: address,
-            to: contractAdd,
-            gasPrice: parseGwei('420'),
-            value: parseEther(bidAmount.toString()),
-            gas: BigInt(1e7),
-        })
+        // const request = await suaveClient.prepareTransactionRequest({
+        //     chain: rigil,
+        //     chainId: rigil.id,
+        //     account: address,
+        //     to: contractAdd,
+        //     gasPrice: parseGwei('1'),
+        //     gas: BigInt(1e7),
+        //     data: calldata,
+        // })
+        // console.log(`request`, request)
         const suaveTx = {
-            chainId: RIGIL_CHAIN_ID,//request.chain?.id,
+            chainId: rigil.id,
             data: calldata,
             gasLimit: 1e7,
-            gasPrice: BigInt(1e9),
-            nonce: request.nonce,
+            gasPrice: parseGwei('1'),
+            nonce: await suaveClient.getTransactionCount({ address }),
             to: contractAdd,
         }
+        console.log(`suaveTx`, suaveTx)
         const executionNodeAdd = '0x03493869959c866713c33669ca118e774a30a0e5'
         const confidentialBytes = txToBundleBytes(signedTx as `0x${string}`)
         const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
@@ -148,16 +150,10 @@ const BlockBid = () => {
             ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
         }
 
-
-
         console.log(ccrRlp)
-        const hash = await suaveClient.transport.request({ method: 'eth_sendRawTransaction', params: [ccrRlp] })
-            .catch((error: any) => {
-                console.log(error)
-            })
-        // const hash = await walletClient.sendRawTransaction({
-        //     serializedTransaction: ccrRlp as `0x${string}`
-        // })
+        const hash = await suaveClient.sendRawTransaction({
+            serializedTransaction: ccrRlp as `0x${string}`
+        })
         console.log(hash)
     }
 
@@ -180,7 +176,7 @@ const BlockBid = () => {
                 className="border w-full px-3 py-1 rounded-full"
                 id="extra-data"
                 type="text"
-                value={address}
+                value={burnerAccount !== undefined && useBurner ? burnerAccount.address : address}
             />
             <p
                 className="text-sm text-right px-3"
@@ -223,13 +219,21 @@ const BlockBid = () => {
                 onChange={handleBidAmountChange.bind(this)}
             />
             {useBurner ?
+            <>
                 <p
                     className="text-sm text-right px-3"
                 >Burner Balance: {burnerBalance !== undefined ? `${burnerBalance.formatted}` : `-`} goerliETH</p>
-                :
                 <p
                     className="text-sm text-right px-3"
-                >Wallet Balance: {balance !== undefined ? `${balance.formatted}` : `-`} goerliETH</p>}
+                >{burnerRigilBalance !== undefined ? `${burnerRigilBalance.formatted}` : `-`} rigilETH</p>
+                </>:<>
+                <p
+                    className="text-sm text-right px-3"
+                >Wallet Balance: {balance !== undefined ? `${balance.formatted}` : `-`} goerliETH</p>
+                <p
+                    className="text-sm text-right px-3"
+                >{rigilBalance !== undefined ? `${rigilBalance.formatted}` : `-`} rigilETH</p>
+                </>}
         </div>
         <div className="px-2 my-2">
             <button
