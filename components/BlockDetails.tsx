@@ -44,7 +44,7 @@ const BlockDetails = (
                         href={href}
                         target="_blank" 
                         rel="noopener noreferrer"
-                    >{blockNumber.toString()}</a>
+                    >{blockNumber.toLocaleString()}</a>
                     {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
                 </p>
                 <p className={`${!didContentReveal && "bg-black rounded"} text-lg font-semibold`}>

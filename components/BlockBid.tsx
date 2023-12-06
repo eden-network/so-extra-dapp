@@ -1,16 +1,24 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, createPublicClient, http } from "viem"
-import { useAccount, useBalance, useChainId, useNetwork, useWalletClient } from "wagmi"
+import { useAccount, useBalance, useBlockNumber, useChainId, useNetwork, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from 'next/image'
 import useSuave from "../hooks/useSuave"
+import useBlock from "../hooks/useBlock"
+import { goerli } from "viem/chains"
+
+const gasPriceForBidAmount = (bidAmount: number): bigint => {
+    const bidAmountBigInt = parseEther(bidAmount.toString())
+    const gasLimit = BigInt(21_000)
+    return bidAmountBigInt / gasLimit
+}
 
 const BlockBid = () => {
     const [useBurner, setUseBurner] = useState<boolean>(false)
-    const [extraData, setExtraData] = useState<string>("")
-    const [bytesLength, setBytesLength] = useState<number>(0)
+    const [extraData, setExtraData] = useState<string>("So Extra ✨")
+    const [bytesLength, setBytesLength] = useState<number>(12)
     const {
         account: burnerAccount,
         balance: burnerBalance,
@@ -23,11 +31,16 @@ const BlockBid = () => {
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
 
-    const [bidAmount, setBidAmount] = useState<number>(0.05)
+    const [bidAmount, setBidAmount] = useState<number>(0.25)
+    const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
     const [unsignedTx, setUnsignedTx] = useState<string>("")
     const [signedTx, setSignedTx] = useState<string>("")
     const [errorMessage, setErrorMessage] = useState<string>()
+
+    useEffect(() => {
+        setSignedTx("")
+    }, [bidAmount])
 
     const handleExtraDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const text = event.target.value
@@ -39,19 +52,25 @@ const BlockBid = () => {
     }
 
     const handleBidAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setBidAmount(event.target.value as unknown as number)
+        const bidAmount = event.target.value as unknown as number
+        const gasPrice = gasPriceForBidAmount(bidAmount)
+        setBidAmount(bidAmount)
+        setGasPrice(gasPrice)
     }
 
     const handleSignedTxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSignedTx(event.target.value)
     }
 
-    const { address } = useAccount()
+    const { address: walletAddress } = useAccount()
     const { data: walletClient } = useWalletClient()
-    const chainId = useChainId()
-    const { chain } = useNetwork()
 
-    const { data: rigilBalance } = useBalance({ address, chainId: rigil.id })
+    const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
+    const { data: currentBlock } = useBlockNumber({ chainId: goerli.id })
+
+    useEffect(() => {
+        console.log(currentBlock)
+    }, [currentBlock])
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -63,17 +82,17 @@ const BlockBid = () => {
         try {
             // create request with viem
             const request = await walletClient.prepareTransactionRequest({
-                chain: chain,
-                account: address,
-                to: address,
-                gasPrice: parseGwei('6900'), // todo 
+                chain: goerli,
+                account: useBurner ? burnerAccount : walletAddress,
+                to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
+                gasPrice: gasPrice,
                 // maxFeePerGas: parseGwei('6900'), // todo 
                 // maxPriorityFeePerGas: parseGwei('6900'), // todo
                 // value: parseEther(bidAmount.toString()) // todo
             })
 
             // augment with chain id (required)
-            const augmentedTx = { ...request, chainId }
+            const augmentedTx = { ...request, chainId: goerli.id }
             const serialized = serializeTransaction(augmentedTx)
             setUnsignedTx(serialized)
 
@@ -84,10 +103,13 @@ const BlockBid = () => {
             // sign with metamask (required advanced setting enabled)
             try {
                 const serializedHash = keccak256(serialized)
-                const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, serializedHash] })
-                const signature = hexToSignature(hexSignature)
-                const serializedSignedTx = serializeTransaction(augmentedTx, signature)
-                setSignedTx(serializedSignedTx)
+                // ccrRlp = ccr.signWithPK(burnerPrivateKey.slice(2)).rlpEncode()
+                const serializedSignedTx = await burnerAccount?.signTransaction(request)
+                console.log(serializedSignedTx)
+                // const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, serializedHash] })
+                // const signature = hexToSignature(hexSignature)
+                // const serializedSignedTx = serializeTransaction(augmentedTx, signature)
+                setSignedTx(serializedSignedTx!)
             }
             catch (error: any) {
                 throw error
@@ -112,7 +134,7 @@ const BlockBid = () => {
         const calldata = encodeFunctionData({
             abi: [abiItem],
             functionName: 'buyAd',
-            args: [BID_VALID_FOR_BLOCKS, extraData]
+            args: [(currentBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
         })
 
         // const request = await suaveClient.prepareTransactionRequest({
@@ -130,7 +152,7 @@ const BlockBid = () => {
             data: calldata,
             gasLimit: 1e7,
             gasPrice: parseGwei('1'),
-            nonce: await suaveClient.getTransactionCount({ address: address! }),
+            nonce: await suaveClient.getTransactionCount({ address: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress! }),
             to: contractAdd,
             value: "0x"
         }
@@ -140,11 +162,11 @@ const BlockBid = () => {
         const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
         const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
         var ccrRlp
-        if (useBurner && burnerAccount && burnerPrivateKey) {
+        if (useBurner && burnerPrivateKey !== undefined) {
             ccrRlp = ccr.signWithPK(burnerPrivateKey.slice(2)).rlpEncode()
         } else {
             const signingCallback = async (_hash: string) => {
-                const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
+                const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, _hash] })
                 const sig = hexToSignature(hexSig)
                 return { r: sig.r, s: sig.s, v: Number(sig.v) } as SigSplit
             }
@@ -159,7 +181,7 @@ const BlockBid = () => {
     }
 
     const { data: balance } = useBalance({
-        address
+        address: walletAddress
     })
 
     return <div className="flex flex-col pb-3">
@@ -177,7 +199,7 @@ const BlockBid = () => {
                 className="border w-full px-3 py-1 rounded-full"
                 id="extra-data"
                 type="text"
-                value={burnerAccount !== undefined && useBurner ? burnerAccount.address : address}
+                value={burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress}
             />
             <p
                 className="text-sm text-right px-3"
@@ -273,7 +295,7 @@ const BlockBid = () => {
             <input id="signed-tx" type="text" value={signedTx} onChange={handleSignedTxChange.bind(this)}></input>
             <p>Burner: {burnerAccount?.address}</p>
             <p>{burnerBalance?.formatted} {burnerBalance?.symbol}</p>
-            <p>Account: {address}</p>
+            <p>Account: {walletAddress}</p>
             <p>Unsigned tx: {unsignedTx.substring(0, 10)}...</p>
             <p>Signed tx: {signedTx.substring(0, 10)}...</p>
         </div>
