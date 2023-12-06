@@ -66,8 +66,8 @@ const BlockBid = () => {
                 chain: chain,
                 account: address,
                 to: address,
-                maxBaseFee: parseGwei('420'), // todo 
-                maxPriorityFee: parseGwei('420'), // todo
+                maxFeePerGas: parseGwei('420'), // todo 
+                maxPriorityFeePerGas: parseGwei('420'), // todo
                 value: parseEther(bidAmount.toString()) // todo
             })
 
@@ -130,7 +130,7 @@ const BlockBid = () => {
             data: calldata,
             gasLimit: 1e7,
             gasPrice: parseGwei('1'),
-            nonce: await suaveClient.getTransactionCount({ address }),
+            nonce: await suaveClient.getTransactionCount({ address: address! }),
             to: contractAdd,
         }
         console.log(`suaveTx`, suaveTx)
