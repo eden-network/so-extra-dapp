@@ -55,13 +55,11 @@ const BurnerWallet = () => {
     return <div className="flex flex-col pb-3">
         <div className="border-b pt-2 pb-3">
             <h2 className="text-2xl text-center font-semibold">
-                Burner Wallet
+                My Burner Wallet
             </h2>
         </div>
-        {displayOnboarding && <div className="flex flex-col gap-2">
-            <p className="text-sm">
-                Welcome to the show.
-            </p>
+        {displayOnboarding ? <>
+        <div className="flex flex-col gap-2 p-3">
             <p className="text-sm">
                 For this demo, the best UX we can think of is a burner wallet.
                 If you are not already familiar with burner wallets, you can create and use a temporary wallet from your browser window.
@@ -70,14 +68,20 @@ const BurnerWallet = () => {
                 You will need to fund the burner wallet with a small amount and use it for the demo.
                 If you want to recover your funds, you will be able to do so.
             </p>
-            <div>
-                <button
-                    className="bg-emerald-400 hover:bg-emerald-200 my-2 py-2 px-4 rounded w-full"
-                    onClick={handleButtonClick}
-                    type="submit"
-                >Create My Burner Wallet</button>
-            </div>
-        </div>}
+        </div>
+        <div className="px-2 my-2">
+            <button
+                className="py-2 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
+                onClick={handleButtonClick}
+                type="submit"
+            >
+                <div className="flex flex-row items-center justify-center">
+                    <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
+                    <p className="font-semibold">Create My Burner Wallet</p>
+                </div>
+            </button>
+        </div>
+        </> : <>
         <div className="px-2 my-2">
             <label
                 className="px-3 font-semibold"
@@ -91,7 +95,7 @@ const BurnerWallet = () => {
             />
             <p
                 className="text-sm text-right px-3"
-            >Burner Balance: {balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `- ETH` }</p>
+            >Burner Balance: {balance !== undefined ? `${balance.formatted}` : `-` } goerliETH</p>
         </div>
         <div className="px-2 my-2">
             <label
@@ -107,7 +111,7 @@ const BurnerWallet = () => {
             />
             <p
                 className="text-sm text-right px-3"
-            >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted} ${walletBalance.symbol}` : `- ETH` }</p>
+            >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted}` : `-` } goerliETH</p>
         </div>
         <div className="px-2 my-2">
             <button
@@ -121,6 +125,7 @@ const BurnerWallet = () => {
                 </div>
             </button>
         </div>
+        </>}
     </div>
 }
 

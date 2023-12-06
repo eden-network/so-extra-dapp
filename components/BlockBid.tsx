@@ -7,7 +7,7 @@ import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from 'next/image'
 
 const BlockBid = () => {
-    const USING_BURNER = true
+    const [useBurner, setUseBurner] = useState<boolean>(false)
     const [extraData, setExtraData] = useState<string>("")
     const [bytesLength, setBytesLength] = useState<number>(0)
     const {
@@ -106,7 +106,7 @@ const BlockBid = () => {
         const RIGIL_CHAIN_ID = 16813125
         walletClient.switchChain({ id: RIGIL_CHAIN_ID })
         const contractAdd = '0xa60F1B5cB70c0523A086BbCbe132C8679085ea0E' as `0x${string}`
-        
+
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
         )
@@ -114,18 +114,18 @@ const BlockBid = () => {
             abi: [abiItem],
             functionName: 'buyAd',
             args: [BID_VALID_FOR_BLOCKS, extraData]
-          })
+        })
 
         const request = await walletClient.prepareTransactionRequest({
             chain,
             account: address,
             to: contractAdd,
             gasPrice: parseGwei('420'),
-            value: parseEther(bidAmount.toString()), 
+            value: parseEther(bidAmount.toString()),
             gas: BigInt(1e7),
         })
         const suaveTx = {
-            chainId: request.chain?.id,
+            chainId: RIGIL_CHAIN_ID,//request.chain?.id,
             data: calldata,
             gasLimit: 1e7,
             gasPrice: BigInt(1e9),
@@ -137,19 +137,19 @@ const BlockBid = () => {
         const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
         const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
         var ccrRlp
-        if (USING_BURNER && burnerAccount && burnerPrivateKey) {
+        if (useBurner && burnerAccount && burnerPrivateKey) {
             ccrRlp = ccr.signWithPK(burnerPrivateKey.slice(2)).rlpEncode()
         } else {
             const signingCallback = async (_hash: string) => {
                 const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [address, _hash] })
                 const sig = hexToSignature(hexSig)
-                return { r: sig.r, s: sig.s, v: Number(sig.v)  } as SigSplit
+                return { r: sig.r, s: sig.s, v: Number(sig.v) } as SigSplit
             }
             ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
         }
 
-        
-        
+
+
         console.log(ccrRlp)
         const hash = await suaveClient.transport.request({ method: 'eth_sendRawTransaction', params: [ccrRlp] })
             .catch((error: any) => {
@@ -182,6 +182,17 @@ const BlockBid = () => {
                 type="text"
                 value={address}
             />
+            <p
+                className="text-sm text-right px-3"
+            >
+                <button
+                    className="underline italic hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
+                    onClick={() => setUseBurner(!useBurner)}
+                    disabled={burnerAccount === undefined}
+                >
+                    {useBurner ? `Use wallet instead` : `Use burner instead`}
+                </button>
+            </p>
         </div>
         <div className="px-2 my-2">
             <label
@@ -211,9 +222,14 @@ const BlockBid = () => {
                 value={bidAmount}
                 onChange={handleBidAmountChange.bind(this)}
             />
-            <p
-                className="text-sm text-right px-3"
-            >Wallet Balance: {balance !== undefined ? `${balance.formatted} ${balance.symbol}` : `- ETH`}</p>
+            {useBurner ?
+                <p
+                    className="text-sm text-right px-3"
+                >Burner Balance: {burnerBalance !== undefined ? `${burnerBalance.formatted}` : `-`} goerliETH</p>
+                :
+                <p
+                    className="text-sm text-right px-3"
+                >Wallet Balance: {balance !== undefined ? `${balance.formatted}` : `-`} goerliETH</p>}
         </div>
         <div className="px-2 my-2">
             <button
@@ -240,12 +256,12 @@ const BlockBid = () => {
                 className="text-sm text-center"
             >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
         </div>
-        {errorMessage && 
-        <div className="px-2 my-2">
-            <p
-                className="text-sm"
-            >Error: {errorMessage}</p>
-        </div>}
+        {errorMessage &&
+            <div className="px-2 my-2">
+                <p
+                    className="text-sm"
+                >Error: {errorMessage}</p>
+            </div>}
         <div className="px-2 my-2">
             <p className="underline">Debug area</p>
             <label htmlFor="signed-tx">Signed Tx:</label>

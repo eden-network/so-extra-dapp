@@ -6,6 +6,7 @@ import BurnerWallet from '../components/BurnerWallet';
 import LeaderBoard from '../components/LeaderBoard';
 import RecentBlocks from '../components/RecentBlocks';
 import Image from 'next/image';
+import Onboarding from '../components/Onboarding';
 
 const Home: NextPage = () => {
   return (
@@ -49,6 +50,9 @@ const Home: NextPage = () => {
         <div className="flex flex-row gap-4 justify-center items-start p-4">
           <div className="flex-1 max-w-sm justify-end">
             <div className="flex flex-col gap-6 items-center">
+              <div className="flex-1 border rounded-2xl w-full">
+                <Onboarding />
+              </div>
               <div className="flex-1 border rounded-2xl w-full">
                 <BurnerWallet />
               </div>

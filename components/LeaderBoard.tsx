@@ -2,7 +2,7 @@ const LeaderBoard = () => {
     return <div className="flex flex-col pb-3">
         <div className="border-b pt-2 pb-3">
             <h2 className="text-2xl text-center font-semibold">
-                Leader Board
+                Big Spenders
             </h2>
         </div>
         <div className="px-2 my-2">

@@ -11,7 +11,7 @@ const RecentBlocks = () => {
     return <div className="flex flex-col pb-3">
         <div className="border-b pt-2 pb-3">
             <h2 className="text-2xl text-center font-semibold">
-                Recent Blocks
+                Timeline
             </h2>
         </div>
         <div className="flex flex-col px-6 py-3 gap-3">
