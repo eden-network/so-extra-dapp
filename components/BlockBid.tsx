@@ -66,9 +66,10 @@ const BlockBid = () => {
                 chain: chain,
                 account: address,
                 to: address,
-                maxFeePerGas: parseGwei('420'), // todo 
-                maxPriorityFeePerGas: parseGwei('420'), // todo
-                value: parseEther(bidAmount.toString()) // todo
+                gasPrice: parseGwei('6900'), // todo 
+                // maxFeePerGas: parseGwei('6900'), // todo 
+                // maxPriorityFeePerGas: parseGwei('6900'), // todo
+                // value: parseEther(bidAmount.toString()) // todo
             })
 
             // augment with chain id (required)
@@ -105,7 +106,6 @@ const BlockBid = () => {
         }
         
         const contractAdd = '0xa60F1B5cB70c0523A086BbCbe132C8679085ea0E' as `0x${string}`
-
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
         )
@@ -132,6 +132,7 @@ const BlockBid = () => {
             gasPrice: parseGwei('1'),
             nonce: await suaveClient.getTransactionCount({ address: address! }),
             to: contractAdd,
+            value: "0x"
         }
         console.log(`suaveTx`, suaveTx)
         const executionNodeAdd = '0x03493869959c866713c33669ca118e774a30a0e5'
