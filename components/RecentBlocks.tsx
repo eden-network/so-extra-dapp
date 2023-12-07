@@ -1,5 +1,6 @@
 import { useBlockNumber } from "wagmi"
 import BlockDetails from "./BlockDetails"
+import Onboarding from "./Onboarding"
 
 const RecentBlocks = () => {
     const { data } = useBlockNumber({
@@ -15,6 +16,9 @@ const RecentBlocks = () => {
             </h2>
         </div> */}
         <div className="flex flex-col px-6 py-3 gap-1">
+            <div className="flex-1 border border-white/10 rounded-2xl w-full bg-white/5 backdrop-blur-lg">
+                <Onboarding />
+            </div>
             {pastBlocks.map(n => <BlockDetails key={n} blockNumber={n} />)}
         </div>
     </div>

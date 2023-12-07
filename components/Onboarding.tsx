@@ -2,9 +2,9 @@
 const Onboarding = () => {
 
     return <div className="flex flex-col pb-3">
-        <div className="pt-2 pb-3">
-            <h2 className="text-2xl text-center font-bold text-yellow-300">
-                Start Here
+        <div className="p-3">
+            <h2 className="text-2xl text-left font-bold text-yellow-300">
+                Getting Started
             </h2>
         </div>
         <div className="flex flex-col gap-2 p-3">

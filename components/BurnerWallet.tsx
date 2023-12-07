@@ -87,7 +87,7 @@ const BurnerWallet = () => {
                 htmlFor="burner-address"
             >Burner Address</label>
             <input
-                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
+                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
                 id="burner-address"
                 type="text"
                 value={account?.address}
@@ -102,7 +102,7 @@ const BurnerWallet = () => {
                 htmlFor="deposit-amount"
             >Deposit Amount</label>
             <input
-                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
+                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
                 id="deposit-amount"
                 type="text"
                 value={depositAmount}

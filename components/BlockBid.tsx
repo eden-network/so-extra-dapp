@@ -32,7 +32,6 @@ const BlockBid = () => {
     const [bidAmount, setBidAmount] = useState<number>(0.25)
     const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
-    const [unsignedTx, setUnsignedTx] = useState<string>("")
     const [signedTx, setSignedTx] = useState<string>("")
     const [errorMessage, setErrorMessage] = useState<string>()
 
@@ -62,10 +61,6 @@ const BlockBid = () => {
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
     const { data: currentBlock } = useBlockNumber({ chainId: goerli.id })
 
-    useEffect(() => {
-        console.log(currentBlock)
-    }, [currentBlock])
-
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
         if (walletClient === undefined || walletClient === null) {
@@ -88,7 +83,6 @@ const BlockBid = () => {
             // augment with chain id (required)
             const augmentedTx = { ...request, chainId: goerli.id }
             const serialized = serializeTransaction(augmentedTx)
-            setUnsignedTx(serialized)
 
             // ensure serialized tx is valid
             const tmp = parseTransaction(serialized)
@@ -184,16 +178,16 @@ const BlockBid = () => {
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                Bid
+                Bid + Post
             </h2>
         </div>
         <div className="px-4 my-2">
             <label
                 className="font-semibold"
                 htmlFor="extra-data"
-            >Account:</label>
+            >Account</label>
             <input
-                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
+                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
                 id="extra-data"
                 type="text"
                 value={burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress}
@@ -214,9 +208,9 @@ const BlockBid = () => {
             <label
                 className="font-semibold"
                 htmlFor="extra-data"
-            >Extra Data:</label>
+            >Message</label>
             <input
-                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
+                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
                 id="extra-data"
                 type="text"
                 value={extraData}
@@ -230,9 +224,9 @@ const BlockBid = () => {
             <label
                 className="font-semibold"
                 htmlFor="bid-amount"
-            >Bid Amount:</label>
+            >Bid Amount</label>
             <input
-                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
+                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
                 id="bid-amount"
                 type="number"
                 value={bidAmount}
@@ -277,13 +271,6 @@ const BlockBid = () => {
             <p
                 className="text-sm"
             >Error: {errorMessage}</p>}
-        </div>
-        <div className="px-2 my-2">
-            <p className="underline">Debug area</p>
-            <p>Account: {walletAddress?.substring(0, 10)}...</p>
-            <p>Burner: {burnerAccount?.address.substring(0, 10)}...</p>
-            <p>Unsigned tx: {unsignedTx.substring(0, 10)}...</p>
-            <p>Signed tx: {signedTx.substring(0, 10)}...</p>
         </div>
     </div>
 }
