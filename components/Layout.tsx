@@ -19,12 +19,12 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 />
                 <meta property="og:title" content="So Extra" />
                 <meta
-                property="og:description"
-                content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                    property="og:description"
+                    content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
                 />
                 <meta
-                property="og:image"
-                content="https://so-extra-dapp.vercel.app/logo.png"
+                    property="og:image"
+                    content="https://so-extra-dapp.vercel.app/logo.png"
                 />
                 <link href="/favicon.ico" rel="icon" />
             </Head>
@@ -36,9 +36,9 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" />
                         {/* </div> */}
                     </div>
-                    <div className="flex-none">
+                    <div className="flex-1 md:flex-none">
                         <div className="flex place-content-center">
-                            <div className="-mt-[15px] -mb-[175px]">
+                            <div className="-mt-[15px] -mb-[135px] md:-mb-[175px]">
                                 <Image src="/logo.png" alt="So Extra" width="666" height="390" />
                             </div>
                         </div>
