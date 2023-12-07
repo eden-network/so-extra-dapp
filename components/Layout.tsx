@@ -13,30 +13,37 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
             <Head>
                 <title>So Extra</title>
                 <meta
-                    content="So Extra"
-                    name="Buy block extra data - a new SUAVE app for Goerli"
+                    name="description"
+                    content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                    key="desc"
+                />
+                <meta property="og:title" content="So Extra" />
+                <meta
+                property="og:description"
+                content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                />
+                <meta
+                property="og:image"
+                content="https://so-extra-dapp.vercel.app/logo.png"
                 />
                 <link href="/favicon.ico" rel="icon" />
             </Head>
 
             <main>
                 <div className="w-full flex flex-row items-end justify-items-stretch mb-0 pt-3">
-                    <div className="flex flex-1 pl-12 -mb-3 justify-items-end">
-                        <div className="flex place-content-end">
+                    <div className="flex flex-1 pl-12 -mb-3 hidden md:block">
+                        {/* <div className="flex place-content-end"> */}
                             <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" />
-                        </div>
+                        {/* </div> */}
                     </div>
                     <div className="flex-none">
-                        {/* <h1 className="text-5xl font-bold text-center">
-                  So Extra
-                </h1> */}
                         <div className="flex place-content-center">
                             <div className="-mt-[15px] -mb-[175px]">
                                 <Image src="/logo.png" alt="So Extra" width="666" height="390" />
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 justify-items-end mr-6 -mb-8">
+                    <div className="flex-1 justify-items-end mr-6 -mb-8 hidden md:block">
                         <div className="flex place-content-end">
                             <ConnectButton />
                         </div>
@@ -53,8 +60,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <hr className="bg-indigo-700 w-full h-1 hover:h-10 border-0 my-0" />
                 </div>
 
-                <div className="flex flex-row gap-4 justify-center items-start p-4">
-                    <div className="flex-1 max-w-sm justify-end">
+                <div className="flex flex-row gap-4 justify-center items-start p-4 min-h-screen">
+                    <div className="flex-1 max-w-sm hidden md:block">
                         <div className="flex flex-col gap-12 items-center">
                             <div className="flex-1 w-full">
                                 <BlockBid />
@@ -71,7 +78,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 max-w-sm justify-start">
+                    <div className="flex-1 max-w-sm hidden md:block">
                         <div className="flex flex-col gap-12">
                             <div className="flex-1 w-full">
                                 <LeaderBoard />

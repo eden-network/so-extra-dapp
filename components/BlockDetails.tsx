@@ -49,7 +49,7 @@ const BlockDetails = (
                         >{blockNumber.toLocaleString()}</a>
                         {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
                     </p>
-                    <p className={`${!didContentReveal && "bg-black rounded"} text-lg mb-6 font-bold text-white`}>
+                    <p className={`${!didContentReveal && "bg-black rounded"} text-xl mb-6 font-bold text-white`}>
                         {isLoading && `Loading...`}
                         {didContentReveal && extraData}&nbsp;
                     </p>

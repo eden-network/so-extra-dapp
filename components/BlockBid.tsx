@@ -178,7 +178,7 @@ const BlockBid = () => {
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                Bid + Post
+                Post a Message
             </h2>
         </div>
         <div className="px-4 my-2">
