@@ -6,7 +6,14 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      boxShadow: {
+        'glitter-shadow': '0 35px 60px -15px rgba(0, 0, 0, 1.0)'
+      },
+      dropShadow: {
+        'glitter-shadow': '10px 10px 10px rgba(0, 0, 0, 1.0)',
+      }
+    },
   },
   plugins: [],
 }

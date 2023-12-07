@@ -2,8 +2,8 @@
 const Onboarding = () => {
 
     return <div className="flex flex-col pb-3">
-        <div className="border-b pt-2 pb-3">
-            <h2 className="text-2xl text-center font-semibold">
+        <div className="pt-2 pb-3">
+            <h2 className="text-2xl text-center font-bold text-yellow-300">
                 Start Here
             </h2>
         </div>

@@ -53,8 +53,8 @@ const BurnerWallet = () => {
     }
 
     return <div className="flex flex-col pb-3">
-        <div className="border-b pt-2 pb-3">
-            <h2 className="text-2xl text-center font-semibold">
+        <div className="pt-2 pb-3">
+            <h2 className="text-2xl text-center font-bold text-yellow-300">
                 My Burner Wallet
             </h2>
         </div>
@@ -69,59 +69,57 @@ const BurnerWallet = () => {
                 If you want to recover your funds, you will be able to do so.
             </p>
         </div>
-        <div className="px-2 my-2">
+        <div className="px-4 my-2 text-center">
             <button
-                className="py-2 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
+                className="px-8 py-4 text-lg rounded-lg bg-[url('/glitter.png')] hover:opacity-95 text-white "
                 onClick={handleButtonClick}
                 type="submit"
             >
                 <div className="flex flex-row items-center justify-center">
-                    <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
-                    <p className="font-semibold">Create My Burner Wallet</p>
+                    <p className="font-bold glitter-shadow">Create My Burner Wallet</p>
                 </div>
             </button>
         </div>
         </> : <>
-        <div className="px-2 my-2">
+        <div className="px-4 my-2">
             <label
-                className="px-3 font-semibold"
+                className="font-semibold"
                 htmlFor="burner-address"
-            >Burner Address:</label>
+            >Burner Address</label>
             <input
-                className="border w-full px-3 py-1 rounded-full"
+                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
                 id="burner-address"
                 type="text"
                 value={account?.address}
             />
             <p
-                className="text-sm text-right px-3"
+                className="text-sm text-right"
             >Burner Balance: {balance !== undefined ? `${balance.formatted}` : `-` } goerliETH</p>
         </div>
-        <div className="px-2 my-2">
+        <div className="px-4 my-2">
             <label
-                className="px-3 font-semibold"
+                className="font-semibold"
                 htmlFor="deposit-amount"
-            >Deposit Amount:</label>
+            >Deposit Amount</label>
             <input
-                className="border w-full px-3 py-1 rounded-full"
+                className="border w-full px-2 py-3 rounded-sm text-black font-bold text-xl shadow-inner"
                 id="deposit-amount"
                 type="text"
                 value={depositAmount}
                 onChange={handleDepositAmountChange.bind(this)}
             />
             <p
-                className="text-sm text-right px-3"
+                className="text-sm text-right"
             >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted}` : `-` } goerliETH</p>
         </div>
-        <div className="px-2 my-2">
+        <div className="px-4 my-2 text-center">
             <button
-                className="py-2 rounded-full w-full bg-gradient-to-r from-blue-500 to-violet-500 hover:from-violet-500 hover:to-green-500 text-white"
+                className="px-8 py-4 text-lg rounded-lg bg-[url('/glitter.png')] hover:opacity-99 text-white shadow-xl shadow-indigo-950/40 hover:shadow-none"
                 onClick={handleFundButtonClick}
                 type="submit"
             >
                 <div className="flex flex-row items-center justify-center">
-                    <Image src={`/Group.png`} width="36" height="44" alt="So Extra" />
-                    <p className="font-semibold">Fund My Burner Wallet</p>
+                    <p className="font-bold glitter-shadow">Fund My Burner Wallet</p>
                 </div>
             </button>
         </div>

@@ -31,13 +31,13 @@ const BlockDetails = (
     }
 
     return <div
-        className="p-3 border rounded-lg hover:border-[#ff69f9] hover:text-[#ff69f9] w-full"
+        className="p-3 border border-white/10 rounded-lg hover:border-[#ff69f9] hover:text-[#ff69f9] w-full bg-white/5 backdrop-blur-lg"
         onMouseEnter={handleOnMouseEnter.bind(this)}
     >
         <div className="flex flex-row gap-3 items-center">
             <div className="bg-green-500 w-14 h-14 rounded-md"></div>
             <div>
-                <p className="text-sm mb-1">
+                <p className="text-sm mb-1 text-white/70">
                     {blockHash && <span>{ellipsis(blockHash)} &bull; </span>}
                     <a
                         className="underline"
@@ -47,7 +47,7 @@ const BlockDetails = (
                     >{blockNumber.toLocaleString()}</a>
                     {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
                 </p>
-                <p className={`${!didContentReveal && "bg-black rounded"} text-lg font-semibold`}>
+                <p className={`${!didContentReveal && "bg-black rounded"} text-lg font-bold text-white`}>
                     {isLoading && `Loading...`}
                     {didContentReveal && extraData}&nbsp;
                 </p>
