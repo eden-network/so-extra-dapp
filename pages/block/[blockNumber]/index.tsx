@@ -47,10 +47,10 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
                 <div className="w-full text-center">
                     <Link href="/">
                         <button
-                            className="px-8 py-4 text-lg rounded-lg bg-[url('/glitter.png')] hover:opacity-99 text-white shadow-xl shadow-indigo-950/40 hover:shadow-none"
+                            className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black shadow-xl shadow-indigo-950/40 hover:shadow-none"
                             type="submit"
                         >
-                            <p className="font-bold glitter-shadow">Read More Posts</p>
+                            <p className="font-semibold">Read More Posts</p>
                         </button>
                     </Link>
                 </div>

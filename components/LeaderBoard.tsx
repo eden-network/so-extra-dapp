@@ -8,9 +8,11 @@ const LeaderBoard = () => {
         <div className="px-2 my-2">
             <table className="w-full text-center text-sm">
                 <thead>
-                    <th>Rank</th>
-                    <th>Spender</th>
-                    <th>Total (goerliETH)</th>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Spender</th>
+                        <th>Total (goerliETH)</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr>

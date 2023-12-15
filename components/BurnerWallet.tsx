@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
-import Image from 'next/image'
 
 const BurnerWallet = () => {
     const { address: walletAddress } = useAccount()
@@ -71,12 +70,12 @@ const BurnerWallet = () => {
         </div>
         <div className="px-4 my-2 text-center">
             <button
-                className="px-8 py-4 text-lg rounded-lg bg-[url('/glitter.png')] hover:opacity-95 text-white "
+                className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black"
                 onClick={handleButtonClick}
                 type="submit"
             >
                 <div className="flex flex-row items-center justify-center">
-                    <p className="font-bold glitter-shadow">Create My Burner Wallet</p>
+                    <p className="font-semibold">Create My Burner Wallet</p>
                 </div>
             </button>
         </div>
@@ -87,7 +86,7 @@ const BurnerWallet = () => {
                 htmlFor="burner-address"
             >Burner Address</label>
             <input
-                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
+                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
                 id="burner-address"
                 type="text"
                 value={account?.address}
@@ -102,7 +101,7 @@ const BurnerWallet = () => {
                 htmlFor="deposit-amount"
             >Deposit Amount</label>
             <input
-                className="border border-white/20 w-full px-2 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/50"
+                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
                 id="deposit-amount"
                 type="text"
                 value={depositAmount}
@@ -114,12 +113,12 @@ const BurnerWallet = () => {
         </div>
         <div className="px-4 my-2 text-center">
             <button
-                className="px-8 py-4 text-lg rounded-lg bg-[url('/glitter.png')] hover:opacity-99 text-white shadow-xl shadow-indigo-950/40 hover:shadow-none"
+                className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black shadow-xl shadow-indigo-950/40 hover:shadow-none"
                 onClick={handleFundButtonClick}
                 type="submit"
             >
                 <div className="flex flex-row items-center justify-center">
-                    <p className="font-bold glitter-shadow">Fund My Burner Wallet</p>
+                    <p className="font-semibold">Fund My Burner Wallet</p>
                 </div>
             </button>
         </div>

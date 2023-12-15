@@ -6,6 +6,8 @@ import BurnerWallet from '../components/BurnerWallet';
 import LeaderBoard from '../components/LeaderBoard';
 import Image from 'next/image';
 import Faq from '../components/Faq';
+import Onboarding from "./Onboarding";
+import Steps from "./Steps";
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     return (
@@ -30,20 +32,21 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
             </Head>
 
             <main>
-                <div className="w-full flex flex-row items-end justify-items-stretch mb-0 pt-3">
-                    <div className="flex flex-1 pl-12 -mb-3 hidden md:block">
+                <div className="w-full flex flex-row gap-4 justify-between items-end mb-0 pt-3 px-4">
+                    <div className="flex-1 max-w-sm hidden md:block -mb-[130px]">
                         {/* <div className="flex place-content-end"> */}
-                            <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" />
+                        {/* <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" /> */}
+                        <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" />
                         {/* </div> */}
                     </div>
-                    <div className="flex-1 md:flex-none">
-                        <div className="flex place-content-center">
-                            <div className="-mt-[15px] -mb-[135px] md:-mb-[175px]">
-                                <Image src="/logo.png" alt="So Extra" width="666" height="390" />
+                    {/* <div className="flex-1 max-w-2xl justify-center w-full border border-red-500">
+                        <div className="place-content-center">
+                            <div className="-mt-[25px] -mb-[100px] md:-mb-[65px]">
+                                <Image src="/logo.png" alt="So Extra" width="621" height="240" />
                             </div>
                         </div>
-                    </div>
-                    <div className="flex-1 justify-items-end mr-6 -mb-8 hidden md:block">
+                    </div> */}
+                    <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
                         <div className="flex place-content-end">
                             <ConnectButton />
                         </div>
@@ -51,13 +54,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 </div>
 
                 <div>
-                    <hr className="bg-red-500 w-full h-1 hover:h-10 border-0 my-0" />
-                    <hr className="bg-orange-400 w-full h-1 hover:h-10 border-0 my-0" />
-                    <hr className="bg-yellow-300 w-full h-1 hover:h-10 border-0 my-0" />
-                    <hr className="bg-lime-400 w-full h-1 hover:h-10 border-0 my-0" />
-                    <hr className="bg-cyan-400 w-full h-1 hover:h-10 border-0 my-0" />
-                    <hr className="bg-blue-600 w-full h-1 hover:h-10 border-0 my-0" />
-                    <hr className="bg-indigo-700 w-full h-1 hover:h-10 border-0 my-0" />
+                    <hr className="bg-red-500 w-full h-1 border-0 my-0" />
+                    <hr className="bg-orange-400 w-full h-1 border-0 my-0" />
+                    <hr className="bg-yellow-300 w-full h-1 border-0 my-0" />
+                    <hr className="bg-lime-400 w-full h-1 border-0 my-0" />
+                    <hr className="bg-cyan-400 w-full h-1 border-0 my-0" />
+                    <hr className="bg-blue-600 w-full h-1 border-0 my-0" />
+                    <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
                 </div>
 
                 <div className="flex flex-row gap-4 justify-center items-start p-4 min-h-screen">
@@ -72,7 +75,14 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         </div>
                     </div>
                     <div className="flex-1 max-w-2xl justify-center">
-                        <div className="flex flex-col gap-6">
+                        <div className="flex flex-col">
+                            <div className="flex-1 w-full">
+                                <div className="relative place-content-center">
+                                    <div className="absolute -bottom-[20px]">
+                                        <Image src="/logo.png" alt="So Extra" width="621" height="240" />
+                                    </div>
+                                </div>
+                            </div>
                             <div className="flex-1 w-full">
                                 {children}
                             </div>
@@ -80,6 +90,9 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     </div>
                     <div className="flex-1 max-w-sm hidden md:block">
                         <div className="flex flex-col gap-12">
+                            <div className="flex-1 w-full">
+                                <Onboarding />
+                            </div>
                             <div className="flex-1 w-full">
                                 <LeaderBoard />
                             </div>
@@ -92,13 +105,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
             </main>
 
             <div>
-                <hr className="bg-red-500 w-full h-1 hover:h-10 border-0 my-0" />
-                <hr className="bg-orange-400 w-full h-1 hover:h-10 border-0 my-0" />
-                <hr className="bg-yellow-300 w-full h-1 hover:h-10 border-0 my-0" />
-                <hr className="bg-lime-400 w-full h-1 hover:h-10 border-0 my-0" />
-                <hr className="bg-cyan-400 w-full h-1 hover:h-10 border-0 my-0" />
-                <hr className="bg-blue-600 w-full h-1 hover:h-10 border-0 my-0" />
-                <hr className="bg-indigo-700 w-full h-1 hover:h-10 border-0 my-0" />
+                <hr className="bg-red-500 w-full h-1 border-0 my-0" />
+                <hr className="bg-orange-400 w-full h-1 border-0 my-0" />
+                <hr className="bg-yellow-300 w-full h-1 border-0 my-0" />
+                <hr className="bg-lime-400 w-full h-1 border-0 my-0" />
+                <hr className="bg-cyan-400 w-full h-1 border-0 my-0" />
+                <hr className="bg-blue-600 w-full h-1 border-0 my-0" />
+                <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
             </div>
 
             <footer className="p-6 text-center">
