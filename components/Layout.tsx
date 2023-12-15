@@ -7,7 +7,6 @@ import LeaderBoard from '../components/LeaderBoard';
 import Image from 'next/image';
 import Faq from '../components/Faq';
 import Onboarding from "./Onboarding";
-import Steps from "./Steps";
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     return (
@@ -39,13 +38,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" />
                         {/* </div> */}
                     </div>
-                    {/* <div className="flex-1 max-w-2xl justify-center w-full border border-red-500">
-                        <div className="place-content-center">
+                    <div className="flex-1 max-w-2xl justify-center w-full h-[150px]">
+                        {/* <div className="place-content-center">
                             <div className="-mt-[25px] -mb-[100px] md:-mb-[65px]">
                                 <Image src="/logo.png" alt="So Extra" width="621" height="240" />
                             </div>
-                        </div>
-                    </div> */}
+                        </div> */}
+                    </div>
                     <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
                         <div className="flex place-content-end">
                             <ConnectButton />
@@ -63,7 +62,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
                 </div>
 
-                <div className="flex flex-row gap-4 justify-center items-start p-4 min-h-screen">
+                <div className="flex flex-row gap-4 justify-center items-start md:p-4 min-h-screen">
                     <div className="flex-1 max-w-sm hidden md:block">
                         <div className="flex flex-col gap-12 items-center">
                             <div className="flex-1 w-full">
@@ -78,7 +77,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         <div className="flex flex-col">
                             <div className="flex-1 w-full">
                                 <div className="relative place-content-center">
-                                    <div className="absolute -bottom-[20px]">
+                                    <div className="absolute -bottom-[20px] lg:pt-5">
                                         <Image src="/logo.png" alt="So Extra" width="621" height="240" />
                                     </div>
                                 </div>

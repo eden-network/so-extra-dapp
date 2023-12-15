@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData } from "viem"
+import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, hexToString, stringToHex } from "viem"
 import { useAccount, useBalance, useBlockNumber, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
@@ -27,6 +27,10 @@ const BlockBid = () => {
 
     const { suaveClient, rigil } = useSuave()
 
+    // suaveClient.getBlock({
+    //     blockHash: "0xbf51327c63fb3c8741d4233ae0315e3e1a74641532f4e59c307f72314a346235"
+    // }).then((r: any) => console.log("debug", r))
+
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
 
@@ -37,6 +41,7 @@ const BlockBid = () => {
     const [errorMessage, setErrorMessage] = useState<string>()
 
     const [rigilTx, setRigilTx] = useState<`0x${string}` | undefined>(undefined)
+    const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 
     useEffect(() => {
         setSignedTx(undefined)
@@ -172,6 +177,11 @@ const BlockBid = () => {
         })
         console.log(hash)
         setRigilTx(hash)
+        const receipt = await suaveClient.waitForTransactionReceipt({
+            hash: hash
+        })
+        console.log(receipt)
+        setRigilTxReceipt(receipt)
     }
 
     const { data: balance } = useBalance({
@@ -298,7 +308,8 @@ const BlockBid = () => {
             isGoerliBalance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
             isRigilBalance={useBurner ? (burnerRigilBalance !== undefined && burnerRigilBalance.value > BigInt(0)) : (rigilBalance !== undefined && rigilBalance.value > BigInt(0))}
             isSignedTx={signedTx !== undefined}
-            isRigilHash={rigilTx !== undefined}
+            rigilHash={rigilTx}
+            rigilReceipt={rigilTxReceipt}
         />
     </div>
 }
