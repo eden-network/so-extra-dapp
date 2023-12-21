@@ -32,18 +32,25 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
 
             <main>
                 <div className="w-full flex flex-row gap-4 justify-between items-end mb-0 pt-3 px-4">
-                    <div className="flex-1 max-w-sm hidden md:block -mb-[130px]">
+                    <div className="flex-1 max-w-sm hidden md:block -mb-[30px]">
                         {/* <div className="flex place-content-end"> */}
                         {/* <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" /> */}
-                        <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" />
+                        {/* <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" /> */}
+                        <Image src="/c.png" alt="So Extra" width="282" height="230" className="hover:animate-bounce" />
                         {/* </div> */}
                     </div>
-                    <div className="flex-1 max-w-2xl justify-center w-full h-[150px]">
-                        {/* <div className="place-content-center">
-                            <div className="-mt-[25px] -mb-[100px] md:-mb-[65px]">
-                                <Image src="/logo.png" alt="So Extra" width="621" height="240" />
+                    <div className="flex-1 max-w-2xl justify-center">
+                        <div className="place-content-center">
+                            <div className="-mb-[80px] md:-mb-[0px] max-h-[100px]">
+                                <Image 
+                                    src="/logo.png" 
+                                    alt="So Extra" 
+                                    width="560" 
+                                    height="201" 
+                                    className="object-contain h-[150px] w-[560px]" 
+                                />
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
                         <div className="flex place-content-end">
@@ -76,11 +83,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <div className="flex-1 max-w-2xl justify-center">
                         <div className="flex flex-col">
                             <div className="flex-1 w-full">
-                                <div className="relative place-content-center">
-                                    <div className="absolute -bottom-[20px] lg:pt-5">
-                                        <Image src="/logo.png" alt="So Extra" width="621" height="240" />
+                                {/* <div className="relative place-content-center">
+                                    <div className="absolute -bottom-[0px] lg:-bottom-[20px] p-5">
+                                        <Image src="/logo.png" alt="So Extra" width="560" height="201" />
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="flex-1 w-full">
                                 {children}

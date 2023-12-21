@@ -4,13 +4,15 @@ const Onboarding = () => {
     const [displayOnboarding, setDisplayOnboarding] = useState<boolean>(true)
 
     return displayOnboarding ? (
-        <div className="flex-1 border border-white/10 rounded-2xl w-full bg-white/5 backdrop-blur-lg">
+        <div className="flex-1 w-full">
             <div className="flex flex-col pb-3">
-                <div className="flex flex-row justify-between p-3">
-                    <h2 className="text-2xl text-left font-bold text-yellow-300">
-                        Welcome to the show
+                <div className="flex flex-row justify-end">
+                    <button className="hover:text-white/60 text-sm text-white/90" onClick={() => setDisplayOnboarding(false)}>Close section</button>
+                </div>
+                <div className="p-3">
+                    <h2 className="text-2xl text-center font-bold text-yellow-300">
+                        Welcome to the show!
                     </h2>
-                    <button className="underline hover:no-underline text-sm text-white/60" onClick={() => setDisplayOnboarding(false)}>Close</button>
                 </div>
                 <div className="flex flex-col gap-2 p-3 text-sm">
                     <p className="text-sm">

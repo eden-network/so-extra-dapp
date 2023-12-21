@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, hexToString, stringToHex } from "viem"
-import { useAccount, useBalance, useBlockNumber, useWalletClient } from "wagmi"
+import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, hexToString, stringToHex, toHex } from "viem"
+import { useAccount, useBalance, useBlockNumber, usePublicClient, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import useSuave from "../hooks/useSuave"
 import { goerli } from "viem/chains"
 import Steps from "./Steps"
+import BurnerWallet from "./BurnerWallet"
+
+const suaveContractAddress: `0x${string}` = "0xcc0CF4390CF424c74F4BFBdb6F5F21b0cfa9A934"
 
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
@@ -22,10 +25,20 @@ const BlockBid = () => {
         account: burnerAccount,
         balance: burnerBalance,
         rigilBalance: burnerRigilBalance,
-        privateKey: burnerPrivateKey
+        privateKey: burnerPrivateKey,
+        createBurnerWallet
     } = useBurnerWallet()
 
     const { suaveClient, rigil } = useSuave()
+
+    useEffect(() => {
+        suaveClient.getLogs({
+            address: suaveContractAddress,
+            event: parseAbiItem('event RequestAdded(uint indexed id, string extra, uint blockLimit)'),
+            fromBlock: BigInt(687029),
+            toBlock: BigInt(777563),
+        }).then((r: any) => console.log("event RequestAdded", r))
+    }, [suaveClient])
 
     // suaveClient.getBlock({
     //     blockHash: "0xbf51327c63fb3c8741d4233ae0315e3e1a74641532f4e59c307f72314a346235"
@@ -65,6 +78,24 @@ const BlockBid = () => {
 
     const { address: walletAddress } = useAccount()
     const { data: walletClient } = useWalletClient()
+
+    const publicClient = usePublicClient()
+    useEffect(() => {
+        suaveClient.getLogs({
+            address: suaveContractAddress,
+            event: parseAbiItem('event RequestIncluded(uint indexed id, uint64 egp, string blockHash)'),
+            fromBlock: BigInt(687029),
+            toBlock: BigInt(777563)
+        }).then((r: any) => {
+            console.log("event RequestIncluded", r)
+            // r.forEach((x: any) => {
+            //     const blockHash = x.topics[0]
+            //     publicClient.getBlock({
+            //         blockHash: blockHash
+            //     }).then((b: any) => console.log("debug -> getBlock", b)).catch()
+            // })
+        }).catch()
+    }, [suaveClient, walletClient])
 
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
     const { data: currentBlock } = useBlockNumber({ chainId: goerli.id })
@@ -126,7 +157,6 @@ const BlockBid = () => {
             return
         }
 
-        const contractAdd = '0xee9794177378e98268b30Ca14964f2FDFc71bD6D' as `0x${string}`
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
         )
@@ -140,7 +170,7 @@ const BlockBid = () => {
         //     chain: rigil,
         //     chainId: rigil.id,
         //     account: address,
-        //     to: contractAdd,
+        //     to: suaveContractAddress,
         //     gasPrice: parseGwei('1'),
         //     gas: BigInt(1e7),
         //     data: calldata,
@@ -152,7 +182,7 @@ const BlockBid = () => {
             gasLimit: 1e7,
             gasPrice: parseGwei('1'),
             nonce: await suaveClient.getTransactionCount({ address: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress! }),
-            to: contractAdd,
+            to: suaveContractAddress,
             value: "0x"
         }
         console.log(`suaveTx`, suaveTx)
@@ -217,6 +247,13 @@ const BlockBid = () => {
                     {useBurner ? `Use wallet instead` : `Use burner instead`}
                 </button>
             </p>
+            <button
+                className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
+                onClick={createBurnerWallet.bind(this)}
+                type="submit"
+            >
+                <p className="hidden">Create Burner Wallet</p>
+            </button>
         </div>
         <div className="px-4 my-2">
             <label
@@ -265,14 +302,23 @@ const BlockBid = () => {
         </div>
         <div className="px-4 my-2 text-center space-y-4">
             {(useBurner ? burnerAccount === undefined : walletAddress === undefined) && (
+                // <button
+                //     className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
+                //     onClick={handleButtonClick}
+                //     // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
+                //     disabled={true}
+                //     type="submit"
+                // >
+                //     <p className="font-semibold">Connect Wallet</p>
+                // </button>
                 <button
-                    className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
+                    className="w-[274px] h-[64px] rounded-full bg-[url('/connect-button.png')] disabled:bg-[url('/connect-button-disabled.png')] hover:bg-[url('/connect-button-hover.png')]"
                     onClick={handleButtonClick}
                     // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
                     disabled={true}
                     type="submit"
                 >
-                    <p className="font-semibold">Connect Wallet</p>
+                    <p className="hidden">Connect Wallet</p>
                 </button>
             )}
             {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (

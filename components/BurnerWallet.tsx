@@ -16,7 +16,7 @@ const BurnerWallet = () => {
         createBurnerWallet
     } = useBurnerWallet()
 
-    const [ depositAmount, setDepositAmount ] = useState<string>("")
+    const [depositAmount, setDepositAmount] = useState<string>("")
 
     const { config, error } = usePrepareSendTransaction({
         account: walletAddress,
@@ -48,7 +48,7 @@ const BurnerWallet = () => {
             parseEther(event.target.value)
             setDepositAmount(event.target.value)
         }
-        catch {}
+        catch { }
     }
 
     return <div className="flex flex-col pb-3">
@@ -58,18 +58,18 @@ const BurnerWallet = () => {
             </h2>
         </div>
         {displayOnboarding ? <>
-        <div className="flex flex-col gap-2 p-3">
-            <p className="text-sm">
-                For this demo, the best UX we can think of is a burner wallet.
-                If you are not already familiar with burner wallets, you can create and use a temporary wallet from your browser window.
-            </p>
-            <p className="text-sm">
-                You will need to fund the burner wallet with a small amount and use it for the demo.
-                If you want to recover your funds, you will be able to do so.
-            </p>
-        </div>
-        <div className="px-4 my-2 text-center">
-            <button
+            <div className="flex flex-col gap-2 p-3">
+                <p className="text-sm">
+                    For this demo, the best UX we can think of is a burner wallet.
+                    If you are not already familiar with burner wallets, you can create and use a temporary wallet from your browser window.
+                </p>
+                <p className="text-sm">
+                    You will need to fund the burner wallet with a small amount and use it for the demo.
+                    If you want to recover your funds, you will be able to do so.
+                </p>
+            </div>
+            <div className="px-4 my-2 text-center">
+                {/* <button
                 className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black"
                 onClick={handleButtonClick}
                 type="submit"
@@ -77,51 +77,58 @@ const BurnerWallet = () => {
                 <div className="flex flex-row items-center justify-center">
                     <p className="font-semibold">Create My Burner Wallet</p>
                 </div>
-            </button>
-        </div>
+            </button> */}
+                <button
+                    className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
+                    onClick={handleButtonClick}
+                    type="submit"
+                >
+                    <p className="hidden">Create Burner Wallet</p>
+                </button>
+            </div>
         </> : <>
-        <div className="px-4 my-2">
-            <label
-                className="font-semibold"
-                htmlFor="burner-address"
-            >Burner Address</label>
-            <input
-                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
-                id="burner-address"
-                type="text"
-                value={account?.address}
-            />
-            <p
-                className="text-sm text-right"
-            >Burner Balance: {balance !== undefined ? `${balance.formatted}` : `-` } goerliETH</p>
-        </div>
-        <div className="px-4 my-2">
-            <label
-                className="font-semibold"
-                htmlFor="deposit-amount"
-            >Deposit Amount</label>
-            <input
-                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
-                id="deposit-amount"
-                type="text"
-                value={depositAmount}
-                onChange={handleDepositAmountChange.bind(this)}
-            />
-            <p
-                className="text-sm text-right"
-            >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted}` : `-` } goerliETH</p>
-        </div>
-        <div className="px-4 my-2 text-center">
-            <button
-                className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black shadow-xl shadow-indigo-950/40 hover:shadow-none"
-                onClick={handleFundButtonClick}
-                type="submit"
-            >
-                <div className="flex flex-row items-center justify-center">
-                    <p className="font-semibold">Fund My Burner Wallet</p>
-                </div>
-            </button>
-        </div>
+            <div className="px-4 my-2">
+                <label
+                    className="font-semibold"
+                    htmlFor="burner-address"
+                >Burner Address</label>
+                <input
+                    className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                    id="burner-address"
+                    type="text"
+                    value={account?.address}
+                />
+                <p
+                    className="text-sm text-right"
+                >Burner Balance: {balance !== undefined ? `${balance.formatted}` : `-`} goerliETH</p>
+            </div>
+            <div className="px-4 my-2">
+                <label
+                    className="font-semibold"
+                    htmlFor="deposit-amount"
+                >Deposit Amount</label>
+                <input
+                    className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                    id="deposit-amount"
+                    type="text"
+                    value={depositAmount}
+                    onChange={handleDepositAmountChange.bind(this)}
+                />
+                <p
+                    className="text-sm text-right"
+                >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} goerliETH</p>
+            </div>
+            <div className="px-4 my-2 text-center">
+                <button
+                    className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black shadow-xl shadow-indigo-950/40 hover:shadow-none"
+                    onClick={handleFundButtonClick}
+                    type="submit"
+                >
+                    <div className="flex flex-row items-center justify-center">
+                        <p className="font-semibold">Fund My Burner Wallet</p>
+                    </div>
+                </button>
+            </div>
         </>}
     </div>
 }
