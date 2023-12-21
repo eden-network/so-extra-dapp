@@ -7,7 +7,7 @@ const Onboarding = () => {
         <div className="flex-1 w-full">
             <div className="flex flex-col pb-3">
                 <div className="flex flex-row justify-end">
-                    <button className="hover:text-white/60 text-sm text-white/90" onClick={() => setDisplayOnboarding(false)}>Close section</button>
+                    <button className="underline italic hover:no-underline text-sm" onClick={() => setDisplayOnboarding(false)}>Close section</button>
                 </div>
                 <div className="p-3">
                     <h2 className="text-2xl text-center font-bold text-yellow-300">

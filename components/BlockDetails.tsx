@@ -39,7 +39,7 @@ const BlockDetails = (
             <div className="flex flex-row gap-4 items-start">
                 <div className="bg-green-500 w-16 h-16 rounded-md"></div>
                 <div className="w-full">
-                    <p className="text-sm mb-2 text-white/70">
+                    <p className="text-xs mb-2 text-white/70">
                         {blockHash && <span>{ellipsis(blockHash)}</span>}
                         {/* <a
                             className="underline"
@@ -49,11 +49,11 @@ const BlockDetails = (
                         >{blockNumber.toLocaleString()}</a> */}
                         {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
                     </p>
-                    <p className={`${!didContentReveal && "bg-black rounded"} text-xl mb-6 font-bold text-white`}>
+                    <p className={`${!didContentReveal && "bg-black rounded"} text-lg mb-6 font-semibold text-white`}>
                         {isLoading && `Loading...`}
                         {didContentReveal && extraData}&nbsp;
                     </p>
-                    <div className="flex flex-row text-sm text-white/60">
+                    <div className="flex flex-row text-xs text-white/60">
                         <p className="flex-1">BN {blockNumber.toLocaleString()}</p>
                         <p className="flex-1">TX {data !== undefined && data.transactions.length}</p>
                         {/* <p className="flex-1">BF {data !== undefined && data.baseFeePerGas !== null && formatGwei(data.baseFeePerGas).toLocaleString()}</p> */}

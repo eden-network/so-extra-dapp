@@ -8,8 +8,14 @@ import useSuave from "../hooks/useSuave"
 import { goerli } from "viem/chains"
 import Steps from "./Steps"
 import BurnerWallet from "./BurnerWallet"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { CustomConnectButton } from "./CustomConnectButton"
 
 const suaveContractAddress: `0x${string}` = "0xcc0CF4390CF424c74F4BFBdb6F5F21b0cfa9A934"
+
+const ellipsis = (str: string) => {
+    return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
+}
 
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
@@ -151,6 +157,11 @@ const BlockBid = () => {
         }
     }
 
+    const handleButtonClickForCreateBurnerWallet = () => {
+        createBurnerWallet()
+        setUseBurner(true)
+    }
+
     const handleButtonClickForSignedTx = async () => {
         if (walletClient === undefined || walletClient === null) {
             console.error(`walletClient not found`)
@@ -225,43 +236,59 @@ const BlockBid = () => {
             </h2>
         </div>
         <div className="px-4 my-2">
-            <label
-                className="font-semibold"
-                htmlFor="extra-data"
-            >Account</label>
-            <input
-                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
-                id="extra-data"
-                type="text"
-                value={burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress}
-                readOnly
-            />
-            <p
-                className="text-sm text-right"
-            >
-                <button
-                    className="underline italic hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
-                    onClick={() => setUseBurner(!useBurner)}
-                    disabled={burnerAccount === undefined}
-                >
-                    {useBurner ? `Use wallet instead` : `Use burner instead`}
-                </button>
-            </p>
-            <button
-                className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
-                onClick={createBurnerWallet.bind(this)}
-                type="submit"
-            >
-                <p className="hidden">Create Burner Wallet</p>
-            </button>
+            <div className="flex flex-col">
+                <p className="text-sm mb-1">Burner wallet</p>
+                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-6">
+                    {/* <p className="">Burner wallet</p> */}
+                    {burnerAccount === undefined ? <button
+                        className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
+                        onClick={handleButtonClickForCreateBurnerWallet.bind(this)}
+                        type="submit"
+                    >
+                        <p className="hidden">Create Burner Wallet</p>
+                    </button> : <>
+                        <p className="flex-1 font-semibold text-xl">
+                            <a href={`https://goerli.etherscan.io/address/${burnerAccount.address}`} target="_blank" className="hover:underline">
+                                {ellipsis(burnerAccount.address)}
+                            </a>
+                        </p>
+                        {useBurner === true ? <p className="flex-0 font-semibold text-base text-fuchsia-500">Active</p> : <button
+                            className="flex-0 text-base underline italic hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
+                            onClick={() => setUseBurner(true)}
+                            disabled={burnerAccount === undefined}
+                        >
+                            {`Switch`}
+                        </button>}
+                    </>}
+                </div>
+                <p className="text-sm mb-1">Wallet</p>
+                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-6">
+                    {/* <p className="">Wallet</p> */}
+                    {walletAddress === undefined ? <CustomConnectButton isSmall={true} /> : <>
+                        <p className="flex-1 font-semibold text-xl">
+                            <a href={`https://goerli.etherscan.io/address/${walletAddress}`} target="_blank" className="hover:underline">
+                                {ellipsis(walletAddress)}
+                            </a>
+                        </p>
+                        {useBurner === false ? <p className="flex-0 font-semibold text-base text-fuchsia-500">Active</p> : <button
+                            className="flex-0 text-base underline italic hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
+                            onClick={() => setUseBurner(false)}
+                            disabled={burnerAccount === undefined}
+                        >
+                            {`Switch`}
+                        </button>}
+                    </>}
+
+                </div>
+            </div>
         </div>
         <div className="px-4 my-2">
             <label
-                className="font-semibold"
+                className="font-light text-sm"
                 htmlFor="extra-data"
             >Message</label>
             <input
-                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
                 id="extra-data"
                 type="text"
                 value={extraData}
@@ -273,11 +300,11 @@ const BlockBid = () => {
         </div>
         <div className="px-4 my-2">
             <label
-                className="font-semibold"
+                className="font-light text-sm"
                 htmlFor="bid-amount"
             >Bid Amount</label>
             <input
-                className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
                 id="bid-amount"
                 type="number"
                 value={bidAmount}
@@ -301,26 +328,6 @@ const BlockBid = () => {
                 )}
         </div>
         <div className="px-4 my-2 text-center space-y-4">
-            {(useBurner ? burnerAccount === undefined : walletAddress === undefined) && (
-                // <button
-                //     className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
-                //     onClick={handleButtonClick}
-                //     // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
-                //     disabled={true}
-                //     type="submit"
-                // >
-                //     <p className="font-semibold">Connect Wallet</p>
-                // </button>
-                <button
-                    className="w-[274px] h-[64px] rounded-full bg-[url('/connect-button.png')] disabled:bg-[url('/connect-button-disabled.png')] hover:bg-[url('/connect-button-hover.png')]"
-                    onClick={handleButtonClick}
-                    // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
-                    disabled={true}
-                    type="submit"
-                >
-                    <p className="hidden">Connect Wallet</p>
-                </button>
-            )}
             {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
                 <button
                     className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"

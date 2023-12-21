@@ -75,7 +75,7 @@ const BurnerWallet = () => {
                 type="submit"
             >
                 <div className="flex flex-row items-center justify-center">
-                    <p className="font-semibold">Create My Burner Wallet</p>
+                    <p className="font-light">Create My Burner Wallet</p>
                 </div>
             </button> */}
                 <button
@@ -89,7 +89,7 @@ const BurnerWallet = () => {
         </> : <>
             <div className="px-4 my-2">
                 <label
-                    className="font-semibold"
+                    className="font-light"
                     htmlFor="burner-address"
                 >Burner Address</label>
                 <input
@@ -104,7 +104,7 @@ const BurnerWallet = () => {
             </div>
             <div className="px-4 my-2">
                 <label
-                    className="font-semibold"
+                    className="font-light"
                     htmlFor="deposit-amount"
                 >Deposit Amount</label>
                 <input
