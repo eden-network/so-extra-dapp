@@ -28,6 +28,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     content="https://so-extra-dapp.vercel.app/logo.png"
                 />
                 <link href="/favicon.ico" rel="icon" />
+                <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
 
             <main>
@@ -39,18 +40,18 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         <Image src="/c.png" alt="So Extra" width="282" height="230" className="hover:animate-bounce" />
                         {/* </div> */}
                     </div>
-                    <div className="flex-1 max-w-2xl justify-center">
-                        <div className="place-content-center">
-                            <div className="-mb-[80px] md:-mb-[0px] max-h-[100px]">
-                                <Image 
-                                    src="/logo.png" 
-                                    alt="So Extra" 
-                                    width="560" 
-                                    height="201" 
-                                    className="object-contain h-[150px] w-[560px]" 
+                    <div className="flex-1 max-w-2xl justify-center h-[110px]">
+                        {/* <div className="place-content-center">
+                            <div className="-mb-[80px] md:-mb-[0px] h-[100px]">
+                                <Image
+                                    src="/logo.png"
+                                    alt="So Extra"
+                                    width="560"
+                                    height="201"
+                                    className="object-contain h-[150px] w-[560px] mx-auto"
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
                         <div className="flex place-content-end">
@@ -82,12 +83,18 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     </div>
                     <div className="flex-1 max-w-2xl justify-center">
                         <div className="flex flex-col">
-                            <div className="flex-1 w-full">
-                                {/* <div className="relative place-content-center">
-                                    <div className="absolute -bottom-[0px] lg:-bottom-[20px] p-5">
-                                        <Image src="/logo.png" alt="So Extra" width="560" height="201" />
+                            <div className="flex-1 w-full mb-6 md:mb-0">
+                                <div className="relative place-content-center">
+                                    <div className="absolute -bottom-[45px] lg:-bottom-[30px] p-5">
+                                        <Image
+                                            src="/logo.png"
+                                            alt="So Extra"
+                                            width="560"
+                                            height="201"
+                                            className="object-contain h-[150px] w-[560px] mx-auto"
+                                        />
                                     </div>
-                                </div> */}
+                                </div>
                             </div>
                             <div className="flex-1 w-full">
                                 {children}
