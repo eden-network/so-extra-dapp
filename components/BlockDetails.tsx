@@ -1,4 +1,4 @@
-import { formatGwei, fromHex, parseGwei } from "viem"
+import { fromHex } from "viem"
 import useBlock from "../hooks/useBlock"
 import { goerli } from "viem/chains";
 import TimeAgo from "react-timeago";

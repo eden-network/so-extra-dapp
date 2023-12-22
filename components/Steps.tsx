@@ -21,7 +21,7 @@ const Steps = ({
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                Steps
+                {'Progress'}
             </h2>
         </div>
         <div className="flex flex-col gap-2 p-3 text-sm">
@@ -31,7 +31,7 @@ const Steps = ({
                         Connect Wallet
                     </p>
                     {isConnected && (
-                        <p className="font-semibold text-green-500">
+                        <p className="font-semibold text-fuchsia-500">
                             Completed
                         </p>
                     )}
@@ -43,7 +43,7 @@ const Steps = ({
                         Get Goerli ETH
                     </p>
                     {isGoerliBalance && (
-                        <p className="font-semibold text-green-500">
+                        <p className="font-semibold text-fuchsia-500">
                             Completed
                         </p>
                     )}
@@ -55,7 +55,7 @@ const Steps = ({
                         Get Rigil ETH
                     </p>
                     {isRigilBalance && (
-                        <p className="font-semibold text-green-500">
+                        <p className="font-semibold text-fuchsia-500">
                             Completed
                         </p>
                     )}
@@ -67,7 +67,7 @@ const Steps = ({
                         Sign Bid (Goerli)
                     </p>
                     {isSignedTx && (
-                        <p className="font-semibold text-green-500">
+                        <p className="font-semibold text-fuchsia-500">
                             Completed
                         </p>
                     )}
@@ -79,18 +79,18 @@ const Steps = ({
                         Submit SUAVE CCR (Rigil)
                     </p>
                     {isRigilHash && !isMined && (
-                        <p className="font-semibold text-green-500">
-                            <a className="text-neutral-500 underline" href={`https://explorer.rigil.suave.flashbots.net/tx/${rigilHash}`} target="_blank">Pending</a>
+                        <p className="font-semibold text-fuchsia-500">
+                            <a className="text-neutral-500 underline hover:no-underline" href={`https://explorer.rigil.suave.flashbots.net/tx/${rigilHash}`} target="_blank">Pending</a>
                         </p>
                     )}
                     {isRigilHash && rigilReceipt?.status === "success" && (
-                        <p className="font-semibold text-green-500">
-                            <a className="text-green-500 underline" href={`https://explorer.rigil.suave.flashbots.net/tx/${rigilHash}`} target="_blank">Completed</a>
+                        <p className="font-semibold text-fuchsia-500">
+                            <a className="underline hover:no-underline" href={`https://explorer.rigil.suave.flashbots.net/tx/${rigilHash}`} target="_blank">Completed</a>
                         </p>
                     )}
                     {isRigilHash && rigilReceipt?.status === "reverted" && (
-                        <p className="font-semibold text-green-500">
-                            <a className="text-red-500 underline" href={`https://explorer.rigil.suave.flashbots.net/tx/${rigilHash}`} target="_blank">Error</a>
+                        <p className="font-semibold text-fuchsia-500">
+                            <a className="text-red-500 underline hover:no-underline" href={`https://explorer.rigil.suave.flashbots.net/tx/${rigilHash}`} target="_blank">Error</a>
                         </p>
                     )}
                 </div>

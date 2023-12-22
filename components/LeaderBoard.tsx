@@ -2,7 +2,7 @@ const LeaderBoard = () => {
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                Big Spenders
+                Big Point Earners
             </h2>
         </div>
         <div className="px-2 my-2">
@@ -10,8 +10,8 @@ const LeaderBoard = () => {
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>Spender</th>
-                        <th>Total (goerliETH)</th>
+                        <th>Account</th>
+                        <th>Points</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -31,7 +31,7 @@ const Faq = () => {
                     How much should I bid?
                 </p>
                 <p className="">
-                    In order to win, your bid has to be competive with the latest payloads delivered by <a className="text-blue-500 underline" href="https://boost-relay-goerli.flashbots.net/" target="_blank">Flashbots Goerli Relay</a>
+                    In order to win, your bid has to be competive with the latest payloads delivered by <a className="text-white underline hover:no-underline" href="https://boost-relay-goerli.flashbots.net/" target="_blank">Flashbots Goerli Relay</a>
                 </p>
             </div>
         </div>

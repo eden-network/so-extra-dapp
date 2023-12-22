@@ -25,8 +25,8 @@ const Onboarding = () => {
                         You need:
                     </p>
                     <ol className="list-decimal list-inside ml-3">
-                        <li>Goerli ETH: <a href="https://goerli-faucet.pk910.de/" target="_blank" className="text-blue-500 underline">goerliETH Faucet</a></li>
-                        <li>Suave rigilETH: <a href="https://faucet.rigil.suave.flashbots.net/" target="_blank" className="text-blue-500 underline">rigilETH Faucet</a></li>
+                        <li>Goerli ETH: <a href="https://goerli-faucet.pk910.de/" target="_blank" className="text-white underline hover:no-underline">goerliETH Faucet</a></li>
+                        <li>Suave rigilETH: <a href="https://faucet.rigil.suave.flashbots.net/" target="_blank" className="text-white underline hover:no-underline">rigilETH Faucet</a></li>
                         <li>Wallet capable of <code>eth_sign</code>, either:</li>
                         <ul className="list-disc list-inside ml-6">
                             <li>Burner Wallet, or</li>

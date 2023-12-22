@@ -9,6 +9,7 @@ import { goerli } from "viem/chains"
 import Steps from "./Steps"
 import { CustomConnectButton } from "./CustomConnectButton"
 
+const executionNodeAdd: `0x${string}` = '0x03493869959c866713c33669ca118e774a30a0e5'
 const suaveContractAddress: `0x${string}` = "0x07e60844bCd83B78b1991A3228E749B09AF9E215"
 
 const ellipsis = (str: string) => {
@@ -39,8 +40,8 @@ const BlockBid = () => {
         suaveClient.getLogs({
             address: suaveContractAddress,
             event: parseAbiItem('event RequestAdded(uint indexed id, string extra, uint blockLimit)'),
-            fromBlock: BigInt(687029),
-            toBlock: BigInt(777563),
+            fromBlock: BigInt(904301),
+            toBlock: BigInt(904377),
         }).then((r: any) => console.log("event RequestAdded", r))
     }, [suaveClient])
 
@@ -83,13 +84,25 @@ const BlockBid = () => {
     const { address: walletAddress } = useAccount()
     const { data: walletClient } = useWalletClient()
 
+    useEffect(() => {
+        if (walletAddress === undefined) {
+            if (burnerAccount !== undefined) {
+                setUseBurner(true)
+            }
+        }
+
+        else {
+            setUseBurner(false)
+        }
+    }, [burnerAccount, walletAddress])
+
     const publicClient = usePublicClient()
     useEffect(() => {
         suaveClient.getLogs({
             address: suaveContractAddress,
             event: parseAbiItem('event RequestIncluded(uint indexed id, uint64 egp, string blockHash)'),
-            fromBlock: BigInt(687029),
-            toBlock: BigInt(777563)
+            fromBlock: BigInt(904301),
+            toBlock: BigInt(904377)
         }).then((r: any) => {
             console.log("event RequestIncluded", r)
             // r.forEach((x: any) => {
@@ -128,8 +141,8 @@ const BlockBid = () => {
             const serialized = serializeTransaction(augmentedTx)
 
             // ensure serialized tx is valid
-            const tmp = parseTransaction(serialized)
-            console.log(tmp)
+            const parsedTx = parseTransaction(serialized)
+            console.log(`parsed tx`, parsedTx)
 
             try {
                 let serializedSignedTx;
@@ -144,6 +157,9 @@ const BlockBid = () => {
                     serializedSignedTx = serializeTransaction(augmentedTx, signature)
                 }
                 setSignedTx(serializedSignedTx!)
+                if (useBurner === true) {
+                    handleButtonClickForSignedTx()
+                }
             }
             catch (error: any) {
                 throw error
@@ -194,8 +210,7 @@ const BlockBid = () => {
             to: suaveContractAddress,
             value: "0x"
         }
-        console.log(`suaveTx`, suaveTx)
-        const executionNodeAdd = '0x03493869959c866713c33669ca118e774a30a0e5'
+        console.log(`suave tx`, suaveTx)
         const confidentialBytes = txToBundleBytes(signedTx as `0x${string}`)
         const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
         const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
@@ -214,18 +229,37 @@ const BlockBid = () => {
         const hash = await suaveClient.sendRawTransaction({
             serializedTransaction: ccrRlp as `0x${string}`
         })
-        console.log(hash)
+        console.log(`rigil hash`, hash)
         setRigilTx(hash)
         const receipt = await suaveClient.waitForTransactionReceipt({
             hash: hash
         })
-        console.log(receipt)
+        console.log(`rigil receipt`, receipt)
         setRigilTxReceipt(receipt)
     }
 
     const { data: balance } = useBalance({
         address: walletAddress
     })
+
+    const [bidAmountError, setBidAmountError] = useState<"balance" | "input" | undefined>(undefined)
+
+    useEffect(() => {
+        const bidAmountBigInt = parseEther(bidAmount.toString())
+        if (bidAmountBigInt <= BigInt(0)) {
+            setBidAmountError("input")
+            return
+        }
+
+        if (useBurner === true && burnerBalance !== undefined) {
+            setBidAmountError(bidAmountBigInt > burnerBalance.value ? "balance" : undefined)
+            return
+        }
+        else if (useBurner === false && balance !== undefined) {
+            setBidAmountError(bidAmountBigInt > balance.value ? "balance" : undefined)
+            return
+        }
+    }, [bidAmount, useBurner, burnerBalance, balance])
 
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
@@ -236,7 +270,7 @@ const BlockBid = () => {
         <div className="px-4 my-2">
             <div className="flex flex-col">
                 <p className="text-sm mb-1">Burner wallet</p>
-                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-6">
+                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
                     {/* <p className="">Burner wallet</p> */}
                     {burnerAccount === undefined ? <button
                         className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
@@ -259,8 +293,14 @@ const BlockBid = () => {
                         </button>}
                     </>}
                 </div>
+                <p
+                    className="text-xs mb-6"
+                >Balances:
+                    <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
+                    <span>{' '}&bull;{' '}{burnerRigilBalance !== undefined ? `${parseFloat(burnerRigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
+                </p>
                 <p className="text-sm mb-1">Wallet</p>
-                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-6">
+                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
                     {/* <p className="">Wallet</p> */}
                     {walletAddress === undefined ? <CustomConnectButton isSmall={true} /> : <>
                         <p className="flex-1 font-semibold text-xl">
@@ -276,15 +316,20 @@ const BlockBid = () => {
                             {`Switch`}
                         </button>}
                     </>}
-
                 </div>
+                {walletAddress !== undefined && <p
+                    className="text-xs mb-6"
+                >Balances:
+                    <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
+                    <span>{' '}&bull;{' '}{rigilBalance !== undefined ? `${parseFloat(rigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
+                </p>}
             </div>
         </div>
         <div className="px-4 my-2">
             <label
                 className="font-light text-sm"
                 htmlFor="extra-data"
-            >Message</label>
+            >{'Message'}<span className="text-white/70">{' '}&bull;{' '}Public Data</span></label>
             <input
                 className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
                 id="extra-data"
@@ -300,9 +345,9 @@ const BlockBid = () => {
             <label
                 className="font-light text-sm"
                 htmlFor="bid-amount"
-            >Bid Amount</label>
+            >{'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span></label>
             <input
-                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                className={`border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20`}
                 id="bid-amount"
                 type="number"
                 value={bidAmount}
@@ -311,17 +356,15 @@ const BlockBid = () => {
             {useBurner ?
                 (
                     <p
-                        className="text-sm text-right"
-                    >Balances:
-                        <span>{' '}{burnerBalance !== undefined ? `${burnerBalance.formatted}` : `-`} goerliETH</span>
-                        <span>{' '}{burnerRigilBalance !== undefined ? `${burnerRigilBalance.formatted}` : `-`} rigilETH</span>
+                        className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
+                    >Balance:
+                        <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
                     </p>
                 ) : (
                     <p
-                        className="text-sm text-right"
-                    >Balances:
+                        className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
+                    >Balance:
                         <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
-                        <span>{' '}{rigilBalance !== undefined ? `${parseFloat(rigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
                     </p>
                 )}
         </div>
@@ -330,7 +373,7 @@ const BlockBid = () => {
                 <button
                     className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                     onClick={handleButtonClick}
-                    disabled={signedTx !== undefined}
+                    disabled={signedTx !== undefined || bidAmountError !== undefined}
                     type="submit"
                 >
                     <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
@@ -340,7 +383,7 @@ const BlockBid = () => {
                 <button
                     className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                     onClick={handleButtonClickForSignedTx}
-                    disabled={signedTx === undefined}
+                    disabled={signedTx === undefined || rigilTxReceipt !== undefined}
                     type="submit"
                 >
                     <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
@@ -351,7 +394,7 @@ const BlockBid = () => {
             >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
             {errorMessage &&
                 <p
-                    className="text-sm"
+                    className="text-sm text-red-400"
                 >Error: {errorMessage}</p>}
         </div>
         <Steps
