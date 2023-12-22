@@ -7,11 +7,9 @@ import useBurnerWallet from "../hooks/useBurnerWallet"
 import useSuave from "../hooks/useSuave"
 import { goerli } from "viem/chains"
 import Steps from "./Steps"
-import BurnerWallet from "./BurnerWallet"
-import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { CustomConnectButton } from "./CustomConnectButton"
 
-const suaveContractAddress: `0x${string}` = "0xcc0CF4390CF424c74F4BFBdb6F5F21b0cfa9A934"
+const suaveContractAddress: `0x${string}` = "0x07e60844bCd83B78b1991A3228E749B09AF9E215"
 
 const ellipsis = (str: string) => {
     return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
