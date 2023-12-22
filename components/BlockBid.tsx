@@ -293,12 +293,12 @@ const BlockBid = () => {
                         </button>}
                     </>}
                 </div>
-                <p
+                {burnerAccount === undefined && <p
                     className="text-xs mb-6"
                 >Balances:
                     <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
                     <span>{' '}&bull;{' '}{burnerRigilBalance !== undefined ? `${parseFloat(burnerRigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
-                </p>
+                </p>}
                 <p className="text-sm mb-1">Wallet</p>
                 <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
                     {/* <p className="">Wallet</p> */}
