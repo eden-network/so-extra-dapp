@@ -293,7 +293,7 @@ const BlockBid = () => {
                         </button>}
                     </>}
                 </div>
-                {burnerAccount === undefined && <p
+                {burnerAccount !== undefined && <p
                     className="text-xs mb-6"
                 >Balances:
                     <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
