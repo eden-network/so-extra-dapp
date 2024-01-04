@@ -4,15 +4,19 @@ import { goerli } from "viem/chains";
 import TimeAgo from "react-timeago";
 import { useState } from "react";
 import Link from "next/link";
+import { getShareUrl, SocialPlatforms } from "@phntms/react-share";
+import Share from "./Share";
 
 const BlockDetails = (
     {
-        blockNumber
+        blockNumber,
+        shareUrl
     }: {
-        blockNumber: bigint | undefined
+        blockNumber: bigint | undefined,
+        shareUrl: string
     }
 ) => {
-    const [ didContentReveal, setDidContentReveal ] = useState(true)
+    const [didContentReveal, setDidContentReveal] = useState(true)
     const handleOnMouseEnter = () => {
         setDidContentReveal(true)
     }
@@ -58,11 +62,15 @@ const BlockDetails = (
                         <p className="flex-1">TX {data !== undefined && data.transactions.length}</p>
                         {/* <p className="flex-1">BF {data !== undefined && data.baseFeePerGas !== null && formatGwei(data.baseFeePerGas).toLocaleString()}</p> */}
                         <p className="flex-1">GU {data !== undefined && data.gasUsed.toLocaleString()}</p>
-                        <p className="flex-2">SHARE</p>
                     </div>
                 </div>
             </div>
         </Link>
+        <Share
+            url={shareUrl}
+            blockNumber={blockNumber}
+            extraData={extraData}
+        />
     </div>
 }
 

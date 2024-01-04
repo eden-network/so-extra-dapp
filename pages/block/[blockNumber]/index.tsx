@@ -30,7 +30,12 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (context) => 
     }
 }
 
+
+
+
 const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof getStaticProps>) => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
     const blockNumberBigInt = blockNumber !== undefined ? BigInt(blockNumber) : undefined
     return <Layout>
         <Head>
@@ -39,11 +44,16 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
                 content={`So Extra | Block ${blockNumber}`}
                 name="Buy block extra data - a new SUAVE app for Goerli"
             />
+            <meta property="twitter:card" content="summary_large_image" />
+            <meta property="twitter:url" content="https://metatags.io/" />
+            <meta property="twitter:title" content="Meta Tags — Preview, Edit and Generate" />
+            <meta property="twitter:description" content="With Meta Tags you can edit and experiment with your content then preview how your webpage will look on Google, Facebook, Twitter and more!" />
+            <meta property="twitter:image" content="https://metatags.io/images/meta-tags.png" />
             <link href="/favicon.ico" rel="icon" />
         </Head>
         <div className="flex flex-col pb-3">
             <div className="flex flex-col px-6 py-3 gap-6">
-                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} />}
+                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} />}
                 <div className="w-full text-center">
                     <Link href="/">
                         <button
