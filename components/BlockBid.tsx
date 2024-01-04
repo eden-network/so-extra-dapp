@@ -41,8 +41,11 @@ const BlockBid = () => {
             address: suaveContractAddress,
             event: parseAbiItem('event RequestAdded(uint indexed id, string extra, uint blockLimit)'),
             fromBlock: BigInt(904301),
-            toBlock: BigInt(904377),
-        }).then((r: any) => console.log("event RequestAdded", r))
+            toBlock: BigInt(10320182),
+        }).then((r: any) => {
+            console.log("event RequestAdded", r)
+            // suaveClient.getTransaction({ hash: r.transactionHash }).then((x: any) => console.log(x))
+        })
     }, [suaveClient])
 
     // suaveClient.getBlock({
