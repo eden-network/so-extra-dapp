@@ -1,9 +1,14 @@
 import type { NextPage } from 'next';
 import RecentBlocks from '../components/RecentBlocks';
 import Layout from '../components/Layout';
-import Onboarding from '../components/Onboarding';
+import { rainbowCursor } from "cursor-effects";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    new rainbowCursor()
+  }, []);
+
   return <Layout>
     <RecentBlocks />
   </Layout>
