@@ -27,6 +27,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     property="og:image"
                     content="https://so-extra-dapp.vercel.app/logo.png"
                 />
+                <meta property="twitter:card" content="summary_large_image" />
+                <meta property="twitter:url" content="https://so-extra-dapp.vercel.app/" />
+                <meta property="twitter:title" content="So Extra" />
+                <meta property="twitter:description" content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data" />
+                <meta property="twitter:image" content="https://so-extra-dapp.vercel.app/logo.png" />
                 <link href="/favicon.ico" rel="icon" />
                 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
