@@ -7,6 +7,7 @@ import LeaderBoard from '../components/LeaderBoard';
 import Image from 'next/image';
 import Faq from '../components/Faq';
 import Onboarding from "./Onboarding";
+import ActiveBids from "./ActiveBids";
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     return (
@@ -113,6 +114,9 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             </div>
                             <div className="flex-1 w-full">
                                 <LeaderBoard />
+                            </div>
+                            <div className="flex-1 w-full">
+                                <ActiveBids />
                             </div>
                             <div className="flex-1 w-full">
                                 <Faq />
