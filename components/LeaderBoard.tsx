@@ -27,7 +27,7 @@ const LeaderBoard = () => {
                     {Object.keys(postSummary).map(post => <tr key={post}>
                         <td>{post}</td>
                         <td>{postSummary[post]}</td>
-                        <td>{parseInt(Math.random() * 100 * postSummary[post]).toString()}</td>
+                        <td>{`${Math.round(Math.random() * 100 * postSummary[post])}`}</td>
                     </tr>)}
                 </tbody>
             </table>
