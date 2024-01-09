@@ -6,6 +6,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { getShareUrl, SocialPlatforms } from "@phntms/react-share";
 import Share from "./Share";
+import { useRouter } from 'next/router';
+
 
 const BlockDetails = (
     {
@@ -16,6 +18,8 @@ const BlockDetails = (
         shareUrl: string
     }
 ) => {
+    const router = useRouter();
+    const isBlockPage = router.route === '/block/[blockNumber]';
     const [didContentReveal, setDidContentReveal] = useState(true)
     const handleOnMouseEnter = () => {
         setDidContentReveal(true)
@@ -35,42 +39,45 @@ const BlockDetails = (
         return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
     }
 
-    return <div
-        className="p-3 border border-white/10 hover:border-[#ff69f9] hover:text-[#ff69f9] w-full bg-white/5 backdrop-blur-lg"
-        onMouseEnter={handleOnMouseEnter.bind(this)}
-    >
-        <Link href={`/block/${blockNumber}`}>
-            <div className="flex flex-row gap-4 items-start">
-                <div className="bg-green-500 w-16 h-16 rounded-md"></div>
-                <div className="w-full">
-                    <p className="text-xs mb-2 text-white/70">
-                        {blockHash && <span>{ellipsis(blockHash)}</span>}
-                        {/* <a
-                            className="underline"
-                            href={href}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                        >{blockNumber.toLocaleString()}</a> */}
-                        {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
-                    </p>
-                    <p className={`${!didContentReveal && "bg-black rounded"} text-lg mb-6 font-semibold text-white`}>
-                        {isLoading && `Loading...`}
-                        {didContentReveal && extraData}&nbsp;
-                    </p>
-                    <div className="flex flex-row text-xs text-white/60">
-                        <p className="flex-1">BN {blockNumber.toLocaleString()}</p>
-                        <p className="flex-1">TX {data !== undefined && data.transactions.length}</p>
-                        {/* <p className="flex-1">BF {data !== undefined && data.baseFeePerGas !== null && formatGwei(data.baseFeePerGas).toLocaleString()}</p> */}
-                        <p className="flex-1">GU {data !== undefined && data.gasUsed.toLocaleString()}</p>
-                    </div>
+    const blockCard =
+        <div className="flex flex-row gap-4 items-start">
+            <div className="bg-green-500 w-16 h-16 rounded-md"></div>
+            <div className="w-full">
+                <p className="text-xs mb-2 text-white/70">
+                    {blockHash && <span>{ellipsis(blockHash)}</span>}
+                    {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
+                </p>
+                <p className={`${!didContentReveal && "bg-black rounded"} text-lg mb-6 font-semibold text-white`}>
+                    {isLoading && `Loading...`}
+                    {didContentReveal && extraData}&nbsp;
+                </p>
+                <div className="flex justify-between text-xs text-white/60">
+                    <p>BN {blockNumber.toLocaleString()}</p>
+                    <p>TX {data !== undefined && data.transactions.length}</p>
+                    {/* <p>BF {data !== undefined && data.baseFeePerGas !== null && formatGwei(data.baseFeePerGas).toLocaleString()}</p> */}
+                    <p>GU {data !== undefined && data.gasUsed.toLocaleString()}</p>
+                    {isBlockPage ?
+                        <Share
+                            url={shareUrl}
+                            blockNumber={blockNumber}
+                            extraData={extraData}
+                        /> : null}
                 </div>
             </div>
-        </Link>
-        <Share
-            url={shareUrl}
-            blockNumber={blockNumber}
-            extraData={extraData}
-        />
+        </div>
+
+    return <div
+        className="p-3 border border-white/10 hover:border-[#ff69f9] hover:text-[#ff69f9] w-full bg-white/5 backdrop-blur-lg relative"
+        onMouseEnter={handleOnMouseEnter.bind(this)}
+    >
+        {
+            isBlockPage ?
+                blockCard
+                :
+                <Link href={`/block/${blockNumber}`}>
+                    {blockCard}
+                </Link>
+        }
     </div>
 }
 
