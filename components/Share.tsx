@@ -1,6 +1,6 @@
 import { getTwitterUrl } from "@phntms/react-share";
 import React from "react";
-import Head from "next/head";
+import { SocialIcon } from 'react-social-icons'
 
 const Share = ({
     url,
@@ -15,6 +15,7 @@ const Share = ({
     return (
         <>
             <a target="_blank"
+                className="absolute right-2 top-2 text-xs bg-transparent text-white rounded border border-[#ff69f9] px-2 py-1"
                 href={getTwitterUrl({
                     url: url,
                     text: `I just build block number: ${blockNumber} and added:${extraData} `,
@@ -22,7 +23,8 @@ const Share = ({
                     related: 'eden network'
                 })}
             >
-                Share to Twitter
+                {/* <SocialIcon network="twitter" fgColor="#009f7d" bgColor="#ffff" style={{ width: '40px' }} /> */}
+                Share on Twitter
             </a>
         </>
     )
