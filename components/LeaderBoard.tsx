@@ -19,7 +19,7 @@ const LeaderBoard = () => {
                 <thead>
                     <tr>
                         <th>Message</th>
-                        <th>Posts</th>
+                        {/* <th>Posts</th> */}
                         <th>Points</th>
                     </tr>
                 </thead>
@@ -27,7 +27,7 @@ const LeaderBoard = () => {
                     {Object.keys(postSummary).map(post => <tr key={post}>
                         <td>{post}</td>
                         <td>{postSummary[post]}</td>
-                        <td>{`${Math.round(Math.random() * 100 * postSummary[post])}`}</td>
+                        {/* <td>{`${Math.round(Math.random() * 100 * postSummary[post])}`}</td> */}
                     </tr>)}
                 </tbody>
             </table>

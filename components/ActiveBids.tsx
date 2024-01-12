@@ -1,3 +1,4 @@
+import { goerli } from "viem/chains"
 import { useBlockNumber } from "wagmi"
 import useLogs from "../hooks/useLogs"
 import { rigil } from "../hooks/useSuave"
@@ -5,7 +6,7 @@ import { rigil } from "../hooks/useSuave"
 
 const ActiveBids = () => {
     const { logs } = useLogs()
-    const { data: currentBlock } = useBlockNumber({ chainId: rigil.id })
+    const { data: currentBlock } = useBlockNumber({ chainId: goerli.id })
 
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">

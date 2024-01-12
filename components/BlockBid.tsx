@@ -122,7 +122,8 @@ const BlockBid = () => {
     }, [suaveClient])
 
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
-    const { data: currentRigilBlock } = useBlockNumber({ chainId: rigil.id })
+    // const { data: currentRigilBlock } = useBlockNumber({ chainId: rigil.id })
+    const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -192,7 +193,7 @@ const BlockBid = () => {
         const calldata = encodeFunctionData({
             abi: [abiItem],
             functionName: 'buyAd',
-            args: [(currentRigilBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
+            args: [(currentGoerliBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
         })
 
         // const request = await suaveClient.prepareTransactionRequest({
