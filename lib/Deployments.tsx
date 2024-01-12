@@ -1,7 +1,7 @@
 import { parseAbiItem } from "viem"
 
 export const executionNodeAdd: `0x${string}` = '0x03493869959c866713c33669ca118e774a30a0e5'
-export const suaveContractAddress: `0x${string}` = "0x07e60844bCd83B78b1991A3228E749B09AF9E215"
+export const suaveContractAddress: `0x${string}` = "0xbA1B456C993B5c18DBCC25aBEA7FcCE081EF57a8"
 export const suaveDeployBlock: bigint = BigInt(904301)
 
 export const EventRequestAdded = parseAbiItem('event RequestAdded(uint256 id, string extra, uint256 blockLimit)')
