@@ -8,9 +8,7 @@ import useSuave from "../hooks/useSuave"
 import { goerli } from "viem/chains"
 import Steps from "./Steps"
 import { CustomConnectButton } from "./CustomConnectButton"
-
-const executionNodeAdd: `0x${string}` = '0x03493869959c866713c33669ca118e774a30a0e5'
-const suaveContractAddress: `0x${string}` = "0x07e60844bCd83B78b1991A3228E749B09AF9E215"
+import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
 
 const ellipsis = (str: string) => {
     return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
@@ -43,14 +41,17 @@ const BlockBid = ({
 
     const { suaveClient, rigil } = useSuave()
 
-    useEffect(() => {
-        suaveClient.getLogs({
-            address: suaveContractAddress,
-            event: parseAbiItem('event RequestAdded(uint indexed id, string extra, uint blockLimit)'),
-            fromBlock: BigInt(904301),
-            toBlock: BigInt(904377),
-        }).then((r: any) => console.log("event RequestAdded", r))
-    }, [suaveClient])
+    // useEffect(() => {
+    //     suaveClient.getLogs({
+    //         address: suaveContractAddress,
+    //         event: parseAbiItem('event RequestAdded(uint indexed id, string extra, uint blockLimit)'),
+    //         fromBlock: suaveDeployBlock,
+    //         toBlock: BigInt(10320182),
+    //     }).then((r: any) => {
+    //         console.log("event RequestAdded", r)
+    //         // suaveClient.getTransaction({ hash: r.transactionHash }).then((x: any) => console.log(x))
+    //     })
+    // }, [suaveClient])
 
     // suaveClient.getBlock({
     //     blockHash: "0xbf51327c63fb3c8741d4233ae0315e3e1a74641532f4e59c307f72314a346235"
@@ -103,26 +104,33 @@ const BlockBid = ({
         }
     }, [burnerAccount, walletAddress])
 
-    const publicClient = usePublicClient()
     useEffect(() => {
         suaveClient.getLogs({
             address: suaveContractAddress,
-            event: parseAbiItem('event RequestIncluded(uint indexed id, uint64 egp, string blockHash)'),
-            fromBlock: BigInt(904301),
-            toBlock: BigInt(904377)
+            event: EventRequestIncluded,
+            fromBlock: suaveDeployBlock,
+            // toBlock: BigInt(904377),
+            strict: true
         }).then((r: any) => {
             console.log("event RequestIncluded", r)
-            // r.forEach((x: any) => {
-            //     const blockHash = x.topics[0]
-            //     publicClient.getBlock({
-            //         blockHash: blockHash
-            //     }).then((b: any) => console.log("debug -> getBlock", b)).catch()
-            // })
         }).catch()
-    }, [suaveClient, walletClient])
+    }, [suaveClient])
+
+    useEffect(() => {
+        suaveClient.getLogs({
+            address: suaveContractAddress,
+            event: EventRequestRemoved,
+            fromBlock: suaveDeployBlock,
+            // toBlock: BigInt(904377),
+            strict: true
+        }).then((r: any) => {
+            console.log("event RequestRemoved", r)
+        }).catch()
+    }, [suaveClient])
 
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
-    const { data: currentBlock } = useBlockNumber({ chainId: goerli.id })
+    // const { data: currentRigilBlock } = useBlockNumber({ chainId: rigil.id })
+    const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -138,9 +146,6 @@ const BlockBid = ({
                 account: useBurner ? burnerAccount : walletAddress,
                 to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
                 gasPrice: gasPrice,
-                // maxFeePerGas: parseGwei('6900'), // todo 
-                // maxPriorityFeePerGas: parseGwei('6900'), // todo
-                // value: parseEther(bidAmount.toString()) // todo
             })
 
             // augment with chain id (required)
@@ -195,7 +200,7 @@ const BlockBid = ({
         const calldata = encodeFunctionData({
             abi: [abiItem],
             functionName: 'buyAd',
-            args: [(currentBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
+            args: [(currentGoerliBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
         })
 
         // const request = await suaveClient.prepareTransactionRequest({
@@ -271,7 +276,7 @@ const BlockBid = ({
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                Post a Message
+                Wallets
             </h2>
         </div>
         <div className="px-4 my-2">

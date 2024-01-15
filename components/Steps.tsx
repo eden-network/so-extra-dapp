@@ -21,7 +21,7 @@ const Steps = ({
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                {'Prequisites'}
+                {'Steps'}
             </h2>
         </div>
         <div className="flex flex-col gap-2 p-3 text-sm">
@@ -42,9 +42,13 @@ const Steps = ({
                     <p className="flex-1 font-semibold">
                         Get Goerli ETH
                     </p>
-                    {isGoerliBalance && (
+                    {isGoerliBalance ? (
                         <p className="font-semibold text-fuchsia-500">
                             Completed
+                        </p>
+                    ) : (
+                        <p className="font-semibold text-fuchsia-500">
+                            <a className="text-white underline hover:no-underline" href={`https://goerli-faucet.pk910.de/`} target="_blank">Faucet</a>
                         </p>
                     )}
                 </div>
@@ -54,9 +58,13 @@ const Steps = ({
                     <p className="flex-1 font-semibold">
                         Get Rigil ETH
                     </p>
-                    {isRigilBalance && (
+                    {isRigilBalance ? (
                         <p className="font-semibold text-fuchsia-500">
                             Completed
+                        </p>
+                    ) : (
+                        <p className="font-semibold text-fuchsia-500">
+                            <a className="text-white underline hover:no-underline" href={`https://faucet.rigil.suave.flashbots.net/`} target="_blank">Faucet</a>
                         </p>
                     )}
                 </div>

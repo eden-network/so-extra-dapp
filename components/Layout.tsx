@@ -7,12 +7,7 @@ import LeaderBoard from '../components/LeaderBoard';
 import Image from 'next/image';
 import Faq from '../components/Faq';
 import Onboarding from "./Onboarding";
-import useBurnerWallet from "../hooks/useBurnerWallet"
-import { useAccount, useBalance } from "wagmi";
-import useSuave from "../hooks/useSuave"
-import Steps from "./Steps";
-import Wallets from "./Wallets";
-
+import ActiveBids from "./ActiveBids";
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
@@ -147,6 +142,9 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             </div>
                             <div className="flex-1 w-full">
                                 <LeaderBoard />
+                            </div>
+                            <div className="flex-1 w-full">
+                                <ActiveBids />
                             </div>
                             <div className="flex-1 w-full">
                                 <Faq />
