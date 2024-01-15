@@ -12,8 +12,8 @@ const Steps = ({
     isGoerliBalance: boolean,
     isRigilBalance: boolean,
     isSignedTx: boolean,
-    rigilHash: `0x${string}` | undefined
-    rigilReceipt: TransactionReceipt | undefined
+    rigilHash?: `0x${string}` | undefined
+    rigilReceipt?: TransactionReceipt | undefined
 }) => {
     const isRigilHash = rigilHash !== undefined
     const isMined = rigilReceipt !== undefined
