@@ -12,8 +12,8 @@ const Steps = ({
     isGoerliBalance: boolean,
     isRigilBalance: boolean,
     isSignedTx: boolean,
-    rigilHash: `0x${string}` | undefined
-    rigilReceipt: TransactionReceipt | undefined
+    rigilHash?: `0x${string}` | undefined
+    rigilReceipt?: TransactionReceipt | undefined
 }) => {
     const isRigilHash = rigilHash !== undefined
     const isMined = rigilReceipt !== undefined
@@ -21,7 +21,7 @@ const Steps = ({
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-yellow-300">
-                {'Progress'}
+                {'Prequisites'}
             </h2>
         </div>
         <div className="flex flex-col gap-2 p-3 text-sm">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, hexToString, stringToHex, toHex } from "viem"
 import { useAccount, useBalance, useBlockNumber, usePublicClient, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
@@ -22,8 +22,15 @@ const gasPriceForBidAmount = (bidAmount: number): bigint => {
     return bidAmountBigInt / gasLimit
 }
 
-const BlockBid = () => {
-    const [useBurner, setUseBurner] = useState<boolean>(false)
+const BlockBid = ({
+    useBurner,
+    setUseBurner
+}: {
+    useBurner: boolean,
+    setUseBurner: Dispatch<SetStateAction<boolean>>
+
+}) => {
+    // const [useBurner, setUseBurner] = useState<boolean>(false)
     const [extraData, setExtraData] = useState<string>("So Extra ✨")
     const [bytesLength, setBytesLength] = useState<number>(12)
     const {
@@ -268,64 +275,6 @@ const BlockBid = () => {
             </h2>
         </div>
         <div className="px-4 my-2">
-            <div className="flex flex-col">
-                <p className="text-sm mb-1">Burner wallet</p>
-                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
-                    {/* <p className="">Burner wallet</p> */}
-                    {burnerAccount === undefined ? <button
-                        className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
-                        onClick={handleButtonClickForCreateBurnerWallet.bind(this)}
-                        type="submit"
-                    >
-                        <p className="hidden">Create Burner Wallet</p>
-                    </button> : <>
-                        <p className="flex-1 font-semibold text-xl">
-                            <a href={`https://goerli.etherscan.io/address/${burnerAccount.address}`} target="_blank" className="hover:underline">
-                                {ellipsis(burnerAccount.address)}
-                            </a>
-                        </p>
-                        {useBurner === true ? <p className="flex-0 font-semibold text-base text-fuchsia-500">Active</p> : <button
-                            className="flex-0 text-base underline italic hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
-                            onClick={() => setUseBurner(true)}
-                            disabled={burnerAccount === undefined}
-                        >
-                            {`Switch`}
-                        </button>}
-                    </>}
-                </div>
-                {burnerAccount !== undefined && <p
-                    className="text-xs mb-6"
-                >Balances:
-                    <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
-                    <span>{' '}&bull;{' '}{burnerRigilBalance !== undefined ? `${parseFloat(burnerRigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
-                </p>}
-                <p className="text-sm mb-1">Wallet</p>
-                <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
-                    {/* <p className="">Wallet</p> */}
-                    {walletAddress === undefined ? <CustomConnectButton isSmall={true} /> : <>
-                        <p className="flex-1 font-semibold text-xl">
-                            <a href={`https://goerli.etherscan.io/address/${walletAddress}`} target="_blank" className="hover:underline">
-                                {ellipsis(walletAddress)}
-                            </a>
-                        </p>
-                        {useBurner === false ? <p className="flex-0 font-semibold text-base text-fuchsia-500">Active</p> : <button
-                            className="flex-0 text-base underline italic hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
-                            onClick={() => setUseBurner(false)}
-                            disabled={burnerAccount === undefined}
-                        >
-                            {`Switch`}
-                        </button>}
-                    </>}
-                </div>
-                {walletAddress !== undefined && <p
-                    className="text-xs mb-6"
-                >Balances:
-                    <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
-                    <span>{' '}&bull;{' '}{rigilBalance !== undefined ? `${parseFloat(rigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
-                </p>}
-            </div>
-        </div>
-        <div className="px-4 my-2">
             <label
                 className="font-light text-sm"
                 htmlFor="extra-data"
@@ -341,70 +290,64 @@ const BlockBid = () => {
                 className="text-sm text-right"
             >{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
         </div>
-        <div className="px-4 my-2">
-            <label
-                className="font-light text-sm"
-                htmlFor="bid-amount"
-            >{'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span></label>
-            <input
-                className={`border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20`}
-                id="bid-amount"
-                type="number"
-                value={bidAmount}
-                onChange={handleBidAmountChange.bind(this)}
-            />
-            {useBurner ?
-                (
-                    <p
-                        className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
-                    >Balance:
-                        <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
-                    </p>
-                ) : (
-                    <p
-                        className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
-                    >Balance:
-                        <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
-                    </p>
+        <div className="px-4 flex">
+            <div className="flex flex-col w-1/2">
+                <label
+                    className="font-light text-sm"
+                    htmlFor="bid-amount"
+                >{'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span></label>
+                <input
+                    className={`border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20`}
+                    id="bid-amount"
+                    type="number"
+                    value={bidAmount}
+                    onChange={handleBidAmountChange.bind(this)}
+                />
+                {useBurner ?
+                    (
+                        <p
+                            className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
+                        >Balance:
+                            <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
+                        </p>
+                    ) : (
+                        <p
+                            className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
+                        >Balance:
+                            <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
+                        </p>
+                    )}
+            </div>
+            <div className="pl-2 my-2 text-center items-center flex gap-4 w-1/2">
+                {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
+                    <button
+                        className="px-8 py-1 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
+                        onClick={handleButtonClick}
+                        disabled={signedTx !== undefined || bidAmountError !== undefined}
+                        type="submit"
+                    >
+                        <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
+                    </button>
                 )}
+                {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
+                    <button
+                        className="px-8 py-1 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
+                        onClick={handleButtonClickForSignedTx}
+                        disabled={signedTx === undefined || rigilTxReceipt !== undefined}
+                        type="submit"
+                    >
+                        <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
+                    </button>
+                )}
+            </div>
         </div>
-        <div className="px-4 my-2 text-center space-y-4">
-            {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
-                <button
-                    className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
-                    onClick={handleButtonClick}
-                    disabled={signedTx !== undefined || bidAmountError !== undefined}
-                    type="submit"
-                >
-                    <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
-                </button>
-            )}
-            {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
-                <button
-                    className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
-                    onClick={handleButtonClickForSignedTx}
-                    disabled={signedTx === undefined || rigilTxReceipt !== undefined}
-                    type="submit"
-                >
-                    <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
-                </button>
-            )}
+        <p
+            className="text-right text-white/60 px-6 text-xs"
+        >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
+        {errorMessage &&
             <p
-                className="text-sm"
-            >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
-            {errorMessage &&
-                <p
-                    className="text-sm text-red-400"
-                >Error: {errorMessage}</p>}
-        </div>
-        <Steps
-            isConnected={useBurner ? burnerAccount !== undefined : walletAddress !== undefined}
-            isGoerliBalance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
-            isRigilBalance={useBurner ? (burnerRigilBalance !== undefined && burnerRigilBalance.value > BigInt(0)) : (rigilBalance !== undefined && rigilBalance.value > BigInt(0))}
-            isSignedTx={signedTx !== undefined}
-            rigilHash={rigilTx}
-            rigilReceipt={rigilTxReceipt}
-        />
+                className="text-sm text-red-400"
+            >Error: {errorMessage}</p>}
     </div>
 }
 

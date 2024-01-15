@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
@@ -7,8 +7,36 @@ import LeaderBoard from '../components/LeaderBoard';
 import Image from 'next/image';
 import Faq from '../components/Faq';
 import Onboarding from "./Onboarding";
+import useBurnerWallet from "../hooks/useBurnerWallet"
+import { useAccount, useBalance } from "wagmi";
+import useSuave from "../hooks/useSuave"
+import Steps from "./Steps";
+import Wallets from "./Wallets";
+
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
+    const [useBurner, setUseBurner] = useState<boolean>(false)
+
+    const { suaveClient, rigil } = useSuave()
+
+    const { address: walletAddress } = useAccount()
+
+    const { data: balance } = useBalance({
+        address: walletAddress
+    })
+
+    const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
+
+    const {
+        account: burnerAccount,
+        balance: burnerBalance,
+        rigilBalance: burnerRigilBalance,
+        privateKey: burnerPrivateKey,
+        createBurnerWallet
+    } = useBurnerWallet()
+
+    const [signedTx, setSignedTx] = useState<`0x${string}` | undefined>(undefined)
+
     return (
         <div className="bg-purple-950 text-white bg-[url('/bck.jpg')] min-h-screen">
             <Head>
@@ -76,7 +104,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <div className="flex-1 max-w-sm hidden md:block">
                         <div className="flex flex-col gap-12 items-center">
                             <div className="flex-1 w-full">
-                                <BlockBid />
+                                <Wallets useBurner={useBurner} setUseBurner={setUseBurner} />
+                                <Steps
+                                    isConnected={useBurner ? burnerAccount !== undefined : walletAddress !== undefined}
+                                    isGoerliBalance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
+                                    isRigilBalance={useBurner ? (burnerRigilBalance !== undefined && burnerRigilBalance.value > BigInt(0)) : (rigilBalance !== undefined && rigilBalance.value > BigInt(0))}
+                                    isSignedTx={signedTx !== undefined}
+                                />
                             </div>
                             <div className="flex-1 w-full">
                                 <BurnerWallet />
@@ -99,6 +133,9 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                 </div>
                             </div>
                             <div className="flex-1 w-full">
+                                <div className="flex-1 w-full">
+                                    <BlockBid useBurner={useBurner} setUseBurner={setUseBurner} />
+                                </div>
                                 {children}
                             </div>
                         </div>
