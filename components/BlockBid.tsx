@@ -7,6 +7,7 @@ import useBurnerWallet from "../hooks/useBurnerWallet"
 import useSuave from "../hooks/useSuave"
 import { goerli } from "viem/chains"
 import Steps from "./Steps"
+import { PrivateKeyAccount } from "viem"
 import { CustomConnectButton } from "./CustomConnectButton"
 import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
 
@@ -22,17 +23,20 @@ const gasPriceForBidAmount = (bidAmount: number): bigint => {
 
 const BlockBid = ({
     useBurner,
-    setUseBurner
+    setUseBurner,
+    burnerAccount,
+    walletAddress
 }: {
     useBurner: boolean,
-    setUseBurner: Dispatch<SetStateAction<boolean>>
+    setUseBurner: Dispatch<SetStateAction<boolean>>,
+    burnerAccount: PrivateKeyAccount | undefined,
+    walletAddress: `0x${string}` | undefined
 
 }) => {
     // const [useBurner, setUseBurner] = useState<boolean>(false)
     const [extraData, setExtraData] = useState<string>("So Extra ✨")
     const [bytesLength, setBytesLength] = useState<number>(12)
     const {
-        account: burnerAccount,
         balance: burnerBalance,
         rigilBalance: burnerRigilBalance,
         privateKey: burnerPrivateKey,
@@ -89,7 +93,6 @@ const BlockBid = ({
         setGasPrice(gasPrice)
     }
 
-    const { address: walletAddress } = useAccount()
     const { data: walletClient } = useWalletClient()
 
     useEffect(() => {

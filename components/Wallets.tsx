@@ -72,8 +72,14 @@ const Wallets = ({
                                 {burnerAccount !== undefined && <p
                                     className="flex flex-col text-xs mb-6 mt-2"
                                 >
-                                    <span>goerliETH: {burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`}</span>
-                                    <span>rigilETH: {burnerRigilBalance !== undefined ? `${parseFloat(burnerRigilBalance.formatted).toLocaleString()}` : `-`}</span>
+                                    <div className="flex justify-between mb-1">
+                                        <span>goerliETH: </span>
+                                        <span>{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>rigilETH: </span>
+                                        <span>{burnerRigilBalance !== undefined ? `${parseFloat(burnerRigilBalance.formatted).toLocaleString()}` : `-`}</span>
+                                    </div>
                                 </p>}
                             </div>
                         </>}
@@ -82,26 +88,34 @@ const Wallets = ({
                     <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
                         {/* <p className="">Wallet</p> */}
                         {walletAddress === undefined ? <CustomConnectButton isSmall={true} /> : <>
-                            <p className="flex-1 font-semibold text-xl">
+                            <p className="flex-1 font-semibold text-xl mb-auto">
                                 <a href={`https://goerli.etherscan.io/address/${walletAddress}`} target="_blank" className="hover:underline">
                                     {ellipsis(walletAddress)}
                                 </a>
                             </p>
-                            {useBurner === false ? <p className="flex-0 text-base text-black bg-gray-400 px-6 py-1 rounded-full border border-fuchsia-500">Active</p> : <button
-                                className="flex-0 text-base bg-gray-500 px-6 py-1 rounded-full border border-fuchsia-500 text-black hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
-                                onClick={() => setUseBurner(false)}
-                                disabled={burnerAccount === undefined}
-                            >
-                                {`Switch`}
-                            </button>}
+                            <div>
+                                {useBurner === false ? <p className="flex-0 text-base text-black bg-gray-400 px-6 py-1 rounded-full border border-fuchsia-500">Active</p> : <button
+                                    className="flex-0 text-base bg-gray-500 px-6 py-1 rounded-full border border-fuchsia-500 text-black hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
+                                    onClick={() => setUseBurner(false)}
+                                    disabled={burnerAccount === undefined}
+                                >
+                                    {`Switch`}
+                                </button>}
+                                {walletAddress !== undefined && <p
+                                    className="flex flex-col text-xs mb-6 mt-2"
+                                >
+                                    <div className="flex justify-between mb-1">
+                                        <span>goerliETH: </span>
+                                        <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>rigilETH:</span>
+                                        <span>{rigilBalance !== undefined ? `${parseFloat(rigilBalance.formatted).toLocaleString()}` : `-`}</span>
+                                    </div>
+                                </p>}
+                            </div>
                         </>}
                     </div>
-                    {walletAddress !== undefined && <p
-                        className="text-xs mb-6"
-                    >Balances:
-                        <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
-                        <span>{' '}&bull;{' '}{rigilBalance !== undefined ? `${parseFloat(rigilBalance.formatted).toLocaleString()}` : `-`} rigilETH</span>
-                    </p>}
                 </div>
             </div >
 

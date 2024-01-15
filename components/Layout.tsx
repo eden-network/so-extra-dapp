@@ -134,7 +134,12 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             </div>
                             <div className="flex-1 w-full">
                                 <div className="flex-1 w-full">
-                                    <BlockBid useBurner={useBurner} setUseBurner={setUseBurner} />
+                                    <BlockBid
+                                        useBurner={useBurner}
+                                        setUseBurner={setUseBurner}
+                                        walletAddress={walletAddress}
+                                        burnerAccount={burnerAccount}
+                                    />
                                 </div>
                                 {children}
                             </div>
