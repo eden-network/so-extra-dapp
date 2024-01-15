@@ -8,6 +8,11 @@ import Image from 'next/image';
 import Faq from '../components/Faq';
 import Onboarding from "./Onboarding";
 import ActiveBids from "./ActiveBids";
+import Wallets from "./Wallets";
+import Steps from "./Steps";
+import useSuave from "../hooks/useSuave";
+import useBurnerWallet from "../hooks/useBurnerWallet";
+import { useAccount, useBalance } from "wagmi";
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
