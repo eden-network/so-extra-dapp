@@ -1,7 +1,7 @@
 const Faq = () => {
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
-            <h2 className="text-2xl text-center font-bold text-yellow-300">
+            <h2 className="text-2xl text-center font-bold text-rainbow-yellow">
                 FAQ
             </h2>
         </div>

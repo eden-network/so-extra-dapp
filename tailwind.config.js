@@ -6,7 +6,18 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        rainbow: {
+          orange: "#FF7A00",
+          yellow: "#FFE500",
+          pink: "#F063F9",
+          darkpink: "#C50099",
+          blue: "#2114B5",
+          purple: "#260056"
+        }
+      }
+    },
   },
   plugins: [],
 }

@@ -7,10 +7,10 @@ const LeaderBoard = () => {
     for (const log of logs) {
         postSummary[log.args.extra] = postSummary[log.args.extra] + 1 || 0
     }
-    
+
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
-            <h2 className="text-2xl text-center font-bold text-yellow-300">
+            <h2 className="text-2xl text-center font-bold text-rainbow-yellow">
                 Popular Posts
             </h2>
         </div>
