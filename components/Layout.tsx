@@ -131,7 +131,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         <div className="flex flex-col">
                             <div className="flex-1 w-full mb-6 md:mb-0">
                                 <div className="relative place-content-center">
-                                    <div className="absolute bottom-[-45px] lg:-bottom-[30px] p-5 ">
+                                    <div className="absolute bottom-[-35px] lg:-bottom-[30px] p-5 ">
                                         <Image
                                             src="/so-extra.svg"
                                             alt="So Extra"
