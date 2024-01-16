@@ -9,10 +9,10 @@ const Home: NextPage = () => {
     new rainbowCursor({
       length: 40,
       size: 4,
-      colors: ["rgb(239 68 68)", "rgb(251 146 60)", "rgb(253 224 71)", "rgb(163 230 53)", "rgb(34 211 238)", "rgb(37 99 235)", "rgb(67 56 202)"]
+      colors: ["#FF7A00", "#FFE500", "#F063F9", "#C50099", "#2114B5", "#260056"]
     })
     new fairyDustCursor({
-      colors: ["rgb(239 68 68)", "rgb(251 146 60)", "rgb(253 224 71)", "rgb(163 230 53)", "rgb(34 211 238)", "rgb(37 99 235)", "rgb(67 56 202)"]
+      colors: ["#FF7A00", "#FFE500", "#F063F9", "#C50099", "#2114B5", "#260056"]
     })
     new emojiCursor({ emoji: ["🌈"] });
   }, []);

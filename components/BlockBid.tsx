@@ -25,13 +25,24 @@ const BlockBid = ({
     useBurner,
     setUseBurner,
     burnerAccount,
-    walletAddress
+    walletAddress,
+    signedTx,
+    setSignedTx,
+    rigilTx,
+    setRigilTx,
+    rigilTxReceipt,
+    setRigilTxReceipt
 }: {
     useBurner: boolean,
     setUseBurner: Dispatch<SetStateAction<boolean>>,
     burnerAccount: PrivateKeyAccount | undefined,
-    walletAddress: `0x${string}` | undefined
-
+    walletAddress: `0x${string}` | undefined,
+    signedTx: string | undefined
+    setSignedTx: Dispatch<SetStateAction<string | undefined>>
+    rigilTx: string | undefined,
+    setRigilTx: Dispatch<SetStateAction<string | undefined>>,
+    rigilTxReceipt: TransactionReceipt | undefined,
+    setRigilTxReceipt: Dispatch<SetStateAction<TransactionReceipt | undefined>>
 }) => {
     // const [useBurner, setUseBurner] = useState<boolean>(false)
     const [extraData, setExtraData] = useState<string>("So Extra ✨")
@@ -52,7 +63,7 @@ const BlockBid = ({
     //         fromBlock: suaveDeployBlock,
     //         toBlock: BigInt(10320182),
     //     }).then((r: any) => {
-    //         console.log("event RequestAdded", r)
+    //         ("event RequestAdded", r)
     //         // suaveClient.getTransaction({ hash: r.transactionHash }).then((x: any) => console.log(x))
     //     })
     // }, [suaveClient])
@@ -67,11 +78,10 @@ const BlockBid = ({
     const [bidAmount, setBidAmount] = useState<number>(0.25)
     const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
-    const [signedTx, setSignedTx] = useState<`0x${string}` | undefined>(undefined)
     const [errorMessage, setErrorMessage] = useState<string>()
 
-    const [rigilTx, setRigilTx] = useState<`0x${string}` | undefined>(undefined)
-    const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
+    // const [rigilTx, setRigilTx] = useState<`0x${string}` | undefined>(undefined)
+    // const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 
     useEffect(() => {
         setSignedTx(undefined)
@@ -251,6 +261,7 @@ const BlockBid = ({
         })
         console.log(`rigil receipt`, receipt)
         setRigilTxReceipt(receipt)
+        console.log("rigil receipt", rigilTxReceipt)
     }
 
     const { data: balance } = useBalance({
@@ -276,10 +287,8 @@ const BlockBid = ({
         }
     }, [bidAmount, useBurner, burnerBalance, balance])
 
-    return <div className="flex flex-col pb-3">
-        <div className="pt-2 pb-3">
-        </div>
-        <div className="px-4 my-2">
+    return <div className="flex flex-col py-4 border border-white/10 bg-white/5 backdrop-blur-lg">
+        <div className="relative px-4 my-2">
             <label
                 className="font-light text-sm"
                 htmlFor="extra-data"
@@ -292,8 +301,8 @@ const BlockBid = ({
                 onChange={handleExtraDataChange.bind(this)}
             />
             <p
-                className="text-sm text-right"
-            >{bytesLength} / {MAX_BYTES_LENGTH} bytes</p>
+                className="absolute right-7 bottom-1.5 text-sm text-center text-white/60"
+            >{bytesLength} / {MAX_BYTES_LENGTH}<br /> bytes</p>
         </div>
         <div className="px-4 flex">
             <div className="flex flex-col w-1/2">
@@ -311,22 +320,30 @@ const BlockBid = ({
                 {useBurner ?
                     (
                         <p
-                            className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
+                            className={`text-sm text-right text-white/60 ${bidAmountError === "balance" && `text-red-500`}`}
                         >Balance:
-                            <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerliETH</span>
+                            <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerli ETH</span>
                         </p>
                     ) : (
                         <p
-                            className={`text-sm text-right ${bidAmountError === "balance" && `text-red-500`}`}
+                            className={`text-sm text-right text-white/60 ${bidAmountError === "balance" && `text-red-500`}`}
                         >Balance:
-                            <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerliETH</span>
+                            <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerli ETH</span>
                         </p>
                     )}
             </div>
             <div className="pl-2 my-2 text-center items-center flex gap-4 w-1/2">
-                {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
+                {/* {walletAddress === undefined ? <button>connect to post</button> : <button
+                    className="w-full px-8 py-4 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
+                    onClick={handleButtonClick}
+                    disabled={signedTx !== undefined || bidAmountError !== undefined}
+                    type="submit"
+                >
+                    <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
+                </button>} */}
+                {(useBurner ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
                     <button
-                        className="px-8 py-1 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
+                        className="w-full px-8 py-4 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                         onClick={handleButtonClick}
                         disabled={signedTx !== undefined || bidAmountError !== undefined}
                         type="submit"
@@ -334,7 +351,7 @@ const BlockBid = ({
                         <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
                     </button>
                 )}
-                {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
+                {(useBurner ? burnerAccount !== undefined && signedTx : walletAddress !== undefined && signedTx) && (
                     <button
                         className="px-8 py-1 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                         onClick={handleButtonClickForSignedTx}

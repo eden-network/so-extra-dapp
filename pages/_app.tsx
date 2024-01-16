@@ -6,12 +6,20 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { rigil } from '../hooks/useSuave'
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+
+
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     goerli, rigil
   ],
-  [publicProvider()]
+  [jsonRpcProvider({
+    rpc: () => ({
+      http: `https://ethereum-goerli.publicnode.com`,
+      // webSocket: `wss://ethereum-goerli.publicnode.com`,
+    }),
+  }),]
 );
 
 const { connectors } = getDefaultWallets({

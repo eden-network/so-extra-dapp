@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
@@ -13,6 +13,7 @@ import Steps from "./Steps";
 import useSuave from "../hooks/useSuave";
 import useBurnerWallet from "../hooks/useBurnerWallet";
 import { useAccount, useBalance } from "wagmi";
+import { TransactionReceipt } from "viem";
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
@@ -35,7 +36,16 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         createBurnerWallet
     } = useBurnerWallet()
 
-    const [signedTx, setSignedTx] = useState<`0x${string}` | undefined>(undefined)
+    const [rigilTx, setRigilTx] = useState<string | undefined>(undefined)
+    const [signedTx, setSIgnedTx] = useState<string | undefined>(undefined)
+
+    const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
+    // useEffect(() => {
+    //     console.log("rigiltx", rigilTxReceipt)
+    // }, [rigilTxReceipt])
+    const isSignedTx = useCallback(() => {
+
+    }, [])
 
     return (
         <div className="bg-purple-950 text-white bg-[url('/bck.jpg')] min-h-screen">
@@ -91,14 +101,12 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 </div>
 
                 <div>
-                    <hr className="bg-red-500 w-full h-1 border-0 my-0" />
-                    <hr className="bg-orange-400 w-full h-1 border-0 my-0" />
-                    <hr className="bg-yellow-300 w-full h-1 border-0 my-0" />
-                    <hr className="bg-lime-400 w-full h-1 border-0 my-0" />
-                    <hr className="bg-cyan-400 w-full h-1 border-0 my-0" />
-                    <hr className="bg-blue-600 w-full h-1 border-0 my-0" />
-                    <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
-                </div>
+                    <hr className="bg-rainbow-orange w-full h-1.5 border-0 my-0" />
+                    <hr className="bg-rainbow-yellow w-full h-1.5 border-0 my-0" />
+                    <hr className="bg-rainbow-pink w-full h-1.5 border-0 my-0" />
+                    <hr className="bg-rainbow-darkpink w-full h-1.5 border-0 my-0" />
+                    <hr className="bg-rainbow-blue w-full h-1.5 border-0 my-0" />
+                    <hr className="bg-rainbow-purple w-full h-1.5 border-0 my-0" />                </div>
 
                 <div className="flex flex-row gap-4 justify-center items-start md:p-4 min-h-screen">
                     <div className="flex-1 max-w-sm hidden md:block">
@@ -110,6 +118,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                     isGoerliBalance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
                                     isRigilBalance={useBurner ? (burnerRigilBalance !== undefined && burnerRigilBalance.value > BigInt(0)) : (rigilBalance !== undefined && rigilBalance.value > BigInt(0))}
                                     isSignedTx={signedTx !== undefined}
+                                    rigilHash={rigilTx}
+                                    rigilReceipt={rigilTxReceipt}
                                 />
                             </div>
                             <div className="flex-1 w-full">
@@ -121,24 +131,30 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         <div className="flex flex-col">
                             <div className="flex-1 w-full mb-6 md:mb-0">
                                 <div className="relative place-content-center">
-                                    <div className="absolute -bottom-[45px] lg:-bottom-[30px] p-5">
+                                    <div className="absolute bottom-[-35px] lg:-bottom-[30px] p-5 ">
                                         <Image
-                                            src="/logo.png"
+                                            src="/so-extra.svg"
                                             alt="So Extra"
-                                            width="560"
-                                            height="201"
-                                            className="object-contain h-[150px] w-[560px] mx-auto"
+                                            width="597"
+                                            height="239"
+                                            className="object-contain mx-auto"
                                         />
                                     </div>
                                 </div>
                             </div>
                             <div className="flex-1 w-full">
-                                <div className="flex-1 w-full">
+                                <div className="flex-1 w-full px-6">
                                     <BlockBid
                                         useBurner={useBurner}
                                         setUseBurner={setUseBurner}
                                         walletAddress={walletAddress}
                                         burnerAccount={burnerAccount}
+                                        signedTx={signedTx}
+                                        setSignedTx={setSIgnedTx}
+                                        rigilTx={rigilTx}
+                                        setRigilTx={setRigilTx}
+                                        rigilTxReceipt={rigilTxReceipt}
+                                        setRigilTxReceipt={setRigilTxReceipt}
                                     />
                                 </div>
                                 {children}
