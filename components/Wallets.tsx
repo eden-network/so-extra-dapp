@@ -44,7 +44,7 @@ const Wallets = ({
     return (
         <>
             <div className="px-4 my-2">
-                <h1 className="text-rainbow-yellow font-bold text-2xl text-center">Wallets</h1>
+                <h1 className="text-rainbow-yellow text-2xl text-center text-bold font-modelica-bold">Wallets</h1>
                 <div className="flex flex-col">
                     <p className="text-sm mb-1 text-white/60">Burner wallet</p>
                     <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
@@ -94,8 +94,8 @@ const Wallets = ({
                                 </a>
                             </p>
                             <div>
-                                {useBurner === false ? <p className="flex-0 text-base text-black bg-gray-400 px-6 py-0.5 rounded-full border border-fuchsia-500">Active</p> : <button
-                                    className="flex-0 text-base bg-gray-500 px-6 py-10.5 rounded-full border border-fuchsia-500 text-black hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
+                                {useBurner === false ? <p className="flex-1 text-base text-black bg-gray-400 px-6 py-0.5 rounded-full border border-fuchsia-500">Active</p> : <button
+                                    className="flex-0 text-base bg-gray-500 px-6 py-0.5 rounded-full border border-fuchsia-500 text-black hover:no-underline disabled:text-gray-400 disabled:pointer disabled:underline"
                                     onClick={() => setUseBurner(false)}
                                     disabled={burnerAccount === undefined}
                                 >

@@ -1,4 +1,5 @@
 import { TransactionReceipt } from "viem"
+import { CheckIcon } from "@heroicons/react/24/solid"
 
 const Steps = ({
     isConnected,
@@ -23,32 +24,28 @@ const Steps = ({
 
     return <div className="flex flex-col pb-3">
         <div className="pt-2 pb-3">
-            <h2 className="text-2xl text-center font-bold text-rainbow-yellow">
+            <h2 className="text-2xl text-center font-bold text-rainbow-yellow font-modelica-bold">
                 {'Prequisites'}
             </h2>
         </div>
         <div className="flex flex-col gap-2 p-3 text-sm">
-            <div className="border border-white/10 rounded-sm w-full bg-white/5 backdrop-blur-lg">
+            <div className={`border ${isConnected ? "border-fuchsia-500" : "border-white/10"} rounded-sm w-full bg-white/5 backdrop-blur-lg`}>
                 <div className="flex p-4">
                     <p className="flex-1 font-semibold">
                         Connect Wallet
                     </p>
                     {isConnected && (
-                        <p className="font-semibold text-fuchsia-500">
-                            Completed
-                        </p>
+                        <CheckIcon className="w-5 h-5 text-fuchsia-500" />
                     )}
                 </div>
             </div>
-            <div className="border border-white/10 rounded-sm w-full bg-white/5 backdrop-blur-lg">
+            <div className={`${isGoerliBalance ? "border-fuchsia-500" : "border-white/10"} border rounded-sm w-full bg-white/5 backdrop-blur-lg`}>
                 <div className="flex p-4">
                     <p className="flex-1 font-semibold">
                         Get Goerli ETH
                     </p>
                     {isGoerliBalance ? (
-                        <p className="font-semibold text-fuchsia-500">
-                            Completed
-                        </p>
+                        <CheckIcon className="w-5 h-5 text-fuchsia-500" />
                     ) : (
                         <p className="font-semibold text-fuchsia-500">
                             <a className="text-white underline hover:no-underline" href={`https://goerli-faucet.pk910.de/`} target="_blank">Faucet</a>
@@ -56,15 +53,13 @@ const Steps = ({
                     )}
                 </div>
             </div>
-            <div className="border border-white/10 rounded-sm w-full bg-white/5 backdrop-blur-lg">
+            <div className={`${isRigilBalance ? "border-fuchsia-500" : "border-white/10"} border rounded-sm w-full bg-white/5 backdrop-blur-lg`}>
                 <div className="flex p-4">
                     <p className="flex-1 font-semibold">
                         Get Rigil ETH
                     </p>
                     {isRigilBalance ? (
-                        <p className="font-semibold text-fuchsia-500">
-                            Completed
-                        </p>
+                        <CheckIcon className="w-5 h-5 text-fuchsia-500" />
                     ) : (
                         <p className="font-semibold text-fuchsia-500">
                             <a className="text-white underline hover:no-underline" href={`https://faucet.rigil.suave.flashbots.net/`} target="_blank">Faucet</a>
@@ -72,15 +67,13 @@ const Steps = ({
                     )}
                 </div>
             </div>
-            <div className="border border-white/10 rounded-sm w-full bg-white/5 backdrop-blur-lg">
+            <div className={`${isSignedTx ? "border-fuchsia-500" : "border-white/10"} border rounded-sm w-full bg-white/5 backdrop-blur-lg`}>
                 <div className="flex p-4">
                     <p className="flex-1 font-semibold">
                         Sign Bid (Goerli)
                     </p>
                     {isSignedTx && (
-                        <p className="font-semibold text-fuchsia-500">
-                            Completed
-                        </p>
+                        <CheckIcon className="w-5 h-5 text-fuchsia-500" />
                     )}
                 </div>
             </div>

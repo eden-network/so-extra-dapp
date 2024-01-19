@@ -18,3 +18,26 @@ a {
 * {
   box-sizing: border-box;
 }
+
+@font-face {
+  font-family: 'Modelica';
+  src: url('../public/fonts/modelica/woff2/BwModelica-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Modelica-Bold';
+  src: url('../public/fonts/modelica/woff2/BwModelica-Bold.woff2') format('woff2');
+  font-weight: 700;
+  /* Adjust the font weight as needed */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Modelica-Medium';
+  src: url('../public/fonts/modelica/woff2/BwModelica-Medium.woff2') format('woff2');
+  font-weight: 700;
+  /* Adjust the font weight as needed */
+  font-style: normal;
+}
