@@ -10,6 +10,7 @@ import Steps from "./Steps"
 import { PrivateKeyAccount } from "viem"
 import { CustomConnectButton } from "./CustomConnectButton"
 import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
+import Image from "next/image"
 
 const ellipsis = (str: string) => {
     return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
@@ -44,7 +45,6 @@ const BlockBid = ({
     rigilTxReceipt: TransactionReceipt | undefined,
     setRigilTxReceipt: Dispatch<SetStateAction<TransactionReceipt | undefined>>
 }) => {
-    // const [useBurner, setUseBurner] = useState<boolean>(false)
     const [extraData, setExtraData] = useState<string>("So Extra ✨")
     const [bytesLength, setBytesLength] = useState<number>(12)
     const {
@@ -144,6 +144,7 @@ const BlockBid = ({
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
     // const { data: currentRigilBlock } = useBlockNumber({ chainId: rigil.id })
     const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
+
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -287,14 +288,14 @@ const BlockBid = ({
         }
     }, [bidAmount, useBurner, burnerBalance, balance])
 
-    return <div className="flex flex-col py-4 border border-white/10 bg-white/5 backdrop-blur-lg">
+    return <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
         <div className="relative px-4 my-2">
             <label
                 className="font-light text-sm"
                 htmlFor="extra-data"
             >{'Message'}<span className="text-white/70">{' '}&bull;{' '}Public Data</span></label>
             <input
-                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20 font-modelica-medium"
                 id="extra-data"
                 type="text"
                 value={extraData}
@@ -310,14 +311,17 @@ const BlockBid = ({
                     className="font-light text-sm"
                     htmlFor="bid-amount"
                 >{'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span></label>
-                <input
-                    className={`border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20`}
-                    id="bid-amount"
-                    type="number"
-                    value={bidAmount}
-                    onChange={handleBidAmountChange.bind(this)}
-                />
-                {useBurner ?
+                <div className="relative">
+                    <input
+                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20 font-modelica-medium`}
+                        id="bid-amount"
+                        type="number"
+                        value={bidAmount}
+                        onChange={handleBidAmountChange.bind(this)}
+                    />
+                    <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-1.5" />
+                </div>
+                {/* {useBurner ?
                     (
                         <p
                             className={`text-sm text-right text-white/60 ${bidAmountError === "balance" && `text-red-500`}`}
@@ -330,9 +334,9 @@ const BlockBid = ({
                         >Balance:
                             <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerli ETH</span>
                         </p>
-                    )}
+                    )} */}
             </div>
-            <div className="pl-2 my-2 text-center items-center flex gap-4 w-1/2">
+            <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
                 {/* {walletAddress === undefined ? <button>connect to post</button> : <button
                     className="w-full px-8 py-4 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                     onClick={handleButtonClick}
@@ -363,13 +367,13 @@ const BlockBid = ({
                 )}
             </div>
         </div>
-        <p
+        {/* <p
             className="text-right text-white/60 px-6 text-xs"
         >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
         {errorMessage &&
             <p
                 className="text-sm text-red-400"
-            >Error: {errorMessage}</p>}
+            >Error: {errorMessage}</p>} */}
     </div>
 }
 

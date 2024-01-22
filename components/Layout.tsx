@@ -14,6 +14,11 @@ import useSuave from "../hooks/useSuave";
 import useBurnerWallet from "../hooks/useBurnerWallet";
 import { useAccount, useBalance } from "wagmi";
 import { TransactionReceipt } from "viem";
+import { useRouter } from "next/router";
+import Modal from "./Modal";
+import HelpModal from "./HelpModal";
+import localFont from 'next/font/local'
+const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Regular.woff2' })
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
@@ -36,6 +41,12 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         createBurnerWallet
     } = useBurnerWallet()
 
+    const [showModal, setShowModal] = useState<boolean>(false);
+
+    function toggleModal() {
+        setShowModal(!showModal);
+    }
+
     const [rigilTx, setRigilTx] = useState<string | undefined>(undefined)
     const [signedTx, setSIgnedTx] = useState<string | undefined>(undefined)
 
@@ -47,8 +58,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
 
     }, [])
 
+    const router = useRouter();
+    const isHomePage = router.route === '/';
+
     return (
-        <div className="bg-purple-950 text-white bg-[url('/bck.jpg')] min-h-screen">
+        <div className={`${Modelica.className} bg-purple-950 text-white bg-[url('/bck.jpg')] min-h-screen`}>
             <Head>
                 <title>So Extra</title>
                 <meta
@@ -70,32 +84,36 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <link href="/favicon.ico" rel="icon" />
                 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
-
             <main>
                 <div className="w-full flex flex-row gap-4 justify-between items-end mb-0 pt-3 px-4">
                     <div className="flex-1 max-w-sm hidden md:block -mb-[30px]">
                         {/* <div className="flex place-content-end"> */}
                         {/* <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" /> */}
                         {/* <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" /> */}
-                        <Image src="/c.png" alt="So Extra" width="282" height="230" className="hover:animate-bounce" />
+                        <Image src="/c.png" alt="So Extra" width="800" height="230" className="hover:animate-bounce" />
                         {/* </div> */}
                     </div>
                     <div className="flex-1 max-w-2xl justify-center h-[110px]">
-                        {/* <div className="place-content-center">
+                        <div className="place-content-center">
                             <div className="-mb-[80px] md:-mb-[0px] h-[100px]">
                                 <Image
-                                    src="/logo.png"
-                                    alt="So Extra"
-                                    width="560"
+                                    onClick={toggleModal}
+                                    src="/help.svg"
+                                    alt="help"
+                                    width="100"
                                     height="201"
-                                    className="object-contain h-[150px] w-[560px] mx-auto"
+                                    className="hidden md:flex absolute cursor-pointer right-0 top-2 object-contain mx-auto"
                                 />
+                                <HelpModal showModal={showModal} toggleModal={toggleModal} />
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
+                        {/* <div className="absolute z-0 flex-1 w-full top-0 ml-16">
+                            <LeaderBoard />
+                        </div> */}
                         <div className="flex place-content-end">
-                            <ConnectButton />
+                            <ConnectButton chainStatus={"none"} />
                         </div>
                     </div>
                 </div>
@@ -106,7 +124,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <hr className="bg-rainbow-pink w-full h-1.5 border-0 my-0" />
                     <hr className="bg-rainbow-darkpink w-full h-1.5 border-0 my-0" />
                     <hr className="bg-rainbow-blue w-full h-1.5 border-0 my-0" />
-                    <hr className="bg-rainbow-purple w-full h-1.5 border-0 my-0" />                </div>
+                    <hr className="bg-rainbow-purple w-full h-1.5 border-0 my-0" />
+                </div>
 
                 <div className="flex flex-row gap-4 justify-center items-start md:p-4 min-h-screen">
                     <div className="flex-1 max-w-sm hidden md:block">
@@ -143,8 +162,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                 </div>
                             </div>
                             <div className="flex-1 w-full">
-                                <div className="flex-1 w-full px-6">
-                                    <BlockBid
+                                <div className="flex-1 w-full md:px-6">
+                                    {isHomePage ? <BlockBid
                                         useBurner={useBurner}
                                         setUseBurner={setUseBurner}
                                         walletAddress={walletAddress}
@@ -155,19 +174,17 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                         setRigilTx={setRigilTx}
                                         rigilTxReceipt={rigilTxReceipt}
                                         setRigilTxReceipt={setRigilTxReceipt}
-                                    />
+                                    /> : null}
+
                                 </div>
                                 {children}
                             </div>
                         </div>
                     </div>
                     <div className="flex-1 max-w-sm hidden md:block">
-                        <div className="flex flex-col gap-12">
+                        < div className="flex flex-col gap-12">
                             <div className="flex-1 w-full">
                                 <Onboarding />
-                            </div>
-                            <div className="flex-1 w-full">
-                                <LeaderBoard />
                             </div>
                             <div className="flex-1 w-full">
                                 <ActiveBids />
@@ -175,26 +192,24 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             <div className="flex-1 w-full">
                                 <Faq />
                             </div>
-                        </div>
+                        </ div>
+                    </ div>
+                    <div>
+                        <hr className="bg-red-500 w-full h-1 border-0 my-0" />
+                        <hr className="bg-orange-400 w-full h-1 border-0 my-0" />
+                        <hr className="bg-yellow-300 w-full h-1 border-0 my-0" />
+                        <hr className="bg-lime-400 w-full h-1 border-0 my-0" />
+                        <hr className="bg-cyan-400 w-full h-1 border-0 my-0" />
+                        <hr className="bg-blue-600 w-full h-1 border-0 my-0" />
+                        <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
                     </div>
                 </div>
+                <footer className="p-6 text-center">
+                    <a href="https://twitter.com/MihaLotric" rel="noopener noreferrer" target="_blank">
+                        @MihaLotric
+                    </a>
+                </footer>
             </main>
-
-            <div>
-                <hr className="bg-red-500 w-full h-1 border-0 my-0" />
-                <hr className="bg-orange-400 w-full h-1 border-0 my-0" />
-                <hr className="bg-yellow-300 w-full h-1 border-0 my-0" />
-                <hr className="bg-lime-400 w-full h-1 border-0 my-0" />
-                <hr className="bg-cyan-400 w-full h-1 border-0 my-0" />
-                <hr className="bg-blue-600 w-full h-1 border-0 my-0" />
-                <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
-            </div>
-
-            <footer className="p-6 text-center">
-                <a href="https://twitter.com/MihaLotric" rel="noopener noreferrer" target="_blank">
-                    @MihaLotric
-                </a>
-            </footer>
         </div>
     )
 }

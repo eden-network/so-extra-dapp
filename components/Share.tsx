@@ -1,6 +1,7 @@
 import { getTwitterUrl } from "@phntms/react-share";
 import React from "react";
 import { SocialIcon } from 'react-social-icons'
+import Image from "next/image";
 
 const Share = ({
     url,
@@ -15,7 +16,7 @@ const Share = ({
     return (
         <>
             <a target="_blank"
-                className="absolute right-2 top-2 text-xs bg-transparent text-white rounded border border-[#ff69f9] px-2 py-1"
+                className="lg:flex gap-2 right-2 top-2 text-xs text-white/60 px-2 py-1"
                 href={getTwitterUrl({
                     url: url,
                     text: `I just build block number: ${blockNumber} and added:${extraData} `,
@@ -23,8 +24,10 @@ const Share = ({
                     related: 'eden network'
                 })}
             >
-                {/* <SocialIcon network="twitter" fgColor="#009f7d" bgColor="#ffff" style={{ width: '40px' }} /> */}
-                Share on Twitter
+                <div className="w-full flex justify-center">
+                    <Image src="/share_icon.svg" width="15" height="20" alt="tx_icon" />
+                </div>
+                Share
             </a>
         </>
     )

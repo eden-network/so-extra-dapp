@@ -10,7 +10,7 @@ const Onboarding = () => {
                     <button className="underline italic hover:no-underline text-sm" onClick={() => setDisplayOnboarding(false)}>Close section</button>
                 </div>
                 <div className="p-3">
-                    <h2 className="text-2xl text-center font-bold text-rainbow-yellow">
+                    <h2 className="text-2xl text-center font-bold text-rainbow-yellow font-modelica-bold">
                         Welcome to the show!
                     </h2>
                 </div>
