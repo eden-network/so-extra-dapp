@@ -14,12 +14,16 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     goerli, rigil
   ],
-  [jsonRpcProvider({
-    rpc: () => ({
-      http: `https://ethereum-goerli.publicnode.com`,
-      // webSocket: `wss://ethereum-goerli.publicnode.com`,
-    }),
-  }),]
+  [
+    // jsonRpcProvider({
+    //   rpc: () => ({
+
+    //     http: `https://ethereum-goerli.publicnode.com`,
+    //     // webSocket: `wss://ethereum-goerli.publicnode.com`,
+    //   }),
+    // }),
+    publicProvider()
+  ]
 );
 
 const { connectors } = getDefaultWallets({

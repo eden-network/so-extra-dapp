@@ -12,10 +12,12 @@ import Image from "next/image";
 const BlockDetails = (
     {
         blockNumber,
-        shareUrl
+        shareUrl,
+        index
     }: {
         blockNumber: bigint | undefined,
-        shareUrl: string
+        shareUrl: string,
+        index: number
     }
 ) => {
     const router = useRouter();
@@ -41,20 +43,24 @@ const BlockDetails = (
 
     const blockCard =
         <div className="flex flex-row gap-4 items-start">
-            <div className="bg-green-500 w-16 h-16 rounded-md"></div>
-            <div className="w-full">
+            <div className="flex m-auto">
+                <Image src={`/blockdetails/blockdetails-${index}.svg`} width={100} height={50} alt="blockdetails_symbol" />
+            </div>
+            <div className="w-full flex flex-col justify-between gap-6">
                 <div>
-                    <p className="text-xs mb-2 text-white/70">
+                    <p className="text-xs text-white/70">
                         {blockHash && <span className="text-white">{ellipsis(blockHash)}</span>}
                         <span className="pl-6">Block: {blockNumber.toLocaleString()}</span>
                         {blockTimestamp && (<span> &bull; <TimeAgo date={blockTimestamp} /></span>)}
                     </p>
-                    <p className={`${!didContentReveal && "bg-black rounded"} text-lg mb-6 font-semibold text-white`}>
+                </div>
+                <div>
+                    <p className={`${!didContentReveal && "bg-black rounded"} text-lg font-semibold text-white`}>
                         {isLoading && `Loading...`}
                         {didContentReveal && extraData}&nbsp;
                     </p>
                 </div>
-                <div className="flex justify-between items-center text-xs text-white/60">
+                <div className="flex justify-start gap-14 items-center text-xs text-white/60">
                     <div className="flex gap-2">
                         <Image src="/tx_icon.svg" width="15" height="20" alt="tx_icon" />
                         <p>TX {data !== undefined && data.transactions.length}</p>

@@ -15,8 +15,9 @@ import useBurnerWallet from "../hooks/useBurnerWallet";
 import { useAccount, useBalance } from "wagmi";
 import { TransactionReceipt } from "viem";
 import { useRouter } from "next/router";
-import Modal from "./Modal";
-import HelpModal from "./HelpModal";
+import Modal from "./Modal/Modal";
+import HelpModal from "./Modal/HelpModal";
+import WinModal from "./Modal/WinModal";
 import localFont from 'next/font/local'
 const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Regular.woff2' })
 
@@ -41,10 +42,15 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         createBurnerWallet
     } = useBurnerWallet()
 
-    const [showModal, setShowModal] = useState<boolean>(false);
+    const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
+    const [showWinModal, setShowWinModal] = useState<boolean>(false);
 
-    function toggleModal() {
-        setShowModal(!showModal);
+    function toggleHelpModal() {
+        setShowHelpModal(!showHelpModal);
+    }
+
+    function toggleWinModal() {
+        setShowWinModal(!showWinModal);
     }
 
     const [rigilTx, setRigilTx] = useState<string | undefined>(undefined)
@@ -62,9 +68,9 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
     const isHomePage = router.route === '/';
 
     return (
-        <div className={`${Modelica.className} bg-purple-950 text-white bg-[url('/bck.jpg')] min-h-screen`}>
+        <div className={`${Modelica.className} bg-stone-800 bg-[url('/bck.jpg')] text-white min-h-screen`}>
             <Head>
-                <title>So Extra</title>
+                <title>So Extra | Data Auction on SUAVE</title>
                 <meta
                     name="description"
                     content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
@@ -81,39 +87,40 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:site" content="so-extra" />
-                <link href="/favicon.ico" rel="icon" />
+                <link rel="icon" type="image/png" href="/f64.png" />
                 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
             <main>
-                <div className="w-full flex flex-row gap-4 justify-between items-end mb-0 pt-3 px-4">
+                <div className="w-full flex flex-row gap-4 justify-between items-end mb-0 pt-16 px-4">
                     <div className="flex-1 max-w-sm hidden md:block -mb-[30px]">
                         {/* <div className="flex place-content-end"> */}
                         {/* <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" /> */}
                         {/* <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" /> */}
-                        <Image src="/c.png" alt="So Extra" width="800" height="230" className="hover:animate-bounce" />
+                        {/* <Image onClick={toggleWinModal} src="/flashbot-eden.svg" alt="So Extra" width="500" height="230" />
+                        <WinModal showModal={showWinModal} toggleModal={toggleWinModal} /> */}
                         {/* </div> */}
                     </div>
                     <div className="flex-1 max-w-2xl justify-center h-[110px]">
                         <div className="place-content-center">
                             <div className="-mb-[80px] md:-mb-[0px] h-[100px]">
                                 <Image
-                                    onClick={toggleModal}
+                                    onClick={toggleHelpModal}
                                     src="/help.svg"
                                     alt="help"
                                     width="100"
                                     height="201"
                                     className="hidden md:flex absolute cursor-pointer right-0 top-2 object-contain mx-auto"
                                 />
-                                <HelpModal showModal={showModal} toggleModal={toggleModal} />
+                                <HelpModal showModal={showHelpModal} toggleModal={toggleHelpModal} />
                             </div>
                         </div>
                     </div>
                     <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
-                        {/* <div className="absolute z-0 flex-1 w-full top-0 ml-16">
+                        {/* <div className="absolute z-0 flex-1 w-fit top-0">
                             <LeaderBoard />
                         </div> */}
                         <div className="flex place-content-end">
-                            <ConnectButton chainStatus={"none"} />
+                            <ConnectButton />
                         </div>
                     </div>
                 </div>
@@ -127,10 +134,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <hr className="bg-rainbow-purple w-full h-1.5 border-0 my-0" />
                 </div>
 
-                <div className="flex flex-row gap-4 justify-center items-start md:p-4 min-h-screen">
-                    <div className="flex-1 max-w-sm hidden md:block">
+                <div className="flex flex-row lg:gap-4 justify-center items-start md:p-4 min-h-screen">
+                    <div className="flex-1 max-w-sm hidden md:block z-10">
                         <div className="flex flex-col gap-12 items-center">
-                            <div className="flex-1 w-full">
+                            <div className="flex-1 w-full relative">
+                                <Image className="absolute top-[-280px] min-h-[300px]" onClick={toggleWinModal} src="/flashbot-eden.svg" alt="So Extra" width="500" height="230" />
                                 <Wallets useBurner={useBurner} setUseBurner={setUseBurner} />
                                 <Steps
                                     isConnected={useBurner ? burnerAccount !== undefined : walletAddress !== undefined}
@@ -141,27 +149,27 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                     rigilReceipt={rigilTxReceipt}
                                 />
                             </div>
-                            <div className="flex-1 w-full">
+                            {/* <div className="flex-1 w-full">
                                 <BurnerWallet />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="flex-1 max-w-2xl justify-center">
                         <div className="flex flex-col">
                             <div className="flex-1 w-full mb-6 md:mb-0">
                                 <div className="relative place-content-center">
-                                    <div className="absolute bottom-[-35px] lg:-bottom-[30px] p-5 ">
+                                    <div className="flex absolute bottom-[-35px] lg:-bottom-[30px] p-5 z-10">
                                         <Image
                                             src="/so-extra.svg"
                                             alt="So Extra"
                                             width="597"
                                             height="239"
-                                            className="object-contain mx-auto"
+                                            className="object-contain mx-auto z-10"
                                         />
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 w-full">
+                            <div className="flex-1 w-full z-10">
                                 <div className="flex-1 w-full md:px-6">
                                     {isHomePage ? <BlockBid
                                         useBurner={useBurner}
@@ -181,17 +189,18 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 max-w-sm hidden md:block">
-                        < div className="flex flex-col gap-12">
+                    <div className="flex-1 max-w-sm hidden md:block z-10">
+                        <div className="flex flex-col gap-4">
                             <div className="flex-1 w-full">
-                                <Onboarding />
+                                <Onboarding toggleHelpModal={toggleHelpModal} />
                             </div>
                             <div className="flex-1 w-full">
+                                <LeaderBoard />
                                 <ActiveBids />
                             </div>
-                            <div className="flex-1 w-full">
+                            {/* <div className="flex-1 w-full">
                                 <Faq />
-                            </div>
+                            </div> */}
                         </ div>
                     </ div>
                     <div>

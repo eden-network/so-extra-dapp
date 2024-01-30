@@ -21,8 +21,10 @@ const Steps = ({
 
     console.log("status", rigilReceipt?.status);
 
+    const allCompleted: boolean = isConnected && isGoerliBalance && isRigilBalance && isSignedTx && rigilReceipt ? true : false
 
-    return <div className="flex flex-col pb-3">
+
+    return <div className={`${allCompleted ? "hidden" : "flex"} flex flex-col pb-3`}>
         <div className="pt-2 pb-3">
             <h2 className="text-2xl text-center font-bold text-rainbow-yellow font-modelica-bold">
                 {'Prequisites'}
@@ -77,7 +79,7 @@ const Steps = ({
                     )}
                 </div>
             </div>
-            <div className="border border-white/10 rounded-sm w-full bg-white/5 backdrop-blur-lg">
+            <div className={`${isRigilHash && rigilReceipt?.status === "success" ? "border-fuchsia-500" : "border-white/10"} border rounded-sm w-full bg-white/5 backdrop-blur-lg`}>
                 <div className="flex p-4">
                     <p className="flex-1 font-semibold">
                         Submit SUAVE CCR (Rigil)
