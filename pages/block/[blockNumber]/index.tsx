@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ParsedUrlQuery } from "querystring";
 import BlockDetails from "../../../components/BlockDetails";
 import Layout from "../../../components/Layout";
+import { randomInt } from "crypto";
 
 interface Params extends ParsedUrlQuery {
     blockNumber: string,
@@ -31,7 +32,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (context) => 
 }
 
 
-
+const rndInt = Math.floor(Math.random() * 40) + 1
 
 const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof getStaticProps>) => {
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -48,7 +49,7 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
         </Head>
         <div className="flex flex-col pb-3">
             <div className="flex flex-col px-6 py-3 gap-6">
-                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} />}
+                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} index={rndInt} />}
                 <div className="w-full text-center">
                     <Link href="/">
                         <button

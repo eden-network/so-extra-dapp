@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
+import Image from "next/image"
 
 const BurnerWallet = () => {
     const { address: walletAddress } = useAccount()
@@ -51,86 +52,47 @@ const BurnerWallet = () => {
         catch { }
     }
 
-    return <div className="flex flex-col pb-3">
-        <div className="pt-2 pb-3">
-            <h2 className="text-2xl text-center font-bold text-rainbow-yellow font-modelica-bold">
-                My Burner Wallet
-            </h2>
-        </div>
+    const [isHovered, setIsHovered] = useState<boolean>(false)
+
+    return <div className="flex items-center pb-3">
         {displayOnboarding ? <>
-            <div className="flex flex-col gap-2 p-3">
-                <p className="text-sm">
-                    For this demo, the best UX we can think of is a burner wallet.
-                    If you are not already familiar with burner wallets, you can create and use a temporary wallet from your browser window.
-                </p>
-                <p className="text-sm">
-                    You will need to fund the burner wallet with a small amount and use it for the demo.
-                    If you want to recover your funds, you will be able to do so.
-                </p>
-            </div>
-            <div className="px-4 my-2 text-center">
-                {/* <button
-                className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black"
-                onClick={handleButtonClick}
-                type="submit"
-            >
-                <div className="flex flex-row items-center justify-center">
-                    <p className="font-light">Create My Burner Wallet</p>
-                </div>
-            </button> */}
-                <button
-                    className="w-[263px] h-[44px] rounded-full bg-[url('/create-button.png')] disabled:bg-[url('/create-button-disabled.png')] hover:bg-[url('/create-button-hover.png')]"
-                    onClick={handleButtonClick}
-                    type="submit"
-                >
-                    <p className="hidden">Create Burner Wallet</p>
-                </button>
-            </div>
+
         </> : <>
-            <div className="px-4 my-2">
+            <div className="flex flex-col text-left px-4 my-2">
                 <label
-                    className="font-light"
-                    htmlFor="burner-address"
-                >Burner Address</label>
-                <input
-                    className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
-                    id="burner-address"
-                    type="text"
-                    value={account?.address}
-                />
-                <p
-                    className="text-sm text-right"
-                >Burner Balance: {balance !== undefined ? `${balance.formatted}` : `-`} goerliETH</p>
-            </div>
-            <div className="px-4 my-2">
-                <label
-                    className="font-light"
+                    className="font-light mb-1"
                     htmlFor="deposit-amount"
                 >Deposit Amount</label>
-                <input
-                    className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
-                    id="deposit-amount"
-                    type="text"
-                    value={depositAmount}
-                    onChange={handleDepositAmountChange.bind(this)}
-                />
-                <p
-                    className="text-sm text-right"
-                >Wallet Balance: {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} goerliETH</p>
+                <div className="relative">
+                    <input
+                        className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
+                        id="deposit-amount"
+                        type="text"
+                        value={depositAmount}
+                        onChange={handleDepositAmountChange.bind(this)}
+                    />
+                    <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-1.5" />
+                </div>
+                <div className="flex justify-between mt-1">
+                    <p className="text-xs text-left">Metamask:</p>
+                    <p> {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} goerliETH</p>
+                </div>
             </div>
-            <div className="px-4 my-2 text-center">
+            <div className="my-2 text-center relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
                 <button
-                    className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black shadow-xl shadow-indigo-950/40 hover:shadow-none"
+                    className="bg-[url('/fund-burner.svg')] w-[249px] h-[63px]"
                     onClick={handleFundButtonClick}
                     type="submit"
-                >
-                    <div className="flex flex-row items-center justify-center">
-                        <p className="font-semibold">Fund My Burner Wallet</p>
-                    </div>
-                </button>
+                />
+                <button
+                    className={`${isHovered ? "flex" : "hidden"} w-[249px] h-[63px] bg-[url('/fund-burner-hover.svg')] absolute left-0 top-0`}
+                    onClick={handleFundButtonClick}
+                    type="submit"
+                />
             </div>
-        </>}
-    </div>
+        </>
+        }
+    </div >
 }
 
 export default BurnerWallet

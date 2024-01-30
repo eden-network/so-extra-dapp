@@ -1,20 +1,14 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, hexToString, stringToHex, toHex } from "viem"
-import { useAccount, useBalance, useBlockNumber, usePublicClient, useWalletClient } from "wagmi"
+import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt } from "viem"
+import { useBalance, useBlockNumber, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import useSuave from "../hooks/useSuave"
 import { goerli } from "viem/chains"
-import Steps from "./Steps"
 import { PrivateKeyAccount } from "viem"
-import { CustomConnectButton } from "./CustomConnectButton"
 import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
 import Image from "next/image"
-
-const ellipsis = (str: string) => {
-    return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
-}
 
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
@@ -49,28 +43,10 @@ const BlockBid = ({
     const [bytesLength, setBytesLength] = useState<number>(12)
     const {
         balance: burnerBalance,
-        rigilBalance: burnerRigilBalance,
         privateKey: burnerPrivateKey,
-        createBurnerWallet
     } = useBurnerWallet()
 
     const { suaveClient, rigil } = useSuave()
-
-    // useEffect(() => {
-    //     suaveClient.getLogs({
-    //         address: suaveContractAddress,
-    //         event: parseAbiItem('event RequestAdded(uint indexed id, string extra, uint blockLimit)'),
-    //         fromBlock: suaveDeployBlock,
-    //         toBlock: BigInt(10320182),
-    //     }).then((r: any) => {
-    //         ("event RequestAdded", r)
-    //         // suaveClient.getTransaction({ hash: r.transactionHash }).then((x: any) => console.log(x))
-    //     })
-    // }, [suaveClient])
-
-    // suaveClient.getBlock({
-    //     blockHash: "0xbf51327c63fb3c8741d4233ae0315e3e1a74641532f4e59c307f72314a346235"
-    // }).then((r: any) => console.log("debug", r))
 
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
@@ -79,9 +55,6 @@ const BlockBid = ({
     const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
     const [errorMessage, setErrorMessage] = useState<string>()
-
-    // const [rigilTx, setRigilTx] = useState<`0x${string}` | undefined>(undefined)
-    // const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 
     useEffect(() => {
         setSignedTx(undefined)
@@ -122,10 +95,8 @@ const BlockBid = ({
             address: suaveContractAddress,
             event: EventRequestIncluded,
             fromBlock: suaveDeployBlock,
-            // toBlock: BigInt(904377),
             strict: true
         }).then((r: any) => {
-            console.log("event RequestIncluded", r)
         }).catch()
     }, [suaveClient])
 
@@ -134,7 +105,6 @@ const BlockBid = ({
             address: suaveContractAddress,
             event: EventRequestRemoved,
             fromBlock: suaveDeployBlock,
-            // toBlock: BigInt(904377),
             strict: true
         }).then((r: any) => {
             console.log("event RequestRemoved", r)
@@ -142,9 +112,7 @@ const BlockBid = ({
     }, [suaveClient])
 
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
-    // const { data: currentRigilBlock } = useBlockNumber({ chainId: rigil.id })
     const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
-
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -162,6 +130,9 @@ const BlockBid = ({
                 gasPrice: gasPrice,
             })
 
+            console.log('gas', gasPrice);
+
+
             // augment with chain id (required)
             const augmentedTx = { ...request, chainId: goerli.id }
             const serialized = serializeTransaction(augmentedTx)
@@ -173,6 +144,7 @@ const BlockBid = ({
             try {
                 let serializedSignedTx;
                 if (useBurner) {
+                    console.log('here');
                     serializedSignedTx = await burnerAccount?.signTransaction(augmentedTx)
                 }
                 else {
@@ -197,11 +169,6 @@ const BlockBid = ({
         }
     }
 
-    const handleButtonClickForCreateBurnerWallet = () => {
-        createBurnerWallet()
-        setUseBurner(true)
-    }
-
     const handleButtonClickForSignedTx = async () => {
         if (walletClient === undefined || walletClient === null) {
             console.error(`walletClient not found`)
@@ -217,16 +184,6 @@ const BlockBid = ({
             args: [(currentGoerliBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
         })
 
-        // const request = await suaveClient.prepareTransactionRequest({
-        //     chain: rigil,
-        //     chainId: rigil.id,
-        //     account: address,
-        //     to: suaveContractAddress,
-        //     gasPrice: parseGwei('1'),
-        //     gas: BigInt(1e7),
-        //     data: calldata,
-        // })
-        // console.log(`request`, request)
         const suaveTx = {
             chainId: rigil.id,
             data: calldata,
@@ -253,8 +210,10 @@ const BlockBid = ({
         }
 
         const hash = await suaveClient.sendRawTransaction({
+            //// BREAKS /////
             serializedTransaction: ccrRlp as `0x${string}`
         })
+
         console.log(`rigil hash`, hash)
         setRigilTx(hash)
         const receipt = await suaveClient.waitForTransactionReceipt({
@@ -293,27 +252,28 @@ const BlockBid = ({
             <label
                 className="font-light text-sm"
                 htmlFor="extra-data"
-            >{'Message'}<span className="text-white/70">{' '}&bull;{' '}Public Data</span></label>
+            >{'Message'}
+                <span className="text-white/70">{' '}&bull;{' '}Public Data</span>
+            </label>
             <input
-                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20 font-modelica-medium"
+                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none"
                 id="extra-data"
                 type="text"
                 value={extraData}
                 onChange={handleExtraDataChange.bind(this)}
             />
-            <p
-                className="absolute right-7 bottom-1.5 text-sm text-center text-white/60"
-            >{bytesLength} / {MAX_BYTES_LENGTH}<br /> bytes</p>
+            <p className="absolute right-7 bottom-1.5 text-sm text-center text-white/60">{
+                bytesLength} / {MAX_BYTES_LENGTH}<br /> bytes
+            </p>
         </div>
         <div className="px-4 flex">
             <div className="flex flex-col w-1/2">
-                <label
-                    className="font-light text-sm"
-                    htmlFor="bid-amount"
-                >{'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span></label>
+                <label className="font-light text-sm" htmlFor="bid-amount">
+                    {'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span>
+                </label>
                 <div className="relative">
                     <input
-                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20 font-modelica-medium`}
+                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none`}
                         id="bid-amount"
                         type="number"
                         value={bidAmount}
@@ -321,30 +281,8 @@ const BlockBid = ({
                     />
                     <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-1.5" />
                 </div>
-                {/* {useBurner ?
-                    (
-                        <p
-                            className={`text-sm text-right text-white/60 ${bidAmountError === "balance" && `text-red-500`}`}
-                        >Balance:
-                            <span>{' '}{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`} goerli ETH</span>
-                        </p>
-                    ) : (
-                        <p
-                            className={`text-sm text-right text-white/60 ${bidAmountError === "balance" && `text-red-500`}`}
-                        >Balance:
-                            <span>{' '}{balance !== undefined ? `${parseFloat(balance.formatted).toLocaleString()}` : `-`} goerli ETH</span>
-                        </p>
-                    )} */}
             </div>
             <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
-                {/* {walletAddress === undefined ? <button>connect to post</button> : <button
-                    className="w-full px-8 py-4 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
-                    onClick={handleButtonClick}
-                    disabled={signedTx !== undefined || bidAmountError !== undefined}
-                    type="submit"
-                >
-                    <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
-                </button>} */}
                 {(useBurner ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
                     <button
                         className="w-full px-8 py-4 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
@@ -367,13 +305,6 @@ const BlockBid = ({
                 )}
             </div>
         </div>
-        {/* <p
-            className="text-right text-white/60 px-6 text-xs"
-        >Your bid is valid for the next {BID_VALID_FOR_BLOCKS.toString()} blocks</p>
-        {errorMessage &&
-            <p
-                className="text-sm text-red-400"
-            >Error: {errorMessage}</p>} */}
     </div>
 }
 
