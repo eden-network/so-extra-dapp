@@ -16,7 +16,7 @@ export type LogRequestAdded = {
 const useLogs = () => {
     const [logs, setLogs] = useState<LogRequestAdded[]>([])
     const { suaveClient } = useSuave()
-    
+
     useEffect(() => {
         suaveClient.getLogs({
             address: suaveContractAddress,
@@ -25,7 +25,7 @@ const useLogs = () => {
             // toBlock: BigInt(10320182),
             strict: true
         }).then((r: LogRequestAdded[]) => {
-            console.log("event RequestAdded", r)
+            // console.log("event RequestAdded", r)
             setLogs(r)
         })
     }, [suaveClient])

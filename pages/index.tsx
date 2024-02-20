@@ -11,10 +11,10 @@ const Home: NextPage = () => {
       size: 4,
       colors: ["#FF7A00", "#FFE500", "#F063F9", "#C50099", "#2114B5", "#260056"]
     })
-    new fairyDustCursor({
-      colors: ["#FF7A00", "#FFE500", "#F063F9", "#C50099", "#2114B5", "#260056"]
-    })
-    new emojiCursor({ emoji: ["🌈"] });
+    // new fairyDustCursor({
+    //   colors: ["#FF7A00", "#FFE500", "#F063F9", "#C50099", "#2114B5", "#260056"]
+    // })
+    // new emojiCursor({ emoji: ["🌈"] });
   }, []);
 
   return <Layout>
