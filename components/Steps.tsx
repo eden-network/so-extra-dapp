@@ -25,7 +25,7 @@ const Steps = ({
 
 
     return <div className={`${allCompleted ? "hidden" : "flex"} flex flex-col pb-3`}>
-        <div className="pt-2 pb-3">
+        <div className="pt-2 pb-3 z-10">
             <h2 className="text-2xl text-center font-bold text-rainbow-yellow font-modelica-bold">
                 {'Prequisites'}
             </h2>

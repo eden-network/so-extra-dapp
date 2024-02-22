@@ -1,53 +1,30 @@
-import { useState } from 'react';
+import { useState, LegacyRef, useRef } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import ButtonLottie from '../public/lotties/button.json'
+import { Player, Controls } from '@lottiefiles/react-lottie-player';
 
-export const CustomConnectButton = ({
-    isSmall = false
-}: {
-    isSmall?: boolean
-}) => {
-    const [isHovered, setIsHovered] = useState<boolean>(false)
+export const CustomConnectButton = () => {
+    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>;
     return <ConnectButton.Custom>
         {({
-            account,
             openConnectModal,
         }) => {
-            const connected = account !== undefined
-            return isSmall ?
-                <div className='relative' onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-                    <button
-                        className="w-[263px] h-[44px] rounded-full bg-[url('/connect-metamask.svg')] disabled:bg-[url('/small-connect-disabled.png')] hover:bg-[url('/connect-metamask-hover.svg')]"
-                        onClick={openConnectModal}
-                        // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
-                        disabled={connected}
-                        type="submit"
-                    />
-                    <button
-                        className={`${isHovered ? "flex" : "hidden"} w-[263px] h-[44px] rounded-full bg-[url('/connect-metamask-hover.svg')] absolute top-0 left-0`}
-                        onClick={openConnectModal}
-                        // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
-                        disabled={connected}
-                        type="submit"
-                    />
-                </div>
-                :
+            return (
                 <div className='relative'>
-                    <button
-                        className="w-[274px] h-[64px] rounded-full bg-[url('/connect-button.png')] disabled:bg-[url('/connect-button-disabled.png')] hover:bg-[url('/connect-button-hover.png')]"
-                        onClick={openConnectModal}
-                        // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
-                        disabled={connected}
-                        type="submit"
-                    />
-                    <button
-                        className="w-[274px] h-[64px] rounded-full bg-[url('/connect-button.png')] disabled:bg-[url('/connect-button-disabled.png')] hover:bg-[url('/connect-button-hover.png')]"
-                        onClick={openConnectModal}
-                        // disabled={(useBurner ? burnerAccount !== undefined : walletAddress !== undefined)}
-                        disabled={connected}
-                        type="submit"
-                    />
+                    <button type="submit" onClick={openConnectModal}>
+                        <Player
+                            ref={lottieRef}
+                            src={ButtonLottie}
+                            hover={true}
+                            className="h-[44px]"
+                            loop={false}
+                            keepLastFrame={true}
+                        >
+                            <Controls visible={false} buttons={['play', 'repeat', 'frame', 'debug']} />
+                        </Player>
+                    </button>
                 </div>
-
+            )
         }}
     </ConnectButton.Custom>
 }

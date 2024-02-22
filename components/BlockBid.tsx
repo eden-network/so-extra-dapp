@@ -1,4 +1,4 @@
-import { useEffect, useState, Dispatch, SetStateAction } from "react"
+import { useEffect, useState, Dispatch, SetStateAction, useRef, LegacyRef } from "react"
 import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt } from "viem"
 import { useBalance, useBlockNumber, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
@@ -9,6 +9,9 @@ import { goerli } from "viem/chains"
 import { PrivateKeyAccount } from "viem"
 import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
 import Image from "next/image"
+import { Player } from '@lottiefiles/react-lottie-player';
+import SignButton from '../public/lotties/signButton.json'
+import SubmitButton from '../public/lotties/submitButton.json'
 
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
@@ -97,6 +100,8 @@ const BlockBid = ({
             fromBlock: suaveDeployBlock,
             strict: true
         }).then((r: any) => {
+            console.log(r);
+
         }).catch()
     }, [suaveClient])
 
@@ -247,6 +252,8 @@ const BlockBid = ({
         }
     }, [bidAmount, useBurner, burnerBalance, balance])
 
+    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>;
+
     return <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
         <div className="relative px-4 my-2">
             <label
@@ -273,7 +280,7 @@ const BlockBid = ({
                 </label>
                 <div className="relative">
                     <input
-                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border ${bidAmountError !== undefined ? `border-red-500` : `border-fuchsia-600`} w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none`}
+                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border ${bidAmountError !== undefined ? `text-red-500` : `text-white`} w-full px-3 py-3 rounded-sm font-modelica-bold text-xl shadow-inner bg-black/20 border-fuchsia-500 font-modelica-medium focus-visible:outline-none`}
                         id="bid-amount"
                         type="number"
                         value={bidAmount}
@@ -285,22 +292,35 @@ const BlockBid = ({
             <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
                 {(useBurner ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
                     <button
-                        className="w-full px-8 py-4 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                         onClick={handleButtonClick}
                         disabled={signedTx !== undefined || bidAmountError !== undefined}
                         type="submit"
                     >
-                        <p className="font-semibold">Step 1: Sign Bid for {bidAmount} ETH</p>
+                        <Player
+                            ref={lottieRef}
+                            src={SignButton}
+                            hover={true}
+                            className=""
+                            loop={false}
+                            keepLastFrame={true}
+                        >
+                        </Player>
                     </button>
                 )}
                 {(useBurner ? burnerAccount !== undefined && signedTx : walletAddress !== undefined && signedTx) && (
                     <button
-                        className="px-8 py-1 text-xs rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black disabled:bg-neutral-500"
                         onClick={handleButtonClickForSignedTx}
                         disabled={signedTx === undefined || rigilTxReceipt !== undefined}
                         type="submit"
                     >
-                        <p className="font-semibold">Step 2: Submit Bid for {bidAmount} ETH</p>
+                        <Player
+                            ref={lottieRef}
+                            src={SubmitButton}
+                            hover={true}
+                            className=""
+                            loop={false}
+                            keepLastFrame={true}
+                        />
                     </button>
                 )}
             </div>

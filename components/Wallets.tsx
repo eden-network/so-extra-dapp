@@ -1,12 +1,16 @@
 
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useState, useRef, LegacyRef } from "react"
 import { useAccount, useBalance } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
-import { CustomConnectButton } from "./CustomConnectButton"
 import useSuave from "../hooks/useSuave"
 import AccountModal from "./Modal/AccountModal"
 import BurnerModal from "./Modal/BurnerModal"
-
+import ButtonLottie from '../public/lotties/button.json'
+import { CustomConnectButton } from "./CustomConnectButton"
+import { Player } from '@lottiefiles/react-lottie-player';
+import SwitchButton from '../public/lotties/switch.json'
+import AccountButton from '../public/lotties/account.json'
+import BUrnerAccountButton from '../public/lotties/burner_account.json'
 const ellipsis = (str: string) => {
     return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
 }
@@ -60,7 +64,6 @@ const Wallets = ({
     const [isHoveredAccSwitch, setIsHoveredAccSwitch] = useState<boolean>(false)
 
     function handleBurnerButton() {
-        setIsHoveredAccSwitch(false)
         setUseBurner(true)
     }
 
@@ -68,7 +71,7 @@ const Wallets = ({
         setIsHoveredBurnerSwitch(false)
         setUseBurner(false)
     }
-
+    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>
     return (
         <>
             <div className="px-4 my-2">
@@ -91,10 +94,18 @@ const Wallets = ({
                                 </a>
                             </p>
                             <div>
-                                <div className="flex">
+                                <div className="flex gap-2">
                                     <div className="relative" onMouseEnter={() => setIsHoveredBurner(true)} onMouseLeave={() => setIsHoveredBurner(false)}>
-                                        <button onClick={toggleBurnerModal} className="bg-[url('/plus-account.svg')] w-[54px] h-[34px] mr-1" />
-                                        <button onClick={toggleBurnerModal} className={`${isHoveredBurner ? "flex" : "hidden"} bg-[url('/plus-account-hover.svg')] w-[54px] h-[34px] mr-1 absolute left-0 top-0`} />
+                                        <button onClick={toggleBurnerModal}>
+                                            <Player
+                                                ref={lottieRef}
+                                                src={BUrnerAccountButton}
+                                                hover={true}
+                                                className=""
+                                                loop={false}
+                                                keepLastFrame={true}
+                                            />
+                                        </button>
                                     </div>
                                     <BurnerModal
                                         showModal={showBurnerModal}
@@ -108,15 +119,18 @@ const Wallets = ({
                                         :
                                         <div className="relative" onMouseEnter={() => setIsHoveredBurnerSwitch(true)} onMouseLeave={() => setIsHoveredBurnerSwitch(false)}>
                                             <button
-                                                className="w-[114px] h-[34px] rounded-full bg-[url('/switch-btn.svg')]"
                                                 onClick={handleBurnerButton}
                                                 disabled={burnerAccount === undefined}
-                                            />
-                                            <button
-                                                className={`${isHoveredBurnerSwitch ? "flex" : "hidden"} w-[114px] h-[34px] rounded-full bg-[url('/switch-hover.svg')] left-0 top-0 absolute`}
-                                                onClick={handleBurnerButton}
-                                                disabled={burnerAccount === undefined}
-                                            />
+                                            >
+                                                <Player
+                                                    ref={lottieRef}
+                                                    src={SwitchButton}
+                                                    hover={true}
+                                                    className=""
+                                                    loop={false}
+                                                    keepLastFrame={true}
+                                                />
+                                            </button>
                                         </div>
                                     }
                                 </div>
@@ -125,6 +139,7 @@ const Wallets = ({
                                 >
                                     <div className="flex justify-between mb-1">
                                         <span>goerliETH: </span>
+
                                         <span>{burnerBalance !== undefined ? `${parseFloat(burnerBalance.formatted).toLocaleString()}` : `-`}</span>
                                     </div>
                                     <div className="flex justify-between">
@@ -135,10 +150,11 @@ const Wallets = ({
                             </div>
                         </>}
                     </div>
-                    <p className="text-sm mb-1 text-white">Metamask Wallet</p>
+                    <div className="flex justify-between">
+                        <p className="text-sm mb-1 text-white">Metamask Wallet</p>
+                    </div>
                     <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
-                        {/* <p className="">Wallet</p> */}
-                        {walletAddress === undefined ? <CustomConnectButton isSmall={true} /> :
+                        {walletAddress === undefined ? <CustomConnectButton /> :
                             <>
                                 <p className="flex-1 font-modelica-bold text-xl mb-auto">
                                     <a href={`https://goerli.etherscan.io/address/${walletAddress}`} target="_blank" className="hover:underline">
@@ -146,10 +162,18 @@ const Wallets = ({
                                     </a>
                                 </p>
                                 <div>
-                                    <div className="flex">
-                                        <div className="relative" onMouseEnter={() => setIsHoveredAcc(true)} onMouseLeave={() => setIsHoveredAcc(false)}>
-                                            <button onClick={toggleAccountModal} className="bg-[url('/account.svg')] hover:bg-[url('/account-hover.svg')] w-[54px] h-[34px] mr-1" />
-                                            <button onClick={toggleAccountModal} className={`${isHoveredAcc ? "flex" : "hidden"} bg-[url('/account-hover.svg')] w-[54px] h-[34px] mr-1 absolute left-0 top-0`} />
+                                    <div className="flex gap-2">
+                                        <div className="relative">
+                                            <button onClick={toggleAccountModal}>
+                                                <Player
+                                                    ref={lottieRef}
+                                                    src={AccountButton}
+                                                    hover={true}
+                                                    className=""
+                                                    loop={false}
+                                                    keepLastFrame={true}
+                                                />
+                                            </button>
                                         </div>
                                         <AccountModal
                                             showModal={showAccountModal}
@@ -162,16 +186,20 @@ const Wallets = ({
                                             <button className="bg-[url('/active-btn.svg')] w-[114px] h-[34px]" />
                                             :
                                             <div className="relative" onMouseEnter={() => setIsHoveredAccSwitch(true)} onMouseLeave={() => setIsHoveredAccSwitch(false)}>
+
                                                 <button
-                                                    className="w-[114px] h-[34px] rounded-full bg-[url('/switch-btn.svg')]"
                                                     onClick={handleAccButton}
-                                                    disabled={burnerAccount === undefined}
-                                                />
-                                                <button
-                                                    className={`${isHoveredAccSwitch ? "flex" : "hidden"} w-[114px] h-[34px] rounded-full bg-[url('/switch-hover.svg')] absolute left-0 top-0`}
-                                                    onClick={handleAccButton}
-                                                    disabled={burnerAccount === undefined}
-                                                />
+                                                >
+                                                    <Player
+                                                        ref={lottieRef}
+                                                        src={SwitchButton}
+                                                        hover={true}
+                                                        className=""
+                                                        loop={false}
+                                                        keepLastFrame={true}
+                                                    />
+
+                                                </button>
                                             </div>
                                         }
                                     </div>

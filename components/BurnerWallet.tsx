@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, LegacyRef } from "react"
 import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from "next/image"
+import { Player } from '@lottiefiles/react-lottie-player';
+import FundButton from '../public/lotties/Fund.json'
 
 const BurnerWallet = () => {
     const { address: walletAddress } = useAccount()
@@ -52,7 +54,7 @@ const BurnerWallet = () => {
         catch { }
     }
 
-    const [isHovered, setIsHovered] = useState<boolean>(false)
+    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>;
 
     return <div className="flex items-center pb-3">
         {displayOnboarding ? <>
@@ -78,17 +80,21 @@ const BurnerWallet = () => {
                     <p> {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} goerliETH</p>
                 </div>
             </div>
-            <div className="my-2 text-center relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+            <div className="my-2 text-center relative">
                 <button
-                    className="bg-[url('/fund-burner.svg')] w-[249px] h-[63px]"
+
                     onClick={handleFundButtonClick}
                     type="submit"
-                />
-                <button
-                    className={`${isHovered ? "flex" : "hidden"} w-[249px] h-[63px] bg-[url('/fund-burner-hover.svg')] absolute left-0 top-0`}
-                    onClick={handleFundButtonClick}
-                    type="submit"
-                />
+                >
+                    <Player
+                        ref={lottieRef}
+                        src={FundButton}
+                        hover={true}
+                        className=""
+                        loop={false}
+                        keepLastFrame={true}
+                    />
+                </button>
             </div>
         </>
         }

@@ -68,7 +68,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
     const isHomePage = router.route === '/';
 
     return (
-        <div className={`${Modelica.className} bg-stone-800 bg-[url('/bck.jpg')] text-white min-h-screen`}>
+        <div className={`${Modelica.className} bg-stone-800 bg-[url('/background.svg')] text-white min-h-screen`}>
             <Head>
                 <title>So Extra | Data Auction on SUAVE</title>
                 <meta
@@ -90,41 +90,31 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <link rel="icon" type="image/png" href="/f64.png" />
                 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
+
+
+
+
             <main>
-                <div className="w-full flex flex-row gap-4 justify-between items-end mb-0 pt-16 px-4">
-                    <div className="flex-1 max-w-sm hidden md:block -mb-[30px]">
-                        {/* <div className="flex place-content-end"> */}
-                        {/* <Image src="/a.png" alt="So Extra" width="184" height="184" className="flex hover:animate-bounce" /> */}
-                        {/* <Image src="/b.png" alt="So Extra" width="808" height="519" className="hover:animate-bounce" /> */}
-                        {/* <Image onClick={toggleWinModal} src="/flashbot-eden.svg" alt="So Extra" width="500" height="230" />
-                        <WinModal showModal={showWinModal} toggleModal={toggleWinModal} /> */}
-                        {/* </div> */}
-                    </div>
-                    <div className="flex-1 max-w-2xl justify-center h-[110px]">
-                        <div className="place-content-center">
-                            <div className="-mb-[80px] md:-mb-[0px] h-[100px]">
-                                <Image
-                                    onClick={toggleHelpModal}
-                                    src="/help.svg"
-                                    alt="help"
-                                    width="100"
-                                    height="201"
-                                    className="hidden md:flex absolute cursor-pointer right-0 top-2 object-contain mx-auto"
-                                />
-                                <HelpModal showModal={showHelpModal} toggleModal={toggleHelpModal} />
-                            </div>
+                <div className="w-full flex items-end mb-0 px-4 pt-16">
+                    <div className="flex-1 justify-center h-[110px]">
+                        <div className="-mb-[80px] lg:-mb-[0px] h-[100px]">
+                            <Image
+                                onClick={toggleHelpModal}
+                                src="/help.svg"
+                                alt="help"
+                                width="100"
+                                height="201"
+                                className="hidden lg:flex absolute cursor-pointer right-0 top-2 object-contain mx-auto"
+                            />
+                            <HelpModal showModal={showHelpModal} toggleModal={toggleHelpModal} />
                         </div>
                     </div>
-                    <div className="flex-1 max-w-sm hidden md:block justify-items-end -mb-8 pr-6">
-                        {/* <div className="absolute z-0 flex-1 w-fit top-0">
-                            <LeaderBoard />
-                        </div> */}
-                        <div className="flex place-content-end">
+                    <div className="flex-1 max-w-sm hidden :block justify-items-end -mb-8 pr-6">
+                        <div className="flex place-content-end items-end">
                             <ConnectButton />
                         </div>
                     </div>
                 </div>
-
                 <div>
                     <hr className="bg-rainbow-orange w-full h-1.5 border-0 my-0" />
                     <hr className="bg-rainbow-yellow w-full h-1.5 border-0 my-0" />
@@ -134,11 +124,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                     <hr className="bg-rainbow-purple w-full h-1.5 border-0 my-0" />
                 </div>
 
-                <div className="flex flex-row lg:gap-4 justify-center items-start md:p-4 min-h-screen">
-                    <div className="flex-1 max-w-sm hidden md:block z-10">
-                        <div className="flex flex-col gap-12 items-center">
-                            <div className="flex-1 w-full relative">
-                                <Image className="absolute top-[-280px] min-h-[300px]" onClick={toggleWinModal} src="/flashbot-eden.svg" alt="So Extra" width="500" height="230" />
+                <div className="flex flex-row pt-12 justify-center">
+                    <div className="flex-1 flex-shrink hidden lg:block">
+                        <div className="flex flex-col gap-12 items-end">
+                            <div className="w-full max-w-sm relative">
+                                <Image className="absolute top-[-320px] min-h-[300px]" onClick={toggleWinModal} src="/flashbot-eden.svg" alt="So Extra" width="400" height="230" />
                                 <Wallets useBurner={useBurner} setUseBurner={setUseBurner} />
                                 <Steps
                                     isConnected={useBurner ? burnerAccount !== undefined : walletAddress !== undefined}
@@ -149,16 +139,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                     rigilReceipt={rigilTxReceipt}
                                 />
                             </div>
-                            {/* <div className="flex-1 w-full">
-                                <BurnerWallet />
-                            </div> */}
                         </div>
                     </div>
-                    <div className="flex-1 max-w-2xl justify-center">
+                    <div className="flex-1 justify-center">
                         <div className="flex flex-col">
-                            <div className="flex-1 w-full mb-6 md:mb-0">
+                            <div className="flex-1 w-full mb-6 lg:mb-0">
                                 <div className="relative place-content-center">
-                                    <div className="flex absolute bottom-[-35px] lg:-bottom-[30px] p-5 z-10">
+                                    <div className="flex w-full absolute bottom-[-35px] lg:-bottom-[0px] p-5 z-10">
                                         <Image
                                             src="/so-extra.svg"
                                             alt="So Extra"
@@ -169,8 +156,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 w-full z-10">
-                                <div className="flex-1 w-full md:px-6">
+                            <div className="flex-1 lg:w-full min-w-[600px] flex-shrink-0 z-10">
+                                <div className="flex-1 w-min-2xl flex-shrink-0 w-full px-6">
                                     {isHomePage ? <BlockBid
                                         useBurner={useBurner}
                                         setUseBurner={setUseBurner}
@@ -189,28 +176,12 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 max-w-sm hidden md:block z-10">
-                        <div className="flex flex-col gap-4">
-                            <div className="flex-1 w-full">
-                                <Onboarding toggleHelpModal={toggleHelpModal} />
-                            </div>
-                            <div className="flex-1 w-full">
-                                <LeaderBoard />
-                                <ActiveBids />
-                            </div>
-                            {/* <div className="flex-1 w-full">
-                                <Faq />
-                            </div> */}
-                        </ div>
-                    </ div>
-                    <div>
-                        <hr className="bg-red-500 w-full h-1 border-0 my-0" />
-                        <hr className="bg-orange-400 w-full h-1 border-0 my-0" />
-                        <hr className="bg-yellow-300 w-full h-1 border-0 my-0" />
-                        <hr className="bg-lime-400 w-full h-1 border-0 my-0" />
-                        <hr className="bg-cyan-400 w-full h-1 border-0 my-0" />
-                        <hr className="bg-blue-600 w-full h-1 border-0 my-0" />
-                        <hr className="bg-indigo-700 w-full h-1 border-0 my-0" />
+                    <div className="flex-1 flex-shrink hidden lg:block z-10">
+                        <div className="flex-1 w-full max-w-sm">
+                            <Onboarding toggleHelpModal={toggleHelpModal} />
+                            <LeaderBoard />
+                            <ActiveBids />
+                        </div>
                     </div>
                 </div>
                 <footer className="p-6 text-center">

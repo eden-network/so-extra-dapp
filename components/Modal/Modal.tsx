@@ -15,7 +15,7 @@ const Modal = ({
 }) => {
     return (
         <>
-            <div onClick={onClose} className={`fixed top-0 left-0 z-20 w-full h-full bg-extra-pink/10 items-center backdrop-blur-lg ${open ? "block" : "hidden"}`}>
+            <div onClick={onClose} className={`fixed top-0 left-0 z-50 w-full h-full bg-extra-pink/10 items-center backdrop-blur-lg ${open ? "block" : "hidden"}`}>
                 <div
                     onClick={e => e.stopPropagation()}
                     style={{ transform: 'translate(-50%, -50%)' }}
