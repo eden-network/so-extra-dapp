@@ -1,5 +1,8 @@
+import { useRef, LegacyRef } from "react";
 import Modal from "./Modal"
 import Image from "next/image"
+import { Player } from '@lottiefiles/react-lottie-player';
+import Disconnect from '../../public/lotties/Disconnect.json'
 
 const AccountModal = ({
     showModal,
@@ -14,6 +17,7 @@ const AccountModal = ({
     goerliBalance: string | undefined,
     rigilBalance: string | undefined
 }) => {
+    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>
     return (
         <>
             <Modal title="Your wallet" open={showModal} onClose={toggleModal}>
@@ -22,6 +26,17 @@ const AccountModal = ({
                     <p className="font-modelica-bold text-xl">{walletAddress}</p>
                     <p>{goerliBalance} Goerli ETH</p>
                     <p>{rigilBalance} rigil ETH</p>
+                    <button
+                    >
+                        <Player
+                            ref={lottieRef}
+                            src={Disconnect}
+                            hover={true}
+                            className=""
+                            loop={false}
+                            keepLastFrame={true}
+                        />
+                    </button>
                 </div>
             </Modal>
         </>

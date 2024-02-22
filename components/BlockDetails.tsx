@@ -44,7 +44,7 @@ const BlockDetails = (
     const blockCard =
         <div className="flex flex-row gap-4 items-start">
             <div className="flex m-auto">
-                <Image src={`/blockdetails/blockdetails-${index}.svg`} width={100} height={50} alt="blockdetails_symbol" />
+                <Image src={`/blockdetails/${index}.png`} width={100} height={50} alt="blockdetails_symbol" />
             </div>
             <div className="w-full flex flex-col justify-between gap-6">
                 <div>
