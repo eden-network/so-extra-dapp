@@ -95,7 +95,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
 
 
             <main>
-                <div className="w-full flex items-end mb-0 px-4 pt-16">
+                <div className="w-full flex items-end mb-0 px-4 lg:pt-16">
                     <div className="flex-1 justify-center h-[110px]">
                         <div className="-mb-[80px] lg:-mb-[0px] h-[100px]">
                             <Image
@@ -147,7 +147,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                 <div className="relative place-content-center">
                                     <div className="flex w-full absolute bottom-[-35px] lg:-bottom-[0px] p-5 z-10">
                                         <Image
-                                            src="/so-extra.svg"
+                                            src="/so-extra-data.svg"
                                             alt="So Extra"
                                             width="597"
                                             height="239"
@@ -156,7 +156,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 lg:w-full min-w-[600px] flex-shrink-0 z-10">
+                            <div className="flex-1 lg:w-full lg:min-w-[600px] flex-shrink-0 z-10">
                                 <div className="flex-1 w-min-2xl flex-shrink-0 w-full px-6">
                                     {isHomePage ? <BlockBid
                                         useBurner={useBurner}

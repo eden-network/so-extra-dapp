@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import axios from "axios"
 
 export type ValidatorsResponse = {
     slot: string,
@@ -21,14 +22,13 @@ const useBuilderValidators = () => {
 
     useEffect(() => {
         setIsLoading(true)
-        fetch(url)
-            .then((r: Response) => r.json())
-            .then((data: ValidatorsResponse[]) => {
+        axios.get(url)
+            .then(response => {
                 setIsLoading(false)
-                setData(data)
+                setData(response.data)
             })
-            .catch((e: Error) => {
-                console.log(e)
+            .catch(error => {
+                console.error(error)
                 setIsLoading(false)
             })
     }, [])
@@ -37,7 +37,6 @@ const useBuilderValidators = () => {
         data: data,
         isLoading
     }
-
 }
 
 export default useBuilderValidators

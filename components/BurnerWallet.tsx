@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef, LegacyRef } from "react"
+import { useEffect, useState } from "react"
 import { parseEther } from "viem/utils"
 import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from "next/image"
-import { Player } from '@lottiefiles/react-lottie-player';
+import LottiePlayer from "./LottiePlayer"
 import FundButton from '../public/lotties/Fund.json'
 
 const BurnerWallet = () => {
@@ -54,8 +54,6 @@ const BurnerWallet = () => {
         catch { }
     }
 
-    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>;
-
     return <div className="flex items-center pb-3">
         {displayOnboarding ? <>
 
@@ -86,14 +84,7 @@ const BurnerWallet = () => {
                     onClick={handleFundButtonClick}
                     type="submit"
                 >
-                    <Player
-                        ref={lottieRef}
-                        src={FundButton}
-                        hover={true}
-                        className=""
-                        loop={false}
-                        keepLastFrame={true}
-                    />
+                    <LottiePlayer src={FundButton} />
                 </button>
             </div>
         </>
