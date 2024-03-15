@@ -5,6 +5,7 @@ import { ParsedUrlQuery } from "querystring";
 import BlockDetails from "../../../components/BlockDetails";
 import Layout from "../../../components/Layout";
 import { randomInt } from "crypto";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 interface Params extends ParsedUrlQuery {
     blockNumber: string,
@@ -47,19 +48,20 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
             />
             <link href="/favicon.ico" rel="icon" />
         </Head>
-        <div className="flex flex-col pb-3">
-            <div className="flex flex-col px-6 py-3 gap-6">
-                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} index={rndInt} />}
-                <div className="w-full text-center">
-                    <Link href="/">
+        <div className="flex flex-col">
+            <div className="flex flex-col">
+                <div className="w-full text-left flex mb-1">
+                    <Link href="/" className="group flex gap-2 items-center">
+                        <ArrowLeftIcon className="group-hover:text-white w-4 h-4 text-white/60" />
                         <button
-                            className="px-8 py-4 text-lg rounded-full border-2 border-fuchsia-600 bg-neutral-200 hover:bg-white text-black shadow-xl shadow-indigo-950/40 hover:shadow-none"
+                            className="text-sm text-white/60 group-hover:text-white"
                             type="submit"
                         >
-                            <p className="font-semibold">Read More Posts</p>
+                            <p className="font-semibold">Back</p>
                         </button>
                     </Link>
                 </div>
+                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} index={rndInt} />}
             </div>
         </div>
     </Layout>

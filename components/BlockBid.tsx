@@ -1,4 +1,4 @@
-import { useEffect, useState, Dispatch, SetStateAction, useRef, LegacyRef } from "react"
+import { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt } from "viem"
 import { useBalance, useBlockNumber, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
@@ -9,10 +9,10 @@ import { goerli } from "viem/chains"
 import { PrivateKeyAccount } from "viem"
 import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
 import Image from "next/image"
-import { Player } from '@lottiefiles/react-lottie-player';
 import SignButton from '../public/lotties/signButton.json'
 import SubmitButton from '../public/lotties/submitButton.json'
-
+import { PostConnectButton } from "./PostConnectButton"
+import LottiePlayer from "./LottiePlayer"
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
     const gasLimit = BigInt(21_000)
@@ -100,8 +100,7 @@ const BlockBid = ({
             fromBlock: suaveDeployBlock,
             strict: true
         }).then((r: any) => {
-            console.log(r);
-
+            // console.log(r);
         }).catch()
     }, [suaveClient])
 
@@ -125,7 +124,7 @@ const BlockBid = ({
             console.error(`walletClient not found`)
             return
         }
-
+        console.log('gas', gasPrice);
         try {
             // create request with viem
             const request = await walletClient.prepareTransactionRequest({
@@ -134,9 +133,6 @@ const BlockBid = ({
                 to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
                 gasPrice: gasPrice,
             })
-
-            console.log('gas', gasPrice);
-
 
             // augment with chain id (required)
             const augmentedTx = { ...request, chainId: goerli.id }
@@ -149,7 +145,6 @@ const BlockBid = ({
             try {
                 let serializedSignedTx;
                 if (useBurner) {
-                    console.log('here');
                     serializedSignedTx = await burnerAccount?.signTransaction(augmentedTx)
                 }
                 else {
@@ -252,18 +247,16 @@ const BlockBid = ({
         }
     }, [bidAmount, useBurner, burnerBalance, balance])
 
-    const lottieRef = useRef<Player | undefined>(undefined) as LegacyRef<Player>;
-
     return <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
         <div className="relative px-4 my-2">
             <label
                 className="font-light text-sm"
                 htmlFor="extra-data"
-            >{'Message'}
+            >{'Extra data'}
                 <span className="text-white/70">{' '}&bull;{' '}Public Data</span>
             </label>
             <input
-                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none"
+                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none mt-1"
                 id="extra-data"
                 type="text"
                 value={extraData}
@@ -276,35 +269,32 @@ const BlockBid = ({
         <div className="px-4 flex">
             <div className="flex flex-col w-1/2">
                 <label className="font-light text-sm" htmlFor="bid-amount">
-                    {'Bid Amount'}<span className="text-white/70">{' '}&bull;{' '}Confidential Data</span>
+                    {'Bid Amount'}
+                    <span className="text-white/70">{' '}&bull;{' '}Confidential Data</span>
                 </label>
-                <div className="relative">
+                <div className="flex relative">
                     <input
-                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border ${bidAmountError !== undefined ? `text-red-500` : `text-white`} w-full px-3 py-3 rounded-sm font-modelica-bold text-xl shadow-inner bg-black/20 border-fuchsia-500 font-modelica-medium focus-visible:outline-none`}
+                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border mt-1 ${bidAmountError !== undefined ? `text-red-500` : `text-white`} w-full px-3 py-3 rounded-sm font-modelica-bold text-xl shadow-inner bg-black/20 border-fuchsia-500 font-modelica-medium focus-visible:outline-none`}
                         id="bid-amount"
                         type="number"
                         value={bidAmount}
                         onChange={handleBidAmountChange.bind(this)}
                     />
-                    <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-1.5" />
+                    <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-2.5" />
                 </div>
             </div>
             <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
-                {(useBurner ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
+                {!walletAddress &&
+                    <PostConnectButton />
+                }
+
+                {(useBurner && walletAddress ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
                     <button
                         onClick={handleButtonClick}
                         disabled={signedTx !== undefined || bidAmountError !== undefined}
                         type="submit"
                     >
-                        <Player
-                            ref={lottieRef}
-                            src={SignButton}
-                            hover={true}
-                            className=""
-                            loop={false}
-                            keepLastFrame={true}
-                        >
-                        </Player>
+                        <LottiePlayer src={SignButton} />
                     </button>
                 )}
                 {(useBurner ? burnerAccount !== undefined && signedTx : walletAddress !== undefined && signedTx) && (
@@ -313,14 +303,7 @@ const BlockBid = ({
                         disabled={signedTx === undefined || rigilTxReceipt !== undefined}
                         type="submit"
                     >
-                        <Player
-                            ref={lottieRef}
-                            src={SubmitButton}
-                            hover={true}
-                            className=""
-                            loop={false}
-                            keepLastFrame={true}
-                        />
+                        <LottiePlayer src={SubmitButton} />
                     </button>
                 )}
             </div>

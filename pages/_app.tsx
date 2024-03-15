@@ -15,14 +15,14 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     goerli, rigil
   ],
   [
-    // jsonRpcProvider({
-    //   rpc: () => ({
+    jsonRpcProvider({
+      rpc: () => ({
 
-    //     http: `https://ethereum-goerli.publicnode.com`,
-    //     // webSocket: `wss://ethereum-goerli.publicnode.com`,
-    //   }),
-    // }),
-    publicProvider()
+        http: `https://goerli.gateway.tenderly.co`,
+        // webSocket: `wss://ethereum-goerli.publicnode.com`,
+      }),
+    }),
+    // publicProvider()
   ]
 );
 

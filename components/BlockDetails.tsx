@@ -8,7 +8,6 @@ import Share from "./Share";
 import { useRouter } from 'next/router';
 import Image from "next/image";
 
-
 const BlockDetails = (
     {
         blockNumber,
@@ -26,7 +25,7 @@ const BlockDetails = (
     const handleOnMouseEnter = () => {
         setDidContentReveal(true)
     }
-
+    const [showShareModal, setShowShareModal] = useState<boolean>(false);
     const { data, isLoading } = useBlock(blockNumber)
     if (blockNumber === undefined) {
         return <></>
@@ -40,6 +39,10 @@ const BlockDetails = (
     const ellipsis = (str: string) => {
         return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
     }
+
+    // function toggleShareModal() {
+    //     setShowShareModal(!showShareModal);
+    // }
 
     const blockCard =
         <div className="flex flex-row gap-4 items-start">
@@ -70,7 +73,6 @@ const BlockDetails = (
                         <Image src="/gasused_icon.svg" width="15" height="20" alt="tx_icon" />
                         <p>GU {data !== undefined && data.gasUsed.toLocaleString()}</p>
                     </div>
-
                     <Share
                         url={shareUrl}
                         blockNumber={blockNumber}
