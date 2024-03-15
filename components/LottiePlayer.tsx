@@ -1,23 +1,11 @@
-import { useState, useEffect } from 'react';
+'use client'
+import { Player } from '@lottiefiles/react-lottie-player';
 
 const LottiePlayer = ({
     src
 }: {
     src: any
 }) => {
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true); // Set isClient to true when the component mounts
-    }, []);
-
-    // If not running in a browser environment, return null
-    if (!isClient) {
-        return null;
-    }
-
-    // If running in a browser environment, render the Player component
-    const { Player } = require('@lottiefiles/react-lottie-player');
 
     return (
         <Player

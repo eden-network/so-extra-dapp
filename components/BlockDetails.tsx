@@ -40,9 +40,9 @@ const BlockDetails = (
         return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
     }
 
-    function toggleShareModal() {
-        setShowShareModal(!showShareModal);
-    }
+    // function toggleShareModal() {
+    //     setShowShareModal(!showShareModal);
+    // }
 
     const blockCard =
         <div className="flex flex-row gap-4 items-start">
