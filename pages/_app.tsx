@@ -3,7 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { goerli } from 'wagmi/chains';
+import { holesky } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { rigil } from '../hooks/useSuave'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
@@ -12,14 +12,13 @@ import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    goerli, rigil
+    holesky, rigil
   ],
   [
     jsonRpcProvider({
       rpc: () => ({
 
-        http: `https://goerli.gateway.tenderly.co`,
-        // webSocket: `wss://ethereum-goerli.publicnode.com`,
+        http: `https://holesky.drpc.org`,
       }),
     }),
     // publicProvider()
@@ -30,7 +29,7 @@ const { connectors } = getDefaultWallets({
   appName: 'So Extra',
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
   chains: [
-    goerli,
+    holesky,
     // rigil // hide from ui
   ],
 });
