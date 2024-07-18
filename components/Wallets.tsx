@@ -2,7 +2,7 @@
 import { Dispatch, SetStateAction, useState } from "react"
 import { useAccount, useBalance } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
-import useSuave from "../hooks/useSuave"
+import { rigil } from "../hooks/useSuave"
 import AccountModal from "./Modal/AccountModal"
 import BurnerModal from "./Modal/BurnerModal"
 import { CustomConnectButton } from "./CustomConnectButton"
@@ -32,8 +32,6 @@ const Wallets = ({
         privateKey: burnerPrivateKey,
         createBurnerWallet
     } = useBurnerWallet()
-
-    const { rigil } = useSuave()
 
     const { address: walletAddress } = useAccount()
 

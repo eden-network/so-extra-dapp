@@ -5,14 +5,14 @@ import type { AppProps } from 'next/app';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { holesky } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import { rigil } from '../hooks/useSuave'
+import { rigil, toliman } from '../hooks/useSuave'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 
 
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    holesky, rigil
+    holesky, rigil, toliman
   ],
   [
     jsonRpcProvider({

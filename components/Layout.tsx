@@ -10,7 +10,7 @@ import Onboarding from "./Onboarding";
 import ActiveBids from "./ActiveBids";
 import Wallets from "./Wallets";
 import Steps from "./Steps";
-import useSuave from "../hooks/useSuave";
+import useSuave, { rigil } from "../hooks/useSuave";
 import useBurnerWallet from "../hooks/useBurnerWallet";
 import { useAccount, useBalance } from "wagmi";
 import { TransactionReceipt } from "viem";
@@ -24,7 +24,7 @@ const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Reg
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
 
-    const { suaveClient, rigil } = useSuave()
+    const { suaveClient } = useSuave(rigil)
 
     const { address: walletAddress } = useAccount()
 

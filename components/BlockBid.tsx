@@ -4,7 +4,7 @@ import { useBalance, useBlockNumber, useWalletClient } from "wagmi"
 import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
 import useBurnerWallet from "../hooks/useBurnerWallet"
-import useSuave from "../hooks/useSuave"
+import useSuave, { rigil } from "../hooks/useSuave"
 import { goerli } from "viem/chains"
 import { PrivateKeyAccount } from "viem"
 import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
@@ -49,7 +49,7 @@ const BlockBid = ({
         privateKey: burnerPrivateKey,
     } = useBurnerWallet()
 
-    const { suaveClient, rigil } = useSuave()
+    const { suaveClient } = useSuave(rigil)
 
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
@@ -115,7 +115,6 @@ const BlockBid = ({
         }).catch()
     }, [suaveClient])
 
-    const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
     const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
 
     const handleButtonClick = async () => {
