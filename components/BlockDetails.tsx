@@ -7,6 +7,7 @@ import Link from "next/link";
 import Share from "./Share";
 import { useRouter } from 'next/router';
 import Image from "next/image";
+import ShareModal from "./Modal/ShareModal";
 
 const BlockDetails = (
     {
@@ -40,9 +41,9 @@ const BlockDetails = (
         return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
     }
 
-    // function toggleShareModal() {
-    //     setShowShareModal(!showShareModal);
-    // }
+    function toggleShareModal() {
+        setShowShareModal(!showShareModal);
+    }
 
     const blockCard =
         <div className="flex flex-row gap-4 items-start">

@@ -17,17 +17,17 @@ const LeaderBoard = () => {
                 <div className="text-center">
                     <div className="flex gap-9 mb-2">
                         <div>Posts</div>
-                        <div className="text-left">Popoluar Messages</div>
+                        <div className="text-left">Popular Messages</div>
                     </div>
                 </div>
                 <div className="overflow-hidden">
-                    {Object.keys(postSummary).slice(0, 10).map(post => 
-                    <div className="w-fit overflow-hidden text-wrap" key={post}>
-                        <div className="flex gap-16 text-xs text-xl font-modelica-bold text-wrap overflow-hidden">
-                            <div className="flex w-1">{postSummary[post]}</div>
-                            <div className="ml-1 text-left overflow-hidden text-wrap">{post}</div>
+                    {Object.keys(postSummary).slice(0, 10).map(post =>
+                        <div className="w-fit overflow-hidden text-wrap" key={post}>
+                            <div className="flex gap-16 text-xs text-xl font-modelica-bold text-wrap overflow-hidden">
+                                <div className="flex w-1">{postSummary[post]}</div>
+                                <div className="ml-1 text-left overflow-hidden text-wrap">{post}</div>
+                            </div>
                         </div>
-                    </div>
                     )}
                 </div>
             </div>
