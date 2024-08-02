@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 const Home: NextPage = () => {
   useEffect(() => {
-    new rainbowCursor({
+    rainbowCursor({
       length: 40,
       size: 4,
       colors: ["#FF7A00", "#FFE500", "#F063F9", "#C50099", "#2114B5", "#260056"]

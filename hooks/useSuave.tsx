@@ -66,6 +66,7 @@ const useSuave = (chain: Chain = toliman) => {
 
     const { privateKey } = useBurnerWallet()
 
+    // @ts-expect-error    
     const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<Transport> | undefined>(undefined)
 
     useEffect(() => {

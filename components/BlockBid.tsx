@@ -1,5 +1,5 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt } from "viem"
+import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, Transaction, TransactionLegacy, TransactionRequest, TransactionSerializable, TransactionSerializedLegacy, Hash } from "viem"
 import { useAccount, useBalance, useBlockNumber, useConnectorClient, usePrepareTransactionRequest } from "wagmi"
 import { createConfidentialComputeRecord, removeLeadingZeros, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
@@ -15,6 +15,7 @@ import LottiePlayer from "./LottiePlayer"
 import {
   type TransactionRequestSuave
 } from '@flashbots/suave-viem/chains/utils';
+import useCustomChains from "../hooks/useCustomChains"
 
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
@@ -52,7 +53,8 @@ const BlockBid = ({
         privateKey: burnerPrivateKey,
     } = useBurnerWallet()
 
-    const { chain } = useAccount()
+    const { l1Chain: chain } = useCustomChains()
+    // const { chain } = useAccount()
     const { suaveBurnerWallet, suaveProvider } = useSuave()
 
     const MAX_BYTES_LENGTH = 32
@@ -97,10 +99,10 @@ const BlockBid = ({
         }
     }, [burnerAccount, walletAddress])
 
-    const { data: currentL1Block } = useBlockNumber({ chainId: chain?.id })
+    const { data: currentL1Block } = useBlockNumber({ chainId: chain.id })
 
     const { data: request } = usePrepareTransactionRequest({
-        chain: chain?.id,
+        chainId: chain.id,
         account: useBurner ? burnerAccount : walletAddress,
         to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
         gasPrice: gasPrice,
@@ -115,32 +117,42 @@ const BlockBid = ({
         console.log('gas', gasPrice);
         try {
             // create request with viem
-            // const request = await walletClient.prepareTransactionRequest({
-            //     chain: chain?.id,
+            // const request: TransactionRequest = await walletClient.prepareTransactionRequest({
+            //     chainId: chain?.id,
             //     account: useBurner ? burnerAccount : walletAddress,
             //     to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
             //     gasPrice: gasPrice,
             // })
+            console.log("request", request)
 
             // augment request with chain id (required)
-            const augmentedTx = { ...request, chainId: chain?.id }
-            const serialized = serializeTransaction(augmentedTx)
+            // const augmentedTx = { ...request/*, chainId: chain?.id */}
+            const requestTyped = request as unknown as TransactionRequest
+            console.log("requestTyped", requestTyped)
+
+            // @ts-expect-error
+            const serialized = serializeTransaction(requestTyped)
+            console.log("serialized", serialized)
 
             // ensure serialized tx is valid
-            const parsedTx = parseTransaction(serialized)
-            console.log(`parsed tx`, parsedTx)
+
+            // @ts-expect-error
+            const parsedTx: TransactionSerializedLegacy = parseTransaction(serialized)
+            console.log(`parsedTx`, parsedTx)
 
             try {
                 let serializedSignedTx;
                 if (useBurner) {
-                    serializedSignedTx = await burnerAccount?.signTransaction(augmentedTx)
+                    // @ts-expect-error
+                    serializedSignedTx = await burnerAccount?.signTransaction(requestTyped)
                 }
                 else {
                     const serializedHash = keccak256(serialized)
                     // sign with metamask (required advanced setting enabled)
                     const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, serializedHash] })
                     const signature = hexToSignature(hexSignature)
-                    serializedSignedTx = serializeTransaction(augmentedTx, signature)
+                    // @ts-expect-error
+                    serializedSignedTx = serializeTransaction(requestTyped, signature)
                 }
                 setSignedTx(serializedSignedTx!)
                 if (useBurner === true) {
@@ -210,15 +222,17 @@ const BlockBid = ({
 
         console.log("debug::ccr", ccr)
         console.log("debug::ccrRlp", ccrRlp)
-        // const hash = await suaveBurnerWallet!.sendTransaction(ccr)
-        const hash = await suaveProvider.sendRawTransaction({
+
+        const hash: Hash = await suaveProvider.sendRawTransaction({
             //// BREAKS /////
             serializedTransaction: ccrRlp as `0x${string}`
         })
 
         console.log(`suave hash`, hash)
         setRigilTx(hash)
-        const receipt = await suaveProvider.waitForTransactionReceipt({
+
+        // @ts-expect-error
+        const receipt: TransactionReceipt = await suaveProvider.waitForTransactionReceipt({
             hash: hash
         })
         console.log(`suave receipt`, receipt)

@@ -6,8 +6,8 @@ import { toliman, rigil } from "./useSuave"
 const useCustomChains = () => {
     const { chain: connected } = useAccount()
 
-    const l1Chains: Chain<ChainFormatters>[] = [holesky, mainnet]
-    const suaveChains: Chain<ChainFormatters>[] = [toliman, rigil]
+    const l1Chains: Chain<ChainFormatters | undefined>[] = [holesky, mainnet]
+    const suaveChains: Chain<ChainFormatters | undefined>[] = [toliman, rigil]
 
     return {
         l1Chain: l1Chains[0],
