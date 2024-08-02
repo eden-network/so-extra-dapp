@@ -1,18 +1,21 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt } from "viem"
-import { useBalance, useBlockNumber, useWalletClient } from "wagmi"
-import { createConfidentialComputeRecord, txToBundleBytes } from '../ethers-suave/src/utils'
+import { useAccount, useBalance, useBlockNumber, useConnectorClient, usePrepareTransactionRequest } from "wagmi"
+import { createConfidentialComputeRecord, removeLeadingZeros, txToBundleBytes } from '../ethers-suave/src/utils'
 import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
 import useBurnerWallet from "../hooks/useBurnerWallet"
-import useSuave, { rigil } from "../hooks/useSuave"
-import { goerli } from "viem/chains"
+import useSuave from "../hooks/useSuave"
 import { PrivateKeyAccount } from "viem"
-import { EventRequestIncluded, EventRequestRemoved, executionNodeAdd, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
+import { executionNodes, suaveContractAddress } from "../lib/Deployments"
 import Image from "next/image"
 import SignButton from '../public/lotties/signButton.json'
 import SubmitButton from '../public/lotties/submitButton.json'
 import { PostConnectButton } from "./PostConnectButton"
 import LottiePlayer from "./LottiePlayer"
+import {
+  type TransactionRequestSuave
+} from '@flashbots/suave-viem/chains/utils';
+
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
     const gasLimit = BigInt(21_000)
@@ -49,7 +52,8 @@ const BlockBid = ({
         privateKey: burnerPrivateKey,
     } = useBurnerWallet()
 
-    const { suaveClient } = useSuave(rigil)
+    const { chain } = useAccount()
+    const { suaveBurnerWallet, suaveProvider } = useSuave()
 
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
@@ -79,7 +83,7 @@ const BlockBid = ({
         setGasPrice(gasPrice)
     }
 
-    const { data: walletClient } = useWalletClient()
+    const { data: walletClient } = useConnectorClient()
 
     useEffect(() => {
         if (walletAddress === undefined) {
@@ -93,29 +97,14 @@ const BlockBid = ({
         }
     }, [burnerAccount, walletAddress])
 
-    useEffect(() => {
-        suaveClient.getLogs({
-            address: suaveContractAddress,
-            event: EventRequestIncluded,
-            fromBlock: suaveDeployBlock,
-            strict: true
-        }).then((r: any) => {
-            // console.log(r);
-        }).catch()
-    }, [suaveClient])
+    const { data: currentL1Block } = useBlockNumber({ chainId: chain?.id })
 
-    useEffect(() => {
-        suaveClient.getLogs({
-            address: suaveContractAddress,
-            event: EventRequestRemoved,
-            fromBlock: suaveDeployBlock,
-            strict: true
-        }).then((r: any) => {
-            console.log("event RequestRemoved", r)
-        }).catch()
-    }, [suaveClient])
-
-    const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
+    const { data: request } = usePrepareTransactionRequest({
+        chain: chain?.id,
+        account: useBurner ? burnerAccount : walletAddress,
+        to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
+        gasPrice: gasPrice,
+    })
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -126,15 +115,15 @@ const BlockBid = ({
         console.log('gas', gasPrice);
         try {
             // create request with viem
-            const request = await walletClient.prepareTransactionRequest({
-                chain: goerli,
-                account: useBurner ? burnerAccount : walletAddress,
-                to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
-                gasPrice: gasPrice,
-            })
+            // const request = await walletClient.prepareTransactionRequest({
+            //     chain: chain?.id,
+            //     account: useBurner ? burnerAccount : walletAddress,
+            //     to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
+            //     gasPrice: gasPrice,
+            // })
 
-            // augment with chain id (required)
-            const augmentedTx = { ...request, chainId: goerli.id }
+            // augment request with chain id (required)
+            const augmentedTx = { ...request, chainId: chain?.id }
             const serialized = serializeTransaction(augmentedTx)
 
             // ensure serialized tx is valid
@@ -177,50 +166,64 @@ const BlockBid = ({
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
         )
+
+        // Public data
         const calldata = encodeFunctionData({
             abi: [abiItem],
             functionName: 'buyAd',
-            args: [(currentGoerliBlock || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
+            args: [(currentL1Block || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
         })
 
-        const suaveTx = {
-            chainId: rigil.id,
+        // Confidential data
+        const confidentialBytes = txToBundleBytes(signedTx as `0x${string}`) as `0x${string}`
+
+        const ccr: TransactionRequestSuave = {
+            chainId: suaveProvider.chain.id,
             data: calldata,
-            gasLimit: 1e7,
-            gasPrice: parseGwei('1'),
-            nonce: await suaveClient.getTransactionCount({ address: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress! }),
+            confidentialInputs: confidentialBytes,
+            gas: BigInt(1e6),
+            gasPrice: await suaveProvider.getGasPrice(),
+            nonce: await suaveProvider.getTransactionCount({ address: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress! }),
             to: suaveContractAddress,
-            value: "0x"
+            value: BigInt(0),
+            type: "0x43", // transaction type for Confidential Compute Request
+            isEIP712: false, 
+            kettleAddress: executionNodes[suaveProvider.chain.id]
         }
-        console.log(`suave tx`, suaveTx)
-        const confidentialBytes = txToBundleBytes(signedTx as `0x${string}`)
-        const cRecord = createConfidentialComputeRecord(suaveTx as any, executionNodeAdd)
-        const ccr = new ConfidentialComputeRequest(cRecord, confidentialBytes)
+        console.log(`suave ccr`, ccr)
+
         var ccrRlp
-        if (useBurner && burnerPrivateKey !== undefined) {
-            ccrRlp = ccr.signWithPK(burnerPrivateKey.slice(2)).rlpEncode()
+        if (useBurner && suaveBurnerWallet !== undefined) {
+            ccrRlp = await suaveBurnerWallet.signTransaction(ccr)
         } else {
             const signingCallback = async (_hash: string) => {
                 const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, _hash] })
                 const sig = hexToSignature(hexSig)
+                sig.r = removeLeadingZeros(sig.r) as `0x${string}`
+                sig.s = removeLeadingZeros(sig.s) as `0x${string}`
+                sig.v = Number(sig.v) == 27 ? BigInt(0) : BigInt(1)
+                console.log("sig", sig)
                 return { r: sig.r, s: sig.s, v: Number(sig.v) } as SigSplit
             }
-            ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
+            // ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
         }
 
-        const hash = await suaveClient.sendRawTransaction({
+        console.log("debug::ccr", ccr)
+        console.log("debug::ccrRlp", ccrRlp)
+        // const hash = await suaveBurnerWallet!.sendTransaction(ccr)
+        const hash = await suaveProvider.sendRawTransaction({
             //// BREAKS /////
             serializedTransaction: ccrRlp as `0x${string}`
         })
 
-        console.log(`rigil hash`, hash)
+        console.log(`suave hash`, hash)
         setRigilTx(hash)
-        const receipt = await suaveClient.waitForTransactionReceipt({
+        const receipt = await suaveProvider.waitForTransactionReceipt({
             hash: hash
         })
-        console.log(`rigil receipt`, receipt)
+        console.log(`suave receipt`, receipt)
         setRigilTxReceipt(receipt)
-        console.log("rigil receipt", rigilTxReceipt)
+        console.log("suave receipt", rigilTxReceipt)
     }
 
     const { data: balance } = useBalance({
