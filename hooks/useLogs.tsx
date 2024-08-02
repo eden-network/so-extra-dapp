@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Log } from "viem"
 import { EventRequestAdded, suaveContractAddress, suaveDeployBlock } from "../lib/Deployments"
-import useSuave, { rigil } from "./useSuave"
+import useSuave from "./useSuave"
 
 type ArgsRequestAdded = {
     id: bigint,
@@ -15,10 +15,10 @@ export type LogRequestAdded = {
 
 const useLogs = () => {
     const [logs, setLogs] = useState<LogRequestAdded[]>([])
-    const { suaveClient } = useSuave(rigil)
+    const { suaveProvider } = useSuave()
 
     useEffect(() => {
-        suaveClient.getLogs({
+        suaveProvider.getLogs({
             address: suaveContractAddress,
             event: EventRequestAdded,
             fromBlock: suaveDeployBlock,
@@ -28,7 +28,7 @@ const useLogs = () => {
             // console.log("event RequestAdded", r)
             setLogs(r)
         })
-    }, [suaveClient])
+    }, [suaveProvider])
 
     return {
         logs

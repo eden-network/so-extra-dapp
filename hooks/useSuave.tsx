@@ -1,4 +1,8 @@
-import { Chain, createPublicClient, defineChain, http } from "viem"
+import { Chain, createPublicClient, defineChain, http, HttpTransport } from "viem"
+import useBurnerWallet from "./useBurnerWallet"
+import { http as httpSuaveViem } from '@flashbots/suave-viem';
+import { getSuaveProvider, getSuaveWallet, type SuaveWallet } from '@flashbots/suave-viem/chains/utils';
+import { useEffect, useState } from "react";
 
 export const toliman: Chain = defineChain({
     id: 33626250,
@@ -6,7 +10,7 @@ export const toliman: Chain = defineChain({
     network: 'toliman',
     nativeCurrency: {
         name: 'Toliman ETH',
-        symbol: 'tolimanETH',
+        symbol: 'tETH',
         decimals: 18
     },
     rpcUrls: {
@@ -50,14 +54,39 @@ export const rigil: Chain = defineChain({
     },
 })
 
-const useSuave = (chain: Chain) => {
+const useSuave = (chain: Chain = toliman) => {
     const suaveClient = createPublicClient({
         chain: chain,
         transport: http(chain.rpcUrls.default.http[0])
     })
 
+    const suaveProvider = getSuaveProvider(
+        httpSuaveViem(chain.rpcUrls.default.http[0])
+    )
+
+    const { privateKey } = useBurnerWallet()
+
+    const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<Transport> | undefined>(undefined)
+
+    useEffect(() => {
+        if (privateKey === undefined) {
+            setSuaveBurnerWallet(undefined)
+            return
+        }
+        const newBurnerWallet = getSuaveWallet({
+            transport: httpSuaveViem(chain.rpcUrls.default.http[0]),
+            privateKey: privateKey
+        })
+        setSuaveBurnerWallet(newBurnerWallet)
+    }, [
+        privateKey
+    ])
+
     return {
-        suaveClient, rigil
+        suaveClient, 
+        connectedSuaveChain: chain, 
+        suaveBurnerWallet,
+        suaveProvider
     }
 }
 
