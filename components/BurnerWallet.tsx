@@ -1,32 +1,30 @@
 import { useEffect, useState } from "react"
 import { parseEther } from "viem/utils"
-import { useAccount, useBalance, usePrepareSendTransaction, useSendTransaction } from "wagmi"
+import { useAccount, useBalance, useEstimateGas, useSendTransaction } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from "next/image"
 import LottiePlayer from "./LottiePlayer"
 import FundButton from '../public/lotties/Fund.json'
 
 const BurnerWallet = () => {
-    const { address: walletAddress } = useAccount()
+    const { address: walletAddress, chain } = useAccount()
     const { data: walletBalance } = useBalance({
         address: walletAddress
     })
 
     const {
         account,
-        balance,
-        hasExistingBurnerWallet,
-        createBurnerWallet
+        hasExistingBurnerWallet
     } = useBurnerWallet()
 
     const [depositAmount, setDepositAmount] = useState<string>("")
 
-    const { config, error } = usePrepareSendTransaction({
+    const { data: gasEstimate, refetch } = useEstimateGas({
         account: walletAddress,
         to: account?.address,
         value: parseEther(depositAmount)
     })
-    const { sendTransaction } = useSendTransaction(config)
+    const { sendTransaction } = useSendTransaction()
 
     const [displayOnboarding, setDisplayOnboarding] = useState<boolean>()
     useEffect(() => {
@@ -38,21 +36,26 @@ const BurnerWallet = () => {
         }
     }, [account, hasExistingBurnerWallet])
 
-    const handleButtonClick = () => {
-        createBurnerWallet()
-    }
-
     const handleFundButtonClick = () => {
-        sendTransaction?.()
+        sendTransaction({
+            gas: gasEstimate,
+            to: account?.address,
+            value: parseEther(depositAmount)
+        })
     }
 
     const handleDepositAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         try {
             parseEther(event.target.value)
             setDepositAmount(event.target.value)
+            refetch()
         }
         catch { }
     }
+
+    useEffect(() => {
+        refetch()
+    }, [account?.address, refetch, depositAmount])
 
     return <div className="flex items-center pb-3">
         {displayOnboarding ? <>
@@ -75,7 +78,7 @@ const BurnerWallet = () => {
                 </div>
                 <div className="flex justify-between mt-1">
                     <p className="text-xs text-left">Metamask:</p>
-                    <p> {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} goerliETH</p>
+                    <p> {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} {chain?.nativeCurrency.symbol}</p>
                 </div>
             </div>
             <div className="my-2 text-center relative">

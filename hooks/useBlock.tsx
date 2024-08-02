@@ -17,7 +17,7 @@ const useBlock = (blockNumber: bigint | undefined) => {
 
     useEffect(() => {
         setIsLoading(true)
-        publicClient.getBlock({ blockNumber })
+        publicClient?.getBlock({ blockNumber })
             .then((x: Block) => {
                 setBlock(x)
                 setIsLoading(false)

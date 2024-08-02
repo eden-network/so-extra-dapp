@@ -1,4 +1,33 @@
-import { Chain, createPublicClient, defineChain, http } from "viem"
+import { Chain, createPublicClient, defineChain, http, HttpTransport } from "viem"
+import useBurnerWallet from "./useBurnerWallet"
+import { http as httpSuaveViem } from '@flashbots/suave-viem';
+import { getSuaveProvider, getSuaveWallet, type SuaveWallet } from '@flashbots/suave-viem/chains/utils';
+import { useEffect, useState } from "react";
+
+export const toliman: Chain = defineChain({
+    id: 33626250,
+    name: 'Toliman',
+    network: 'toliman',
+    nativeCurrency: {
+        name: 'Toliman ETH',
+        symbol: 'tETH',
+        decimals: 18
+    },
+    rpcUrls: {
+        'default': {
+            http: ['https://rpc.toliman.suave.flashbots.net'],
+        },
+        public: {
+            http: ['https://rpc.toliman.suave.flashbots.net'],
+        }
+    },
+    blockExplorers: {
+        default: {
+            name: 'Explorer',
+            url: 'https://explorer.toliman.suave.flashbots.net/'
+        },
+    },
+})
 
 export const rigil: Chain = defineChain({
     id: 16813125,
@@ -25,15 +54,40 @@ export const rigil: Chain = defineChain({
     },
 })
 
-const useSuave = () => {
-    const suaveTransport = http('https://rpc.rigil.suave.flashbots.net')
+const useSuave = (chain: Chain = toliman) => {
     const suaveClient = createPublicClient({
-        chain: rigil,
-        transport: suaveTransport
+        chain: chain,
+        transport: http(chain.rpcUrls.default.http[0])
     })
 
+    const suaveProvider = getSuaveProvider(
+        httpSuaveViem(chain.rpcUrls.default.http[0])
+    )
+
+    const { privateKey } = useBurnerWallet()
+
+    // @ts-expect-error    
+    const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<Transport> | undefined>(undefined)
+
+    useEffect(() => {
+        if (privateKey === undefined) {
+            setSuaveBurnerWallet(undefined)
+            return
+        }
+        const newBurnerWallet = getSuaveWallet({
+            transport: httpSuaveViem(chain.rpcUrls.default.http[0]),
+            privateKey: privateKey
+        })
+        setSuaveBurnerWallet(newBurnerWallet)
+    }, [
+        privateKey
+    ])
+
     return {
-        suaveClient, rigil
+        suaveClient, 
+        connectedSuaveChain: chain, 
+        suaveBurnerWallet,
+        suaveProvider
     }
 }
 

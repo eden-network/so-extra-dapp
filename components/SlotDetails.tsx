@@ -1,5 +1,5 @@
 import styles from '../styles/Home.module.css';
-import { goerli } from "viem/chains";
+import { holesky } from "viem/chains";
 import { ValidatorsResponse } from "../hooks/useBuilderValidators";
 
 const SlotDetails = (
@@ -9,7 +9,7 @@ const SlotDetails = (
         data: ValidatorsResponse
     }
 ) => {
-    const href = `${goerli.blockExplorers.etherscan.url}`
+    const href = `${holesky.blockExplorers.default.url}`
 
     return <a className={styles.card} href={href} target="_blank" rel="noopener noreferrer">
         <h2>Slot number: {data.slot} &rarr;</h2>
