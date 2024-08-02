@@ -30,10 +30,10 @@ const BlockBid = ({
     walletAddress,
     signedTx,
     setSignedTx,
-    rigilTx,
-    setRigilTx,
-    rigilTxReceipt,
-    setRigilTxReceipt
+    suaveTxHash,
+    setSuaveTxHash,
+    suaveTxReceipt,
+    setSuaveTxReceipt
 }: {
     useBurner: boolean,
     setUseBurner: Dispatch<SetStateAction<boolean>>,
@@ -41,10 +41,10 @@ const BlockBid = ({
     walletAddress: `0x${string}` | undefined,
     signedTx: string | undefined
     setSignedTx: Dispatch<SetStateAction<string | undefined>>
-    rigilTx: string | undefined,
-    setRigilTx: Dispatch<SetStateAction<string | undefined>>,
-    rigilTxReceipt: TransactionReceipt | undefined,
-    setRigilTxReceipt: Dispatch<SetStateAction<TransactionReceipt | undefined>>
+    suaveTxHash: string | undefined,
+    setSuaveTxHash: Dispatch<SetStateAction<string | undefined>>,
+    suaveTxReceipt: TransactionReceipt | undefined,
+    setSuaveTxReceipt: Dispatch<SetStateAction<TransactionReceipt | undefined>>
 }) => {
     const [extraData, setExtraData] = useState<string>("So Extra ✨")
     const [bytesLength, setBytesLength] = useState<number>(12)
@@ -193,7 +193,7 @@ const BlockBid = ({
             chainId: suaveProvider.chain.id,
             data: calldata,
             confidentialInputs: confidentialBytes,
-            gas: BigInt(1e6),
+            gas: BigInt(250_000),
             gasPrice: await suaveProvider.getGasPrice(),
             nonce: await suaveProvider.getTransactionCount({ address: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress! }),
             to: suaveContractAddress,
@@ -229,15 +229,14 @@ const BlockBid = ({
         })
 
         console.log(`suave hash`, hash)
-        setRigilTx(hash)
+        setSuaveTxHash(hash)
 
         // @ts-expect-error
         const receipt: TransactionReceipt = await suaveProvider.waitForTransactionReceipt({
             hash: hash
         })
         console.log(`suave receipt`, receipt)
-        setRigilTxReceipt(receipt)
-        console.log("suave receipt", rigilTxReceipt)
+        setSuaveTxReceipt(receipt)
     }
 
     const { data: balance } = useBalance({
@@ -316,7 +315,7 @@ const BlockBid = ({
                 {(useBurner ? burnerAccount !== undefined && signedTx : walletAddress !== undefined && signedTx) && (
                     <button
                         onClick={handleButtonClickForSignedTx}
-                        disabled={signedTx === undefined || rigilTxReceipt !== undefined}
+                        disabled={signedTx === undefined || suaveTxReceipt !== undefined}
                         type="submit"
                     >
                         <LottiePlayer src={SubmitButton} />

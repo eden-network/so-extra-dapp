@@ -47,10 +47,10 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         setShowWinModal(!showWinModal);
     }
 
-    const [rigilTx, setRigilTx] = useState<string | undefined>(undefined)
-    const [signedTx, setSIgnedTx] = useState<string | undefined>(undefined)
+    const [suaveTxHash, setSuaveTxHash] = useState<string | undefined>(undefined)
+    const [signedTx, setSignedTx] = useState<string | undefined>(undefined)
 
-    const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
+    const [suaveTxReceipt, setSuaveTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 
     const router = useRouter();
     const isHomePage = router.route === '/';
@@ -61,13 +61,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <title>So Extra | Data Auction on SUAVE</title>
                 <meta
                     name="description"
-                    content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                     key="desc"
                 />
                 <meta property="og:title" content="So Extra" />
                 <meta
                     property="og:description"
-                    content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                 />
                 <meta
                     property="og:image"
@@ -123,8 +123,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                     isL0Balance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
                                     isSuaveBalance={useBurner ? (burnerSuaveBalance !== undefined && burnerSuaveBalance.value > BigInt(0)) : (suaveBalance !== undefined && suaveBalance.value > BigInt(0))}
                                     isSignedTx={signedTx !== undefined}
-                                    rigilHash={rigilTx}
-                                    rigilReceipt={rigilTxReceipt}
+                                    suaveTxHash={suaveTxHash}
+                                    suaveTxReceipt={suaveTxReceipt}
                                 />
                             </div>
                         </div>
@@ -152,11 +152,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                         walletAddress={walletAddress}
                                         burnerAccount={burnerAccount}
                                         signedTx={signedTx}
-                                        setSignedTx={setSIgnedTx}
-                                        rigilTx={rigilTx}
-                                        setRigilTx={setRigilTx}
-                                        rigilTxReceipt={rigilTxReceipt}
-                                        setRigilTxReceipt={setRigilTxReceipt}
+                                        setSignedTx={setSignedTx}
+                                        suaveTxHash={suaveTxHash}
+                                        setSuaveTxHash={setSuaveTxHash}
+                                        suaveTxReceipt={suaveTxReceipt}
+                                        setSuaveTxReceipt={setSuaveTxReceipt}
                                     /> : null}
 
                                 </div>
