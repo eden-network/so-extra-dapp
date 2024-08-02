@@ -1,8 +1,7 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, Transaction, TransactionLegacy, TransactionRequest, TransactionSerializable, TransactionSerializedLegacy, Hash } from "viem"
-import { useAccount, useBalance, useBlockNumber, useConnectorClient, usePrepareTransactionRequest } from "wagmi"
-import { createConfidentialComputeRecord, removeLeadingZeros, txToBundleBytes } from '../ethers-suave/src/utils'
-import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
+import { getAddress, createWalletClient, custom, Chain, ChainFormatters, hexToSignature, keccak256, parseEther, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, TransactionRequest, TransactionSerializedLegacy, Hash } from "viem"
+import { useBalance, useBlockNumber, useConnectorClient, usePrepareTransactionRequest } from "wagmi"
+import { ConfidentialComputeRequest, ConfidentialComputeRecord } from 'ethers-suave'
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import useSuave from "../hooks/useSuave"
 import { PrivateKeyAccount } from "viem"
@@ -202,22 +201,20 @@ const BlockBid = ({
             isEIP712: false, 
             kettleAddress: executionNodes[suaveProvider.chain.id]
         }
-        console.log(`suave ccr`, ccr)
 
         var ccrRlp
         if (useBurner && suaveBurnerWallet !== undefined) {
             ccrRlp = await suaveBurnerWallet.signTransaction(ccr)
         } else {
-            const signingCallback = async (_hash: string) => {
-                const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, _hash] })
-                const sig = hexToSignature(hexSig)
-                sig.r = removeLeadingZeros(sig.r) as `0x${string}`
-                sig.s = removeLeadingZeros(sig.s) as `0x${string}`
-                sig.v = Number(sig.v) == 27 ? BigInt(0) : BigInt(1)
-                console.log("sig", sig)
-                return { r: sig.r, s: sig.s, v: Number(sig.v) } as SigSplit
-            }
-            // ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
+            const crecord = new ConfidentialComputeRecord({...ccr, isEIP712: true})
+            crecord.confidentialInputsHash = keccak256(ccr.confidentialInputs as `0x${string}`)
+            const ccr2 = new ConfidentialComputeRequest(crecord, ccr.confidentialInputs)
+   
+            ccrRlp = await ccr2.signWithAsyncCallback(async (_hash: string) => {
+                const hexSig = await signEIP712(ccr2)
+                let sig = hexToSignature(hexSig)
+                return { ...sig, v: Number(sig.v) } as any
+            }).then(ccr => ccr.rlpEncode())
         }
 
         console.log("debug::ccr", ccr)
@@ -328,3 +325,83 @@ const BlockBid = ({
 }
 
 export default BlockBid
+
+
+import {ethers} from 'ethers'
+
+export function txToBundleBytes(signedTx): string {
+	const bundle = txToBundle(signedTx)
+	const bundleBytes = bundleToBytes(bundle)
+	return bundleBytes
+}
+
+export function txToBundle(signedTx): IBundle {
+	return {
+		txs: [signedTx],
+		revertingHashes: [],
+	}
+}
+
+export function bundleToBytes(bundle: IBundle): string {
+	const bundleBytes = Buffer.from(JSON.stringify(bundle), 'utf8')
+	const confidentialDataBytes = ethers.AbiCoder.defaultAbiCoder().encode(['bytes'], [bundleBytes])
+	return confidentialDataBytes
+}
+
+interface IBundle {
+	txs: Array<string>,
+	revertingHashes: Array<string>,
+}
+
+async function signEIP712(ccr: ConfidentialComputeRequest) {
+    try {
+        const crecord = ccr.confidentialComputeRecord
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const from = accounts[0];
+        const msg = {
+            nonce: crecord.nonce,
+            gasPrice: Number(crecord.gasPrice),
+            gas: Number(crecord.gas),
+            to: crecord.to,
+            value: crecord.value ?? 0,
+            data: crecord.data,
+            kettleAddress: crecord.kettleAddress,
+            confidentialInputsHash: keccak256(ccr.confidentialInputs as `0x${string}`)
+          }
+        const msgParams = JSON.stringify({
+          domain: {
+            name: 'ConfidentialRecord',
+            verifyingContract: crecord.kettleAddress,
+          },
+          message: msg,
+          primaryType: 'ConfidentialRecord',
+          types: {
+            EIP712Domain: [
+              { name: 'name', type: 'string' },
+              { name: 'verifyingContract', type: 'address' },
+            ],
+            ConfidentialRecord: [
+              { name: 'nonce', type: 'uint64' },
+              { name: 'gasPrice', type: 'uint256' },
+              { name: 'gas', type: 'uint64' },
+              { name: 'to', type: 'address' },
+              { name: 'value', type: 'uint256' },
+              { name: 'data', type: 'bytes' },
+              { name: 'kettleAddress', type: 'address' },
+              { name: 'confidentialInputsHash', type: 'bytes32' },
+            ],
+          },
+        });
+    
+        const result = await window.ethereum.request({
+          method: 'eth_signTypedData_v4',
+          params: [from, msgParams],
+          from: from,
+        });
+    
+        return result;
+    
+      } catch (error) {
+        console.error('Error:', error);
+      }
+}
