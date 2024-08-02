@@ -1,6 +1,5 @@
 import { fromHex } from "viem"
 import useBlock from "../hooks/useBlock"
-import { goerli } from "viem/chains";
 import TimeAgo from "react-timeago";
 import { useState } from "react";
 import Link from "next/link";
@@ -31,7 +30,6 @@ const BlockDetails = (
         return <></>
     }
 
-    const href = `${goerli.blockExplorers.etherscan.url}/block/${blockNumber.toString()}`
     const blockHash = data !== undefined ? data.hash : undefined
     const blockTimestamp = data !== undefined ? new Date(parseInt(data.timestamp.toString()) * 1000) : undefined
     const extraData = data !== undefined ? fromHex(data.extraData, 'string') : undefined
