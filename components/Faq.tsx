@@ -35,7 +35,7 @@ const Faq = () => {
                 </p>
                 <p className="">
                     Sealed bids are collected by the SUAPP. Bids consist of an amount, message and expiry. Each block, the winning bid is selected and attempted for inclusion in a block.
-                    The block is submitted to Goerli for inclusion.
+                    The block is submitted to Ethereum for inclusion.
                 </p>
             </div>
             <div>

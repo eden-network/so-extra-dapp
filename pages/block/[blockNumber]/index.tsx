@@ -44,7 +44,7 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
             <title>{`So Extra | Block ${blockNumber}`}</title>
             <meta
                 content={`So Extra | Block ${blockNumber}`}
-                name="Buy block extra data - a new SUAVE app for Goerli"
+                name="Buy block extra data - a new SUAVE app"
             />
             <link href="/favicon.ico" rel="icon" />
         </Head>

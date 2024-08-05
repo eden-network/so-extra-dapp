@@ -1,58 +1,62 @@
-import { Chain, createPublicClient, defineChain, http, HttpTransport } from "viem"
 import useBurnerWallet from "./useBurnerWallet"
-import { http as httpSuaveViem } from '@flashbots/suave-viem';
+import { http } from '@flashbots/suave-viem';
 import { getSuaveProvider, getSuaveWallet, type SuaveWallet } from '@flashbots/suave-viem/chains/utils';
 import { useEffect, useState } from "react";
+import { Chain, suaveToliman, suaveRigil } from "@flashbots/suave-viem/chains";
+import { createPublicClient } from "@flashbots/suave-viem";
 
-export const toliman: Chain = defineChain({
-    id: 33626250,
-    name: 'Toliman',
-    network: 'toliman',
-    nativeCurrency: {
-        name: 'Toliman ETH',
-        symbol: 'tETH',
-        decimals: 18
-    },
-    rpcUrls: {
-        'default': {
-            http: ['https://rpc.toliman.suave.flashbots.net'],
-        },
-        public: {
-            http: ['https://rpc.toliman.suave.flashbots.net'],
-        }
-    },
-    blockExplorers: {
-        default: {
-            name: 'Explorer',
-            url: 'https://explorer.toliman.suave.flashbots.net/'
-        },
-    },
-})
+export const toliman = suaveToliman
+export const rigil = suaveRigil
 
-export const rigil: Chain = defineChain({
-    id: 16813125,
-    name: 'Rigil',
-    network: 'rigil',
-    nativeCurrency: {
-        name: 'Rigil ETH',
-        symbol: 'rigilETH',
-        decimals: 18
-    },
-    rpcUrls: {
-        'default': {
-            http: ['https://rpc.rigil.suave.flashbots.net'],
-        },
-        public: {
-            http: ['https://rpc.rigil.suave.flashbots.net'],
-        }
-    },
-    blockExplorers: {
-        default: {
-            name: 'Explorer',
-            url: 'https://explorer.rigil.suave.flashbots.net/'
-        },
-    },
-})
+// export const toliman: Chain = defineChain({
+//     id: 33626250,
+//     name: 'Toliman',
+//     network: 'toliman',
+//     nativeCurrency: {
+//         name: 'Toliman ETH',
+//         symbol: 'TEEth',
+//         decimals: 18
+//     },
+//     rpcUrls: {
+//         'default': {
+//             http: ['https://rpc.toliman.suave.flashbots.net'],
+//         },
+//         public: {
+//             http: ['https://rpc.toliman.suave.flashbots.net'],
+//         }
+//     },
+//     blockExplorers: {
+//         default: {
+//             name: 'Explorer',
+//             url: 'https://explorer.toliman.suave.flashbots.net/'
+//         },
+//     },
+// })
+
+// export const rigil: Chain = defineChain({
+//     id: 16813125,
+//     name: 'Rigil',
+//     network: 'rigil',
+//     nativeCurrency: {
+//         name: 'Rigil ETH',
+//         symbol: 'rigilETH',
+//         decimals: 18
+//     },
+//     rpcUrls: {
+//         'default': {
+//             http: ['https://rpc.rigil.suave.flashbots.net'],
+//         },
+//         public: {
+//             http: ['https://rpc.rigil.suave.flashbots.net'],
+//         }
+//     },
+//     blockExplorers: {
+//         default: {
+//             name: 'Explorer',
+//             url: 'https://explorer.rigil.suave.flashbots.net/'
+//         },
+//     },
+// })
 
 const useSuave = (chain: Chain = toliman) => {
     const suaveClient = createPublicClient({
@@ -61,12 +65,12 @@ const useSuave = (chain: Chain = toliman) => {
     })
 
     const suaveProvider = getSuaveProvider(
-        httpSuaveViem(chain.rpcUrls.default.http[0])
+        http(chain.rpcUrls.default.http[0])
     )
 
     const { privateKey } = useBurnerWallet()
 
-    // @ts-expect-error    
+    // @ts-expect-error
     const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<Transport> | undefined>(undefined)
 
     useEffect(() => {
@@ -75,7 +79,7 @@ const useSuave = (chain: Chain = toliman) => {
             return
         }
         const newBurnerWallet = getSuaveWallet({
-            transport: httpSuaveViem(chain.rpcUrls.default.http[0]),
+            transport: http(chain.rpcUrls.default.http[0]),
             privateKey: privateKey
         })
         setSuaveBurnerWallet(newBurnerWallet)

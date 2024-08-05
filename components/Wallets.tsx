@@ -159,9 +159,6 @@ const Wallets = ({
                                         <AccountModal
                                             showModal={showAccountModal}
                                             toggleModal={toggleAccountModal}
-                                            walletAddress={ellipsis(walletAddress !== undefined ? walletAddress : '')}
-                                            goerliBalance={balance !== undefined ? parseFloat(balance.formatted).toLocaleString() : ''}
-                                            rigilBalance={suaveBalance !== undefined ? `${parseFloat(suaveBalance.formatted).toLocaleString()}` : ''}
                                         />
                                         {useBurner === false ?
                                             <div>

@@ -34,7 +34,7 @@ const Onboarding = ({
                 </div>
                 <div className="flex flex-col gap-2 p-3 text-sm">
                     <p className="text-sm">
-                        This app demonstrates building blocks using Confidential Requests. You will use testnet SUAVE to buy block extra data. Connect your wallet and follow the steps. Find out more in the <span onClick={toggleHelpModal} className="underline cursor-pointer hover:no-underline">help section</span>.
+                        This app demonstrates building blocks using Confidential Requests. You will use SUAVE to buy block extra data. Connect your wallet and follow the steps. Find out more in the <span onClick={toggleHelpModal} className="underline cursor-pointer hover:no-underline">help section</span>.
                     </p>
                     <p className="text-sm mt-4">
                         <span className="font-modelica-bold">How the auction works?</span><br />Bids are active for 100 blocks and each block, the winning bid is selected and attempted for inclusion in a block. Only some blocks are available for data inclusion.
