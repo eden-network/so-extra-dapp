@@ -39,10 +39,10 @@ const BlockBid = ({
     setUseBurner: Dispatch<SetStateAction<boolean>>,
     burnerAccount: PrivateKeyAccount | undefined,
     walletAddress: `0x${string}` | undefined,
-    signedTx: string | undefined
-    setSignedTx: Dispatch<SetStateAction<string | undefined>>
-    suaveTxHash: string | undefined,
-    setSuaveTxHash: Dispatch<SetStateAction<string | undefined>>,
+    signedTx: `0x${string}` | undefined
+    setSignedTx: Dispatch<SetStateAction<`0x${string}` | undefined>>
+    suaveTxHash: `0x${string}` | undefined,
+    setSuaveTxHash: Dispatch<SetStateAction<`0x${string}` | undefined>>,
     suaveTxReceipt: TransactionReceipt | undefined,
     setSuaveTxReceipt: Dispatch<SetStateAction<TransactionReceipt | undefined>>
 }) => {
@@ -50,7 +50,6 @@ const BlockBid = ({
     const [bytesLength, setBytesLength] = useState<number>(12)
     const {
         balance: burnerBalance,
-        privateKey: burnerPrivateKey,
     } = useBurnerWallet()
 
     const { l1Chain: chain } = useCustomChains()
@@ -60,14 +59,14 @@ const BlockBid = ({
     const MAX_BYTES_LENGTH = 32
     const BID_VALID_FOR_BLOCKS = BigInt(100)
 
-    const [bidAmount, setBidAmount] = useState<number>(0.25)
+    const [bidAmount, setBidAmount] = useState<number>(0.01)
     const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
     const [errorMessage, setErrorMessage] = useState<string>()
 
     useEffect(() => {
         setSignedTx(undefined)
-    }, [bidAmount, useBurner])
+    }, [bidAmount, useBurner, walletAddress, setSignedTx])
 
     const handleExtraDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const text = event.target.value

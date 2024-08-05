@@ -1,13 +1,13 @@
-import { ChainFormatters } from "viem"
-import { Chain, holesky, mainnet } from "viem/chains"
+// import { ChainFormatters } from "viem"
 import { useAccount } from "wagmi"
-import { toliman, rigil } from "./useSuave"
+import { ChainFormatters } from "@flashbots/suave-viem"
+import { Chain, holesky, mainnet, suaveRigil, suaveToliman } from "@flashbots/suave-viem/chains"
 
 const useCustomChains = () => {
     const { chain: connected } = useAccount()
 
     const l1Chains: Chain<ChainFormatters | undefined>[] = [holesky, mainnet]
-    const suaveChains: Chain<ChainFormatters | undefined>[] = [toliman, rigil]
+    const suaveChains: Chain<ChainFormatters | undefined>[] = [suaveToliman, suaveRigil]
 
     return {
         l1Chain: l1Chains[0],

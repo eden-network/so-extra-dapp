@@ -20,7 +20,7 @@ const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Reg
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
 
-    const { suaveClient } = useSuave()
+    const { suaveProvider } = useSuave()
 
     const { address: walletAddress } = useAccount()
 
@@ -28,7 +28,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         address: walletAddress
     })
 
-    const { data: suaveBalance } = useBalance({ address: walletAddress, chainId: suaveClient.chain.id })
+    const { data: suaveBalance } = useBalance({ address: walletAddress, chainId: suaveProvider.chain.id })
 
     const {
         account: burnerAccount,
@@ -47,8 +47,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         setShowWinModal(!showWinModal);
     }
 
-    const [suaveTxHash, setSuaveTxHash] = useState<string | undefined>(undefined)
-    const [signedTx, setSignedTx] = useState<string | undefined>(undefined)
+    const [suaveTxHash, setSuaveTxHash] = useState<`0x${string}` | undefined>(undefined)
+    const [signedTx, setSignedTx] = useState<`0x${string}` | undefined>(undefined)
 
     const [suaveTxReceipt, setSuaveTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 

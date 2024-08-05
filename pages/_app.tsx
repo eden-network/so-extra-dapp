@@ -11,6 +11,7 @@ import { rigil, toliman } from '../hooks/useSuave'
 const config = getDefaultConfig({
   appName: 'So Extra',
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
+  // @ts-expect-error
   chains: [holesky, mainnet, toliman, rigil],
   transports: {
     [mainnet.id]: http(),

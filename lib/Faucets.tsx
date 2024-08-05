@@ -1,4 +1,4 @@
-import { Chain, holesky } from "viem/chains"
+import { Chain, holesky } from "@flashbots/suave-viem/chains"
 
 export const getFaucetUrl = (chain: Chain) => {
     switch (chain.id) {

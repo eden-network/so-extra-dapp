@@ -1,9 +1,9 @@
-import { Chain, createPublicClient, defineChain, http, HttpTransport } from "viem"
 import useBurnerWallet from "./useBurnerWallet"
-import { http as httpSuaveViem } from '@flashbots/suave-viem';
+import { http } from '@flashbots/suave-viem';
 import { getSuaveProvider, getSuaveWallet, type SuaveWallet } from '@flashbots/suave-viem/chains/utils';
 import { useEffect, useState } from "react";
-import { suaveToliman, suaveRigil } from "@flashbots/suave-viem/chains";
+import { Chain, suaveToliman, suaveRigil } from "@flashbots/suave-viem/chains";
+import { createPublicClient } from "@flashbots/suave-viem";
 
 export const toliman = suaveToliman
 export const rigil = suaveRigil
@@ -65,12 +65,12 @@ const useSuave = (chain: Chain = toliman) => {
     })
 
     const suaveProvider = getSuaveProvider(
-        httpSuaveViem(chain.rpcUrls.default.http[0])
+        http(chain.rpcUrls.default.http[0])
     )
 
     const { privateKey } = useBurnerWallet()
 
-    // @ts-expect-error    
+    // @ts-expect-error
     const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<Transport> | undefined>(undefined)
 
     useEffect(() => {
@@ -79,7 +79,7 @@ const useSuave = (chain: Chain = toliman) => {
             return
         }
         const newBurnerWallet = getSuaveWallet({
-            transport: httpSuaveViem(chain.rpcUrls.default.http[0]),
+            transport: http(chain.rpcUrls.default.http[0]),
             privateKey: privateKey
         })
         setSuaveBurnerWallet(newBurnerWallet)

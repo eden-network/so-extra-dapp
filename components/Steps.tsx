@@ -17,7 +17,7 @@ const Steps = ({
     isL0Balance: boolean,
     isSuaveBalance: boolean,
     isSignedTx: boolean,
-    suaveTxHash?: string | undefined
+    suaveTxHash?: `0x${string}` | undefined
     suaveTxReceipt?: TransactionReceipt | undefined
 }) => {
     const isRigilHash = suaveTxHash !== undefined
