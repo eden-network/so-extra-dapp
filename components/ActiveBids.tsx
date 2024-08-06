@@ -1,14 +1,15 @@
 import { useState } from "react"
-import { goerli } from "viem/chains"
 import { useBlockNumber } from "wagmi"
 import useLogs from "../hooks/useLogs"
 import BidProgress from "./BidProgress"
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid"
+import useCustomChains from "../hooks/useCustomChains"
 
 
 const ActiveBids = () => {
     const { logs } = useLogs()
-    const { data: currentBlock } = useBlockNumber({ chainId: goerli.id })
+    const { l1Chain } = useCustomChains()
+    const { data: currentBlock } = useBlockNumber({ chainId: l1Chain.id })
     const [openBidIndex, setOpenBidIndex] = useState<number | null>(null);
 
     const numOfBlock = Number(currentBlock)

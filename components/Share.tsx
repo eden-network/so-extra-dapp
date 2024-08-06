@@ -1,6 +1,5 @@
 import { getTwitterUrl } from "@phntms/react-share";
 import React from "react";
-import { SocialIcon } from 'react-social-icons'
 import ShareModal from "./Modal/ShareModal";
 import Image from "next/image";
 import { useState } from "react";
@@ -27,7 +26,7 @@ const Share = ({
                     className="lg:flex gap-2 right-2 top-2 text-xs text-white/60 px-2 py-1 group-hover:text-fuchsia-500"
                     href={getTwitterUrl({
                         url: url,
-                        text: `I just build block number: ${blockNumber} and added:${extraData} `,
+                        text: `I just build block ${blockNumber} with extra data:\n\n${extraData}\n\n`,
                         hashtags: ['extra', 'data'],
                         related: 'eden network'
                     })}

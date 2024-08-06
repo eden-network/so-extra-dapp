@@ -21,7 +21,7 @@ const LeaderBoard = () => {
                     </div>
                 </div>
                 <div className="overflow-hidden">
-                    {Object.keys(postSummary).slice(0, 10).map(post =>
+                    {Object.keys(postSummary).sort((a, b) => postSummary[b] - postSummary[a]).slice(0, 10).map(post =>
                         <div className="w-fit overflow-hidden text-wrap" key={post}>
                             <div className="flex gap-16 text-xs text-xl font-modelica-bold text-wrap overflow-hidden">
                                 <div className="flex w-1">{postSummary[post]}</div>

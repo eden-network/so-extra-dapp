@@ -1,54 +1,37 @@
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { http, WagmiProvider } from 'wagmi';
+import { mainnet, holesky } from 'wagmi/chains';
+import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { goerli } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { rigil } from '../hooks/useSuave'
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+import { rigil, toliman } from '../hooks/useSuave'
 
-
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [
-    goerli, rigil
-  ],
-  [
-    jsonRpcProvider({
-      rpc: () => ({
-
-        http: `https://goerli.gateway.tenderly.co`,
-        // webSocket: `wss://ethereum-goerli.publicnode.com`,
-      }),
-    }),
-    // publicProvider()
-  ]
-);
-
-const { connectors } = getDefaultWallets({
+const config = getDefaultConfig({
   appName: 'So Extra',
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
-  chains: [
-    goerli,
-    // rigil // hide from ui
-  ],
-});
+  // @ts-expect-error
+  chains: [holesky, mainnet, toliman, rigil],
+  transports: {
+    [mainnet.id]: http(),
+    [holesky.id]: http(),
+    [toliman.id]: http(),
+    [rigil.id]: http()
+  },
+})
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
-});
+const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 

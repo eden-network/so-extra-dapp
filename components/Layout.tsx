@@ -2,10 +2,8 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
-import BurnerWallet from '../components/BurnerWallet';
 import LeaderBoard from '../components/LeaderBoard';
 import Image from 'next/image';
-import Faq from '../components/Faq';
 import Onboarding from "./Onboarding";
 import ActiveBids from "./ActiveBids";
 import Wallets from "./Wallets";
@@ -15,9 +13,7 @@ import useBurnerWallet from "../hooks/useBurnerWallet";
 import { useAccount, useBalance } from "wagmi";
 import { TransactionReceipt } from "viem";
 import { useRouter } from "next/router";
-import Modal from "./Modal/Modal";
 import HelpModal from "./Modal/HelpModal";
-import WinModal from "./Modal/WinModal";
 import localFont from 'next/font/local'
 import Contributors from "./Contributors";
 const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Regular.woff2' })
@@ -25,7 +21,7 @@ const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Reg
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
     const [useBurner, setUseBurner] = useState<boolean>(false)
 
-    const { suaveClient, rigil } = useSuave()
+    const { suaveProvider } = useSuave()
 
     const { address: walletAddress } = useAccount()
 
@@ -33,14 +29,12 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         address: walletAddress
     })
 
-    const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
+    const { data: suaveBalance } = useBalance({ address: walletAddress, chainId: suaveProvider.chain.id })
 
     const {
         account: burnerAccount,
         balance: burnerBalance,
-        rigilBalance: burnerRigilBalance,
-        privateKey: burnerPrivateKey,
-        createBurnerWallet
+        suaveBalance: burnerSuaveBalance,
     } = useBurnerWallet()
 
     const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
@@ -54,16 +48,10 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
         setShowWinModal(!showWinModal);
     }
 
-    const [rigilTx, setRigilTx] = useState<string | undefined>(undefined)
-    const [signedTx, setSIgnedTx] = useState<string | undefined>(undefined)
+    const [suaveTxHash, setSuaveTxHash] = useState<`0x${string}` | undefined>(undefined)
+    const [signedTx, setSignedTx] = useState<`0x${string}` | undefined>(undefined)
 
-    const [rigilTxReceipt, setRigilTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
-    // useEffect(() => {
-    //     console.log("rigiltx", rigilTxReceipt)
-    // }, [rigilTxReceipt])
-    const isSignedTx = useCallback(() => {
-
-    }, [])
+    const [suaveTxReceipt, setSuaveTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 
     const router = useRouter();
     const isHomePage = router.route === '/';
@@ -74,13 +62,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <title>So Extra | Data Auction on SUAVE</title>
                 <meta
                     name="description"
-                    content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                     key="desc"
                 />
                 <meta property="og:title" content="So Extra" />
                 <meta
                     property="og:description"
-                    content="Check out the first suave app! Extra data is for sale on Goerli. Read and post 32-byte messages using block extra data"
+                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                 />
                 <meta
                     property="og:image"
@@ -133,11 +121,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                 <Wallets useBurner={useBurner} setUseBurner={setUseBurner} />
                                 <Steps
                                     isConnected={useBurner ? burnerAccount !== undefined : walletAddress !== undefined}
-                                    isGoerliBalance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
-                                    isRigilBalance={useBurner ? (burnerRigilBalance !== undefined && burnerRigilBalance.value > BigInt(0)) : (rigilBalance !== undefined && rigilBalance.value > BigInt(0))}
+                                    isL0Balance={useBurner ? (burnerBalance !== undefined && burnerBalance.value > BigInt(0)) : (balance !== undefined && balance.value > BigInt(0))}
+                                    isSuaveBalance={useBurner ? (burnerSuaveBalance !== undefined && burnerSuaveBalance.value > BigInt(0)) : (suaveBalance !== undefined && suaveBalance.value > BigInt(0))}
                                     isSignedTx={signedTx !== undefined}
-                                    rigilHash={rigilTx}
-                                    rigilReceipt={rigilTxReceipt}
+                                    suaveTxHash={suaveTxHash}
+                                    suaveTxReceipt={suaveTxReceipt}
                                 />
                             </div>
                         </div>
@@ -165,11 +153,11 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                         walletAddress={walletAddress}
                                         burnerAccount={burnerAccount}
                                         signedTx={signedTx}
-                                        setSignedTx={setSIgnedTx}
-                                        rigilTx={rigilTx}
-                                        setRigilTx={setRigilTx}
-                                        rigilTxReceipt={rigilTxReceipt}
-                                        setRigilTxReceipt={setRigilTxReceipt}
+                                        setSignedTx={setSignedTx}
+                                        suaveTxHash={suaveTxHash}
+                                        setSuaveTxHash={setSuaveTxHash}
+                                        suaveTxReceipt={suaveTxReceipt}
+                                        setSuaveTxReceipt={setSuaveTxReceipt}
                                     /> : null}
 
                                 </div>
