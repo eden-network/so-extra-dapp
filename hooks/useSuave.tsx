@@ -70,8 +70,8 @@ const useSuave = (chain: Chain = toliman) => {
 
     const { privateKey } = useBurnerWallet()
 
-    // @ts-expect-error
-    const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<Transport> | undefined>(undefined)
+    // @ts-expect-error    
+    const [suaveBurnerWallet, setSuaveBurnerWallet] = useState<SuaveWallet<HttpTransport>>()
 
     useEffect(() => {
         if (privateKey === undefined) {
@@ -84,12 +84,13 @@ const useSuave = (chain: Chain = toliman) => {
         })
         setSuaveBurnerWallet(newBurnerWallet)
     }, [
-        privateKey
+        privateKey,
+        chain.rpcUrls
     ])
 
     return {
-        suaveClient, 
-        connectedSuaveChain: chain, 
+        suaveClient,
+        connectedSuaveChain: chain,
         suaveBurnerWallet,
         suaveProvider
     }
