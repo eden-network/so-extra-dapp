@@ -121,14 +121,14 @@ const BlockBid = ({
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
-        // if (walletClient === undefined || walletClient === null) {
-        //     console.error(`walletClient not found`)
-        //     return
-        // }
+        if (walletClient === undefined || walletClient === null) {
+            console.error(`walletClient not found`)
+            return
+        }
         console.log('gas', gasPrice);
         try {
             // create request with viem
-            const request = await walletClient?.prepareTransactionRequest({
+            const request = await walletClient.prepareTransactionRequest({
                 chain: goerli,
                 account: useBurner ? burnerAccount : walletAddress,
                 to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
