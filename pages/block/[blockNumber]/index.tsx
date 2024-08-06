@@ -44,7 +44,7 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
             <title>{`So Extra | Block ${blockNumber}`}</title>
             <meta
                 content={`So Extra | Block ${blockNumber}`}
-                name="Buy block extra data - a new SUAVE app"
+                name="Buy block extra data - a new SUAVE app for Goerli"
             />
             <link href="/favicon.ico" rel="icon" />
         </Head>
@@ -61,7 +61,7 @@ const Page: NextPage<Props> = ({ blockNumber }: InferGetStaticPropsType<typeof g
                         </button>
                     </Link>
                 </div>
-                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} index={rndInt} />}
+                {blockNumberBigInt !== undefined && <BlockDetails blockNumber={blockNumberBigInt} shareUrl={currentUrl} />}
             </div>
         </div>
     </Layout>

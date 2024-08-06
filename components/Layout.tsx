@@ -62,7 +62,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <title>So Extra | Data Auction on SUAVE</title>
                 <meta
                     name="description"
-                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
+                    content="Check out the first Suave App! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                     key="desc"
                 />
                 <meta property="og:title" content="So Extra" />
@@ -79,9 +79,6 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <link rel="icon" type="image/png" href="/f64.png" />
                 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
-
-
-
 
             <main>
                 <div className="w-full flex items-end mb-0 px-4 lg:pt-16">

@@ -15,7 +15,7 @@ const LeaderBoard = () => {
         <div className="border border-white/30 p-2">
             <div className="flex flex-col justify-center text-center text-sm">
                 <div className="text-center">
-                    <div className="flex gap-9 mb-2 font-modelica-bold">
+                    <div className="flex gap-[1.7rem] mb-2 font-modelica-bold">
                         <div>Points</div>
                         <div className="text-left">Extra Data</div>
                     </div>

@@ -16,7 +16,7 @@ const RecentBlocks = () => {
 
     return <div className="flex flex-col pb-3">
         <div className="flex flex-col px-6">
-            {pastBlocks.map((n, index) => <BlockDetails key={n} blockNumber={n} shareUrl="" index={getRandomInteger()} />)}
+            {pastBlocks.map((n, index) => <BlockDetails key={n} blockNumber={n} shareUrl="" />)}
         </div>
     </div>
 }
