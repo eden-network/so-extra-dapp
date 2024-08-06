@@ -1,8 +1,6 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react"
-import { hexToSignature, keccak256, parseEther, parseGwei, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, Transaction, TransactionLegacy, TransactionRequest, TransactionSerializable, TransactionSerializedLegacy, Hash } from "viem"
-import { useAccount, useBalance, useBlockNumber, useConnectorClient, usePrepareTransactionRequest } from "wagmi"
-import { createConfidentialComputeRecord, removeLeadingZeros, txToBundleBytes } from '../ethers-suave/src/utils'
-import { ConfidentialComputeRequest, SigSplit } from '../ethers-suave/src/confidential-types'
+import { hexToSignature, keccak256, parseEther, parseTransaction, serializeTransaction, stringToBytes, parseAbiItem, encodeFunctionData, TransactionReceipt, TransactionRequest, TransactionSerializedLegacy, Hash } from "viem"
+import { useBalance, useBlockNumber, useConnectorClient, usePrepareTransactionRequest } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import useSuave from "../hooks/useSuave"
 import { PrivateKeyAccount } from "viem"
@@ -13,9 +11,13 @@ import SubmitButton from '../public/lotties/submitButton.json'
 import { PostConnectButton } from "./PostConnectButton"
 import LottiePlayer from "./LottiePlayer"
 import {
-  type TransactionRequestSuave
+    getSuaveWallet,
+    type TransactionRequestSuave
 } from '@flashbots/suave-viem/chains/utils';
 import useCustomChains from "../hooks/useCustomChains"
+import { txToBundleBytes } from '../lib/utils'
+import { custom, Hex } from '@flashbots/suave-viem'
+import { suaveToliman } from '@flashbots/suave-viem/chains'
 
 const gasPriceForBidAmount = (bidAmount: number): bigint => {
     const bidAmountBigInt = parseEther(bidAmount.toString())
@@ -198,25 +200,20 @@ const BlockBid = ({
             to: suaveContractAddress,
             value: BigInt(0),
             type: "0x43", // transaction type for Confidential Compute Request
-            isEIP712: false, 
             kettleAddress: executionNodes[suaveProvider.chain.id]
         }
         console.log(`suave ccr`, ccr)
 
-        var ccrRlp
+        let ccrRlp: Hex
         if (useBurner && suaveBurnerWallet !== undefined) {
             ccrRlp = await suaveBurnerWallet.signTransaction(ccr)
         } else {
-            const signingCallback = async (_hash: string) => {
-                const hexSig = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, _hash] })
-                const sig = hexToSignature(hexSig)
-                sig.r = removeLeadingZeros(sig.r) as `0x${string}`
-                sig.s = removeLeadingZeros(sig.s) as `0x${string}`
-                sig.v = Number(sig.v) == 27 ? BigInt(0) : BigInt(1)
-                console.log("sig", sig)
-                return { r: sig.r, s: sig.s, v: Number(sig.v) } as SigSplit
-            }
-            // ccrRlp = await ccr.signWithAsyncCallback(signingCallback).then(ccr => ccr.rlpEncode())
+            const suaveWallet = getSuaveWallet({
+                transport: custom(window.ethereum),
+                jsonRpcAccount: walletAddress,
+                customRpc: suaveToliman.rpcUrls.public.http[0],
+            })
+            ccrRlp = await suaveWallet.signTransaction(ccr)
         }
 
         console.log("debug::ccr", ccr)
@@ -224,7 +221,7 @@ const BlockBid = ({
 
         const hash: Hash = await suaveProvider.sendRawTransaction({
             //// BREAKS /////
-            serializedTransaction: ccrRlp as `0x${string}`
+            serializedTransaction: ccrRlp
         })
 
         console.log(`suave hash`, hash)

@@ -9,9 +9,6 @@ const useBlock = (blockNumber: bigint | undefined) => {
     const publicClient = usePublicClient()
 
     useEffect(() => {
-        // if (blockNumber === undefined) {
-        //     return
-        // }
         setIsLoading(true)
         publicClient?.getBlock({ blockNumber })
             .then((x: Block) => {
