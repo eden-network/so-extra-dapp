@@ -186,11 +186,6 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                         </div>
                     </div>
                 </div>
-                {/* <footer className="p-6 text-center">
-                    <a href="https://twitter.com/MihaLotric" rel="noopener noreferrer" target="_blank">
-                        @MihaLotric
-                    </a>
-                </footer> */}
             </main>
         </div>
     )
