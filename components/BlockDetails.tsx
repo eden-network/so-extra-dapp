@@ -6,6 +6,7 @@ import Link from "next/link";
 import Share from "./Share";
 import { useRouter } from 'next/router';
 import Image from "next/image";
+import ShareModal from "./Modal/ShareModal";
 import ellipsis from "../lib/ellipsis";
 
 const BlockDetails = (
@@ -35,9 +36,9 @@ const BlockDetails = (
     const blockTimestamp = data !== undefined ? new Date(parseInt(data.timestamp.toString()) * 1000) : undefined
     const extraData = data !== undefined ? fromHex(data.extraData, 'string') : undefined
 
-    // function toggleShareModal() {
-    //     setShowShareModal(!showShareModal);
-    // }
+    function toggleShareModal() {
+        setShowShareModal(!showShareModal);
+    }
 
     const blockCard =
         <div className="flex flex-row gap-4 items-start">

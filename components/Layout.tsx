@@ -15,6 +15,7 @@ import { TransactionReceipt } from "viem";
 import { useRouter } from "next/router";
 import HelpModal from "./Modal/HelpModal";
 import localFont from 'next/font/local'
+import Contributors from "./Contributors";
 const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Regular.woff2' })
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
@@ -169,14 +170,10 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             <Onboarding toggleHelpModal={toggleHelpModal} />
                             <LeaderBoard />
                             <ActiveBids />
+                            <Contributors />
                         </div>
                     </div>
                 </div>
-                <footer className="p-6 text-center">
-                    <a href="https://twitter.com/EdenNetwork" rel="noopener noreferrer" target="_blank">
-                        @EdenNetwork
-                    </a>
-                </footer>
             </main>
         </div>
     )

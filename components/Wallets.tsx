@@ -152,7 +152,6 @@ const Wallets = ({
                                     <div className="flex gap-2">
                                         <div className="relative">
                                             <button onClick={toggleAccountModal}>
-
                                                 <LottiePlayer src={AccountButton} />
                                             </button>
                                         </div>
