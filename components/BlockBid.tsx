@@ -117,7 +117,6 @@ const BlockBid = ({
 
     const { data: rigilBalance } = useBalance({ address: walletAddress, chainId: rigil.id })
     const { data: currentGoerliBlock } = useBlockNumber({ chainId: goerli.id })
-    console.log(walletClient);
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
