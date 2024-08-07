@@ -10,13 +10,6 @@ const useBlock = (blockNumber: bigint | undefined) => {
     const { l1Chain } = useCustomChains()
     const publicClient = usePublicClient({ chainId: l1Chain.id })
 
-    if (blockNumber === undefined) {
-        return {
-            data: block,
-            isLoading
-        }
-    }
-
     useEffect(() => {
         setIsLoading(true)
         publicClient?.getBlock({ blockNumber })
