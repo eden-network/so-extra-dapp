@@ -1,6 +1,6 @@
 
 import { Dispatch, SetStateAction, useState } from "react"
-import { useAccount, useBalance, useChains } from "wagmi"
+import { useAccount, useBalance } from "wagmi"
 import useBurnerWallet from "../hooks/useBurnerWallet"
 import AccountModal from "./Modal/AccountModal"
 import BurnerModal from "./Modal/BurnerModal"
@@ -119,7 +119,7 @@ const Wallets = ({
                                             </div>
                                         }
                                     </div>
-                                    {burnerAccount !== undefined && <p
+                                    {burnerAccount !== undefined && <div
                                         className="flex flex-col text-xs mb-6 mt-2"
                                     >
                                         <div className="flex justify-between mb-1">
@@ -131,14 +131,15 @@ const Wallets = ({
                                             <span>{suaveChain.nativeCurrency.symbol}: </span>
                                             <span>{burnerSuaveBalance !== undefined ? `${parseFloat(burnerSuaveBalance.formatted).toLocaleString()}` : `-`}</span>
                                         </div>
-                                    </p>}
+                                    </div>}
                                 </div>
                             </>}
                     </div>
                     <div className="flex justify-between">
                         <p className="text-sm mb-1 text-white pt-6">
                             {'Metamask Wallet'}
-                            <span className="text-white/70">{' '}&bull;{' '}{walletConnectedChain?.name || 'Unsupported Network'}</span></p>
+                            <span className="text-white/70">{' '}&bull;{' '}{walletConnectedChain?.name || 'Unsupported Network'}</span>
+                        </p>
                     </div>
                     <div className="flex flex-row justify-between text-xs items-center gap-2 mb-1">
                         {walletAddress === undefined ? <CustomConnectButton /> :
@@ -174,7 +175,7 @@ const Wallets = ({
                                             </div>
                                         }
                                     </div>
-                                    {walletAddress !== undefined && <p
+                                    {walletAddress !== undefined && <div
                                         className="flex flex-col text-xs mb-6 mt-2"
                                     >
                                         <div className="flex justify-between mb-1">
@@ -185,12 +186,12 @@ const Wallets = ({
                                             <span>{suaveChain.nativeCurrency.symbol}:</span>
                                             <span>{suaveBalance !== undefined ? `${parseFloat(suaveBalance.formatted).toLocaleString()}` : `-`}</span>
                                         </div>
-                                    </p>}
+                                    </div>}
                                 </div>
                             </>}
                     </div>
                 </div>
-            </div >
+            </div>
         </>
     )
 }

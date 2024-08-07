@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
