@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Head from 'next/head';
 import BlockBid from '../components/BlockBid';
@@ -15,6 +15,7 @@ import { TransactionReceipt } from "viem";
 import { useRouter } from "next/router";
 import HelpModal from "./Modal/HelpModal";
 import localFont from 'next/font/local'
+import Contributors from "./Contributors";
 const Modelica = localFont({ src: '../public/fonts/modelica/woff2/BwModelica-Regular.woff2' })
 
 export default function Layout({ pageProps, children }: { pageProps?: any, children: ReactNode }) {
@@ -61,13 +62,13 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <title>So Extra | Data Auction on SUAVE</title>
                 <meta
                     name="description"
-                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
+                    content="Check out the first Suave App! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                     key="desc"
                 />
                 <meta property="og:title" content="So Extra" />
                 <meta
                     property="og:description"
-                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
+                    content="Check out the first Suave App! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                 />
                 <meta
                     property="og:image"
@@ -78,9 +79,6 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <link rel="icon" type="image/png" href="/f64.png" />
                 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             </Head>
-
-
-
 
             <main>
                 <div className="w-full flex items-end mb-0 px-4 lg:pt-16">
@@ -169,14 +167,10 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                             <Onboarding toggleHelpModal={toggleHelpModal} />
                             <LeaderBoard />
                             <ActiveBids />
+                            <Contributors />
                         </div>
                     </div>
                 </div>
-                <footer className="p-6 text-center">
-                    <a href="https://twitter.com/EdenNetwork" rel="noopener noreferrer" target="_blank">
-                        @EdenNetwork
-                    </a>
-                </footer>
             </main>
         </div>
     )

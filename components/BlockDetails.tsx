@@ -7,16 +7,16 @@ import Share from "./Share";
 import { useRouter } from 'next/router';
 import Image from "next/image";
 import ellipsis from "../lib/ellipsis";
+import { getBlockImageIndex } from "../lib/BlockImageIndex";
+
 
 const BlockDetails = (
     {
         blockNumber,
         shareUrl,
-        index
     }: {
         blockNumber: bigint | undefined,
         shareUrl: string,
-        index: number
     }
 ) => {
     const router = useRouter();
@@ -34,15 +34,28 @@ const BlockDetails = (
     const blockHash = data !== undefined ? data.hash : undefined
     const blockTimestamp = data !== undefined ? new Date(parseInt(data.timestamp.toString()) * 1000) : undefined
     const extraData = data !== undefined ? fromHex(data.extraData, 'string') : undefined
+    const imageIndex = blockNumber ? getBlockImageIndex(Number(blockNumber)) : 0;
 
-    // function toggleShareModal() {
-    //     setShowShareModal(!showShareModal);
-    // }
+    const handleClick = () => {
+        if (!isBlockPage) {
+            router.push(`/block/${blockNumber}`);
+        }
+    };
+
+    const handleShareClick = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        // Your share functionality here
+        toggleShareModal();
+    };
+
+    function toggleShareModal() {
+        setShowShareModal(!showShareModal);
+    }
 
     const blockCard =
         <div className="flex flex-row gap-4 items-start">
             <div className="flex m-auto">
-                <Image src={`/blockdetails/${index}.png`} width={100} height={50} alt="blockdetails_symbol" />
+                <Image src={`/blockdetails/${imageIndex}.png`} width={100} height={50} alt="blockdetails_symbol" />
             </div>
             <div className="w-full flex flex-col justify-between gap-6">
                 <div>
@@ -68,27 +81,23 @@ const BlockDetails = (
                         <Image src="/gasused_icon.svg" width="15" height="20" alt="tx_icon" />
                         <p>GU {data !== undefined && data.gasUsed.toLocaleString()}</p>
                     </div>
-                    <Share
-                        url={shareUrl}
-                        blockNumber={blockNumber}
-                        extraData={extraData}
-                    />
+                    <div onClick={handleShareClick}>
+                        <Share
+                            url={shareUrl}
+                            blockNumber={blockNumber}
+                            extraData={extraData}
+                        />
+                    </div>
                 </div>
             </div>
         </div >
 
     return <div
-        className="p-3 border border-white/30 hover:border-[#ff69f9] hover:text-[#ff69f9] w-full bg-white/5 backdrop-blur-lg relative"
+        className={`p-3 border border-white/30 hover:border-[#ff69f9] hover:text-[#ff69f9] w-full bg-white/5 backdrop-blur-sm relative ${!isBlockPage ? "cursor-pointer" : ""}`}
         onMouseEnter={handleOnMouseEnter.bind(this)}
+        onClick={handleClick}
     >
-        {
-            isBlockPage ?
-                blockCard
-                :
-                <Link href={`/block/${blockNumber}`}>
-                    {blockCard}
-                </Link>
-        }
+        {blockCard}
     </div>
 }
 
