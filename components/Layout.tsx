@@ -68,7 +68,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 <meta property="og:title" content="So Extra" />
                 <meta
                     property="og:description"
-                    content="Check out the first suave app! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
+                    content="Check out the first Suave App! Extra data is for sale on Ethereum. Read and post 32-byte messages using block extra data"
                 />
                 <meta
                     property="og:image"
