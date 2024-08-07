@@ -1,24 +1,25 @@
 import { getTwitterUrl } from "@phntms/react-share";
 import React from "react";
 import ShareModal from "./Modal/ShareModal";
-import Image from "next/image";
 import { useState } from "react";
+import { ShareIcon } from "@heroicons/react/24/solid";
 
 const Share = ({
     url,
     blockNumber,
     extraData,
-
 }: {
     url: string,
     blockNumber: string | bigint,
     extraData,
 }) => {
+
     const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
     function toggleShareModal() {
         setShowShareModal(!showShareModal);
     }
+
     return (
         <>
             <div className="group">
@@ -32,7 +33,7 @@ const Share = ({
                     })}
                 >
                     <div className="w-full flex justify-center">
-                        <Image src="/share_icon.svg" width="15" height="20" alt="tx_icon" className="fill-white stroke-blue-500" />
+                        <ShareIcon width={15} height={15}></ShareIcon>
                     </div>
                     Share
                 </a>
