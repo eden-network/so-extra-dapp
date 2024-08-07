@@ -111,11 +111,11 @@ const BlockBid = ({
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
-        if (walletClient === undefined || walletClient === null) {
-            console.error(`walletClient not found`)
-            return
-        }
-        console.log('gas', gasPrice);
+        // if (walletClient === undefined || walletClient === null) {
+        //     console.error(`walletClient not found`)
+        //     return
+        // }
+        // console.log('gas', gasPrice);
         try {
             // create request with viem
             // const request: TransactionRequest = await walletClient.prepareTransactionRequest({
@@ -171,10 +171,10 @@ const BlockBid = ({
     }
 
     const handleButtonClickForSignedTx = async () => {
-        if (walletClient === undefined || walletClient === null) {
-            console.error(`walletClient not found`)
-            return
-        }
+        // if (walletClient === undefined || walletClient === null) {
+        //     console.error(`walletClient not found`)
+        //     return
+        // }
 
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
@@ -295,11 +295,11 @@ const BlockBid = ({
                 </div>
             </div>
             <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
-                {!walletAddress &&
+                {!useBurner && !walletAddress &&
                     <PostConnectButton />
                 }
 
-                {(useBurner && walletAddress ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
+                {(useBurner ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
                     <button
                         onClick={handleButtonClick}
                         disabled={signedTx !== undefined || bidAmountError !== undefined}
