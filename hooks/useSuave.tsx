@@ -3,17 +3,12 @@ import { http, HttpTransport } from '@flashbots/suave-viem';
 import { getSuaveProvider, getSuaveWallet, type SuaveWallet } from '@flashbots/suave-viem/chains/utils';
 import { useEffect, useState } from "react";
 import { Chain, suaveToliman, suaveRigil } from "@flashbots/suave-viem/chains";
-import { createPublicClient } from "@flashbots/suave-viem";
 
 export const toliman = suaveToliman
 export const rigil = suaveRigil
 
 const useSuave = (chain: Chain = toliman) => {
     const rpcUrl = chain.rpcUrls.public.http[0]
-    const suaveClient = createPublicClient({
-        chain: chain,
-        transport: http(rpcUrl)
-    })
     const suaveProvider = getSuaveProvider(
         http(rpcUrl)
     )
@@ -36,7 +31,6 @@ const useSuave = (chain: Chain = toliman) => {
     ])
 
     return {
-        suaveClient,
         connectedSuaveChain: chain,
         suaveBurnerWallet,
         suaveProvider
