@@ -27,6 +27,11 @@ const Contributors = () => {
                         <p>@noisecolor</p>
                     </div>
                 </Link>
+                <Link href={"https://twitter.com/zeroXbrock"} target="_blank">
+                    <div className="text-center hover:underline">
+                        <p>@zeroXbrock</p>
+                    </div>
+                </Link>
             </div>
         </div>
     )
