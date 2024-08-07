@@ -38,7 +38,7 @@ const BurnerModal = ({
                 <div className="flex flex-col gap-4 p-6 min-w-[300px] text-center items-center">
                     <Image src={'/burner-acc.svg'} width={150} height={200} alt="unicorn-acc" />
                     <p className="font-modelica-bold text-xl">{burnerAddress && ellipsis(burnerAddress)}</p>
-                    <p className="flex flex-row items-center gap-1">
+                    <div className="flex flex-row items-center gap-1">
                         <span>{formattedBalance !== undefined ? parseFloat(formattedBalance).toLocaleString() : '-'}</span>
                         <span>{l1Chain.nativeCurrency.symbol}</span>
                         <span>({l1Chain.nativeCurrency.name})</span>
@@ -49,8 +49,8 @@ const BurnerModal = ({
                                     <p className="text-white text-xs hover:no-underline">Faucet</p>
                                 </div>
                             </Link>}
-                    </p>
-                    <p className="flex flex-row items-center gap-1">
+                    </div>
+                    <div className="flex flex-row items-center gap-1">
                         <span>{formattedSuaveBalance !== undefined ? parseFloat(formattedSuaveBalance).toLocaleString() : `-`}</span>
                         <span>{suaveChain.nativeCurrency.symbol}</span>
                         <span>({suaveChain.nativeCurrency.name})</span>
@@ -61,7 +61,7 @@ const BurnerModal = ({
                                     <p className="text-white text-xs hover:no-underline">Faucet</p>
                                 </div>
                             </Link>}
-                    </p>
+                    </div>
                     <BurnerWallet />
                 </div>
             </Modal>
