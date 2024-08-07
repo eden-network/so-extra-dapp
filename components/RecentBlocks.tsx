@@ -1,8 +1,11 @@
 import { useBlockNumber } from "wagmi"
+import useCustomChains from "../hooks/useCustomChains"
 import BlockDetails from "./BlockDetails"
 
 const RecentBlocks = () => {
+    const { l1Chain } = useCustomChains()
     const { data } = useBlockNumber({
+        chainId: l1Chain.id,
         watch: true
     })
 
