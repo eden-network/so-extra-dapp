@@ -89,7 +89,7 @@ const Wallets = ({
                                 <LottiePlayer src={CreateBurner} />
                             </button> : <>
                                 <p className="flex-1 mb-auto font-modelica-bold text-xl">
-                                    <a href={`https://goerli.etherscan.io/address/${burnerAccount.address}`} target="_blank" className="hover:underline">
+                                    <a href={`https://holesky.etherscan.io/address/${burnerAccount.address}`} target="_blank" className="hover:underline">
                                         {ellipsis(burnerAccount.address)}
                                     </a>
                                 </p>
