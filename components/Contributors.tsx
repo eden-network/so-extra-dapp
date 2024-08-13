@@ -17,14 +17,14 @@ const Contributors = () => {
                         <p>@calebsheridan</p>
                     </div>
                 </Link>
-                <Link href={"https://twitter.com/dorianjanezic"} target="_blank">
+                <Link href={"https://twitter.com/dtj5179"} target="_blank">
                     <div className="text-center hover:underline">
                         <p>@dorianjanezic</p>
                     </div>
                 </Link>
-                <Link href={"https://twitter.com/noisecolor"} target="_blank">
+                <Link href={"https://twitter.com/Noiseincolor"} target="_blank">
                     <div className="text-center hover:underline">
-                        <p>@noisecolor</p>
+                        <p>@noiseincolor</p>
                     </div>
                 </Link>
                 <Link href={"https://twitter.com/zeroXbrock"} target="_blank">
