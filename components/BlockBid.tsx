@@ -345,7 +345,7 @@ const BlockBid = ({
         }
         {showCongratulations && (
             <div className="text-center mt-4 text-green-500 font-bold">
-                Congratulations! Your bid was successful and is now pending.
+                Your bid was succesfully sent and is waiting to be mined on Holesky.
             </div>
         )}
     </div>
