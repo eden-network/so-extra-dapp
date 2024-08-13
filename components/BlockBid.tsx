@@ -35,7 +35,9 @@ const BlockBid = ({
     suaveTxHash,
     setSuaveTxHash,
     suaveTxReceipt,
-    setSuaveTxReceipt
+    setSuaveTxReceipt,
+    resetBidStates
+
 }: {
     useBurner: boolean,
     setUseBurner: Dispatch<SetStateAction<boolean>>,
@@ -47,6 +49,7 @@ const BlockBid = ({
     setSuaveTxHash: Dispatch<SetStateAction<`0x${string}` | undefined>>,
     suaveTxReceipt: TransactionReceipt | undefined,
     setSuaveTxReceipt: Dispatch<SetStateAction<TransactionReceipt | undefined>>
+    resetBidStates: () => void
 }) => {
     const [extraData, setExtraData] = useState<string>("So Extra ✨")
     const [bytesLength, setBytesLength] = useState<number>(12)
@@ -260,6 +263,9 @@ const BlockBid = ({
 
         setShowCongratulations(true);
         setShowSignButton(true);
+        setSignedTx(undefined);
+        setSuaveTxReceipt(undefined);
+        resetBidStates();
         setTimeout(() => {
             setShowCongratulations(false);
         }, 5000);
@@ -287,6 +293,10 @@ const BlockBid = ({
             return
         }
     }, [bidAmount, useBurner, burnerBalance, balance])
+
+    useEffect(() => {
+        setSignedTx(undefined);
+    }, [bidAmount, extraData, walletAddress, burnerAccount]);
 
     return <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
         <div className="relative px-4 my-2">
@@ -331,11 +341,11 @@ const BlockBid = ({
 
                 {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
                     <button
-                        onClick={showSignButton ? handleButtonClick : handleButtonClickForSignedTx}
+                        onClick={signedTx ? handleButtonClickForSignedTx : handleButtonClick}
                         disabled={bidAmountError !== undefined || suaveTxReceipt !== undefined}
                         type="submit"
                     >
-                        <LottiePlayer src={showSignButton ? SignButton : SubmitButton} />
+                        <LottiePlayer src={signedTx ? SubmitButton : SignButton} />
                     </button>
                 )}
             </div>
