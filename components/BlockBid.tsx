@@ -65,6 +65,7 @@ const BlockBid = ({
     const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
     const [errorMessage, setErrorMessage] = useState<string>()
+    const [warningMessage, setWarningMessage] = useState(false)
 
     useEffect(() => {
         setSignedTx(undefined)
@@ -108,6 +109,18 @@ const BlockBid = ({
         to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
         gasPrice: gasPrice,
     })
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (warningMessage) {
+            timer = setTimeout(() => {
+                setWarningMessage(false);
+            }, 5000);
+        }
+        return () => {
+            if (timer) clearTimeout(timer);
+        };
+    }, [warningMessage]);
 
     const handleButtonClick = async () => {
         setErrorMessage(undefined)
@@ -165,7 +178,12 @@ const BlockBid = ({
             }
         }
         catch (error: any) {
-            console.log(error)
+            console.log(error.code)
+            if (error.code === -32601) {
+                setWarningMessage(true);
+            } else {
+                setWarningMessage(false);
+            }
             setErrorMessage(error?.message)
         }
     }
@@ -319,6 +337,10 @@ const BlockBid = ({
                 )}
             </div>
         </div>
+        {warningMessage &&
+            <p className="text-center pt-4 text-red-500">eth_sign has been disabled. You must enable it in the advanced settings.</p>
+        }
+
     </div>
 }
 
