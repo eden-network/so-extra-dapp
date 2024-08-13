@@ -28,7 +28,8 @@ const BurnerWallet = () => {
     const { data: holeskyGasEstimate, refetch: refetchHoleskyGas } = useEstimateGas({
         account: walletAddress,
         to: account?.address,
-        value: parseEther(depositAmounts.holesky || "0")
+        value: parseEther(depositAmounts.holesky || "0"),
+        chainId: l1Chain.id
     })
 
     const { data: suaveGasEstimate, refetch: refetchSuaveGas } = useEstimateGas({
