@@ -67,6 +67,11 @@ const BlockBid = ({
     const [errorMessage, setErrorMessage] = useState<string>()
     const [warningMessage, setWarningMessage] = useState(false)
 
+    const [showCongratulations, setShowCongratulations] = useState(false);
+    const [showSignButton, setShowSignButton] = useState(true);
+
+
+
     useEffect(() => {
         setSignedTx(undefined)
     }, [bidAmount, useBurner, walletAddress, setSignedTx])
@@ -169,6 +174,7 @@ const BlockBid = ({
                     serializedSignedTx = serializeTransaction(requestTyped, signature)
                 }
                 setSignedTx(serializedSignedTx!)
+                setShowSignButton(false);
                 if (useBurner === true) {
                     handleButtonClickForSignedTx()
                 }
@@ -251,6 +257,12 @@ const BlockBid = ({
         })
         console.log(`suave receipt`, receipt)
         setSuaveTxReceipt(receipt)
+
+        setShowCongratulations(true);
+        setShowSignButton(true);
+        setTimeout(() => {
+            setShowCongratulations(false);
+        }, 5000);
     }
 
     const { data: balance } = useBalance({
@@ -317,22 +329,13 @@ const BlockBid = ({
                     <PostConnectButton />
                 }
 
-                {(useBurner ? burnerAccount !== undefined && signedTx === undefined : walletAddress !== undefined && signedTx === undefined) && (
+                {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
                     <button
-                        onClick={handleButtonClick}
-                        disabled={signedTx !== undefined || bidAmountError !== undefined}
+                        onClick={showSignButton ? handleButtonClick : handleButtonClickForSignedTx}
+                        disabled={bidAmountError !== undefined || suaveTxReceipt !== undefined}
                         type="submit"
                     >
-                        <LottiePlayer src={SignButton} />
-                    </button>
-                )}
-                {(useBurner ? burnerAccount !== undefined && signedTx : walletAddress !== undefined && signedTx) && (
-                    <button
-                        onClick={handleButtonClickForSignedTx}
-                        disabled={signedTx === undefined || suaveTxReceipt !== undefined}
-                        type="submit"
-                    >
-                        <LottiePlayer src={SubmitButton} />
+                        <LottiePlayer src={showSignButton ? SignButton : SubmitButton} />
                     </button>
                 )}
             </div>
@@ -340,7 +343,11 @@ const BlockBid = ({
         {warningMessage &&
             <p className="text-center pt-4 text-red-500">eth_sign has been disabled. You must enable it in the advanced settings.</p>
         }
-
+        {showCongratulations && (
+            <div className="text-center mt-4 text-green-500 font-bold">
+                Congratulations! Your bid was successful and is now pending.
+            </div>
+        )}
     </div>
 }
 

@@ -30,13 +30,13 @@ const ActiveBids = () => {
                         <p className="text-center">{log.args.extra}</p>
                         {openBidIndex === index ? <ChevronUpIcon className="w-6 h-6 text-white" /> : <ChevronDownIcon className="w-6 h-6 text-white" />}
                     </div>
-                    <div className={`${openBidIndex === index ? "flex" : "hidden"} justify-between`}>
-                        <div className="border-r border-white/50 pr-4">
-                            <p>id: {log.args.id.toString()}</p>
-                            <p>Blocks left: {Number(log.args.blockLimit) - numOfBlock}</p>
-                            <p>current: {numOfBlock}</p>
+                    <div className={`${openBidIndex === index ? "flex border-t border-white/40 mt-2" : "hidden"}`}>
+                        <div className="border-r border-white/50 pr-4 mt-2 flex flex-col gap-2">
+                            <p className="text-sm">ID: {log.args.id.toString()}</p>
+                            <p className="text-sm">Blocks left: {Number(log.args.blockLimit) - numOfBlock}</p>
+                            <p className="text-sm">current: {numOfBlock}</p>
                         </div>
-                        <div className="flex flex-col gap-4 pl-4">
+                        <div className="flex flex-col gap-4 pl-4 my-2">
                             Progress:
                             <BidProgress />
                         </div>
