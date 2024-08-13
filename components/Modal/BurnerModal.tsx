@@ -8,6 +8,8 @@ import useCustomChains from "../../hooks/useCustomChains"
 import ellipsis from "../../lib/ellipsis"
 import { getFaucetUrl } from "../../lib/Faucets"
 import Link from "next/link"
+import { ClipboardDocumentCheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid"
+import { useState } from "react"
 
 const BurnerModal = ({
     showModal,
@@ -31,13 +33,36 @@ const BurnerModal = ({
 
     const l1FaucetUrl = getFaucetUrl(l1Chain)
     const suaveFaucetUrl = getFaucetUrl(suaveChain)
+    const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+
+    const copyAddressToClipboard = (address: string, type: 'burner' | 'wallet') => {
+        if (address) {
+            navigator.clipboard.writeText(address)
+                .then(() => {
+                    setCopiedAddress(type);
+                    setTimeout(() => setCopiedAddress(null), 2000);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
+        }
+    };
+
 
     return (
         <>
             <Modal title="Burner wallet" open={showModal} onClose={toggleModal}>
                 <div className="flex flex-col gap-4 p-6 min-w-[300px] text-center items-center">
                     <Image src={'/burner-acc.svg'} width={150} height={200} alt="unicorn-acc" />
-                    <p className="font-modelica-bold text-xl">{burnerAddress && ellipsis(burnerAddress)}</p>
+                    <div className="flex">
+                        <p className="font-modelica-bold text-xl">{burnerAddress && ellipsis(burnerAddress)}</p>
+                        <button
+                            onClick={() => copyAddressToClipboard(burnerAddress || '', 'burner')}
+                            className="mb-auto px-2 py-1.5 text-white rounded focus:outline-none focus:ring-opacity-50"
+                        >
+                            {copiedAddress === 'burner' ? <ClipboardDocumentCheckIcon color="#C50099" height={12} width={12}></ClipboardDocumentCheckIcon> :
+                                <ClipboardDocumentIcon height={12} width={12}></ClipboardDocumentIcon>}
+                        </button>
+                    </div>
                     <div className="flex flex-row items-center gap-1">
                         <span>{formattedBalance !== undefined ? parseFloat(formattedBalance).toLocaleString() : '-'}</span>
                         <span>{l1Chain.nativeCurrency.symbol}</span>
