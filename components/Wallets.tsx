@@ -12,6 +12,7 @@ import CreateBurner from '../public/lotties/burnerwallet.json'
 import LottiePlayer from "./LottiePlayer"
 import Image from "next/image";
 import useCustomChains from "../hooks/useCustomChains"
+import { ClipboardDocumentCheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid"
 
 const ellipsis = (str: string) => {
     return `${str.substring(0, 6)}...${str.substring(str.length - 4)}`
@@ -31,9 +32,7 @@ const Wallets = ({
         suaveBalance: burnerSuaveBalance,
         createBurnerWallet
     } = useBurnerWallet()
-
     const { address: walletAddress } = useAccount()
-
 
     const { l1Chain, suaveChain } = useCustomChains()
 
@@ -43,6 +42,19 @@ const Wallets = ({
     })
 
     const { data: suaveBalance } = useBalance({ address: walletAddress, chainId: suaveChain.id })
+
+    const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+    const copyAddressToClipboard = (address: string, type: 'burner' | 'wallet') => {
+        if (address) {
+            navigator.clipboard.writeText(address)
+                .then(() => {
+                    setCopiedAddress(type);
+                    setTimeout(() => setCopiedAddress(null), 2000);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
+        }
+    };
 
     const handleButtonClickForCreateBurnerWallet = () => {
         createBurnerWallet()
@@ -93,6 +105,13 @@ const Wallets = ({
                                         {ellipsis(burnerAccount.address)}
                                     </a>
                                 </p>
+                                <button
+                                    onClick={() => copyAddressToClipboard(burnerAccount?.address || '', 'burner')}
+                                    className="mb-auto px-2 py-1.5 text-white rounded focus:outline-none focus:ring-opacity-50"
+                                >
+                                    {copiedAddress === 'burner' ? <ClipboardDocumentCheckIcon color="#C50099" height={12} width={12}></ClipboardDocumentCheckIcon> :
+                                        <ClipboardDocumentIcon height={12} width={12}></ClipboardDocumentIcon>}
+                                </button>
                                 <div>
                                     <div className="flex gap-2">
                                         <div className="relative">
@@ -149,6 +168,13 @@ const Wallets = ({
                                         {ellipsis(walletAddress)}
                                     </a>
                                 </p>
+                                <button
+                                    onClick={() => copyAddressToClipboard(walletAddress || '', 'wallet')}
+                                    className="mb-auto px-2 py-1.5 text-white rounded focus:outline-none focus:ring-opacity-50"
+                                >
+                                    {copiedAddress === 'wallet' ? <ClipboardDocumentCheckIcon color="#C50099" height={12} width={12}></ClipboardDocumentCheckIcon> :
+                                        <ClipboardDocumentIcon height={12} width={12}></ClipboardDocumentIcon>}
+                                </button>
                                 <div>
                                     <div className="flex gap-2">
                                         <div className="relative">

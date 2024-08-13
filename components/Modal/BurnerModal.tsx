@@ -8,6 +8,8 @@ import useCustomChains from "../../hooks/useCustomChains"
 import ellipsis from "../../lib/ellipsis"
 import { getFaucetUrl } from "../../lib/Faucets"
 import Link from "next/link"
+import { ClipboardDocumentCheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid"
+import { useState } from "react"
 
 const BurnerModal = ({
     showModal,
@@ -16,7 +18,7 @@ const BurnerModal = ({
     showModal: boolean,
     toggleModal: () => void,
 }) => {
-    const { 
+    const {
         account,
         balance,
         suaveBalance,
@@ -28,21 +30,44 @@ const BurnerModal = ({
     const formattedSuaveBalance = suaveBalance ? formatUnits(suaveBalance.value, suaveBalance.decimals) : undefined
 
     const { l1Chain, suaveChain } = useCustomChains()
-    
+
     const l1FaucetUrl = getFaucetUrl(l1Chain)
     const suaveFaucetUrl = getFaucetUrl(suaveChain)
+    const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+
+    const copyAddressToClipboard = (address: string, type: 'burner' | 'wallet') => {
+        if (address) {
+            navigator.clipboard.writeText(address)
+                .then(() => {
+                    setCopiedAddress(type);
+                    setTimeout(() => setCopiedAddress(null), 2000);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
+        }
+    };
+
 
     return (
         <>
             <Modal title="Burner wallet" open={showModal} onClose={toggleModal}>
                 <div className="flex flex-col gap-4 p-6 min-w-[300px] text-center items-center">
                     <Image src={'/burner-acc.svg'} width={150} height={200} alt="unicorn-acc" />
-                    <p className="font-modelica-bold text-xl">{burnerAddress && ellipsis(burnerAddress)}</p>
+                    <div className="flex">
+                        <p className="font-modelica-bold text-xl">{burnerAddress && ellipsis(burnerAddress)}</p>
+                        <button
+                            onClick={() => copyAddressToClipboard(burnerAddress || '', 'burner')}
+                            className="mb-auto px-2 py-1.5 text-white rounded focus:outline-none focus:ring-opacity-50"
+                        >
+                            {copiedAddress === 'burner' ? <ClipboardDocumentCheckIcon color="#C50099" height={12} width={12}></ClipboardDocumentCheckIcon> :
+                                <ClipboardDocumentIcon height={12} width={12}></ClipboardDocumentIcon>}
+                        </button>
+                    </div>
                     <div className="flex flex-row items-center gap-1">
                         <span>{formattedBalance !== undefined ? parseFloat(formattedBalance).toLocaleString() : '-'}</span>
                         <span>{l1Chain.nativeCurrency.symbol}</span>
                         <span>({l1Chain.nativeCurrency.name})</span>
-                        {l1FaucetUrl && 
+                        {l1FaucetUrl &&
                             <Link href={l1FaucetUrl} target="_blank">
                                 <div className="flex gap-2 bg-white/10 text-white/30 border border-white/30 hover:border-white px-3 py-0.5 rounded">
                                     <Image src={"/faucet.svg"} width={10} height={10} alt="faucet" />
@@ -54,13 +79,45 @@ const BurnerModal = ({
                         <span>{formattedSuaveBalance !== undefined ? parseFloat(formattedSuaveBalance).toLocaleString() : `-`}</span>
                         <span>{suaveChain.nativeCurrency.symbol}</span>
                         <span>({suaveChain.nativeCurrency.name})</span>
-                        {suaveFaucetUrl && 
+                        {suaveFaucetUrl &&
                             <Link href={suaveFaucetUrl} target="_blank">
                                 <div className="flex gap-2 bg-white/10 text-white/30 border border-white/30 hover:border-white px-3 py-0.5 rounded">
                                     <Image src={"/faucet.svg"} width={10} height={10} alt="faucet" />
                                     <p className="text-white text-xs hover:no-underline">Faucet</p>
                                 </div>
                             </Link>}
+                    </div>
+                    <div className="flex text-left pl-4">
+                        <div>
+                            <p className="pb-2">To fund burner wallet with ETH, you have to add <a target="_blank" className="underline" href="https://chainlist.org/chain/17000">Holesky</a> to Metamask.</p>
+                            <li>
+                                Network name: Holesky
+                            </li>
+                            <li>
+                                Chain ID: 17000
+                            </li>
+                            <li>
+                                RPC URL: https://ethereum-holesky-rpc.publicnode.com
+                            </li>
+                            <li>
+                                Currency Symbol: ETH
+                            </li>
+                        </div>
+                        <div className="pl-16">
+                            <p className="pb-2">To fund burner wallet with TEETH, you have to add <a target="_blank" className="underline" href="https://suave-alpha.flashbots.net/toliman">Toliman Testnet</a> to Metamask.</p>
+                            <li>
+                                Network name: Toliman
+                            </li>
+                            <li>
+                                Chain ID: 33626250
+                            </li>
+                            <li>
+                                RPC URL: https://rpc.toliman.suave.flashbots.net
+                            </li>
+                            <li>
+                                Currency Symbol: TEETH
+                            </li>
+                        </div>
                     </div>
                     <BurnerWallet />
                 </div>
