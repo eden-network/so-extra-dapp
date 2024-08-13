@@ -5,94 +5,115 @@ import useBurnerWallet from "../hooks/useBurnerWallet"
 import Image from "next/image"
 import LottiePlayer from "./LottiePlayer"
 import FundButton from '../public/lotties/Fund.json'
+import useCustomChains from "../hooks/useCustomChains"
+import useSuave from "../hooks/useSuave"
 
 const BurnerWallet = () => {
     const { address: walletAddress, chain } = useAccount()
-    const { data: walletBalance } = useBalance({
-        address: walletAddress
+    const { l1Chain, suaveChain } = useCustomChains()
+    const { suaveBurnerWallet, suaveProvider, connectedSuaveChain } = useSuave()
+    const { account, hasExistingBurnerWallet } = useBurnerWallet()
+
+    const [depositAmounts, setDepositAmounts] = useState({
+        holesky: "",
+        suave: ""
     })
 
-    const {
-        account,
-        hasExistingBurnerWallet
-    } = useBurnerWallet()
-
-    const [depositAmount, setDepositAmount] = useState<string>("")
-
-    const { data: gasEstimate, refetch } = useEstimateGas({
-        account: walletAddress,
-        to: account?.address,
-        value: parseEther(depositAmount)
+    const { data: holeskyBalance } = useBalance({ address: walletAddress })
+    const { data: suaveBalance } = useBalance({
+        address: walletAddress,
+        chainId: suaveChain.id
     })
-    const { sendTransaction } = useSendTransaction()
 
-    const [displayOnboarding, setDisplayOnboarding] = useState<boolean>()
-    useEffect(() => {
-        if (hasExistingBurnerWallet() === true) {
-            setDisplayOnboarding(false)
-        }
-        else {
-            setDisplayOnboarding(true)
-        }
-    }, [account, hasExistingBurnerWallet])
-
-    const handleFundButtonClick = () => {
-        sendTransaction({
-            gas: gasEstimate,
+    const estimateGas = (chainType) => {
+        return useEstimateGas({
+            account: walletAddress,
             to: account?.address,
-            value: parseEther(depositAmount)
+            value: parseEther(depositAmounts[chainType])
         })
     }
 
-    const handleDepositAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { data: holeskyGasEstimate, refetch: refetchHoleskyGas } = estimateGas('holesky')
+    const { data: suaveGasEstimate, refetch: refetchSuaveGas } = estimateGas('suave')
+
+    const { sendTransaction } = useSendTransaction({})
+
+    const [displayOnboarding, setDisplayOnboarding] = useState(false)
+
+    useEffect(() => {
+        setDisplayOnboarding(!hasExistingBurnerWallet())
+    }, [account, hasExistingBurnerWallet])
+
+    const handleFundButtonClick = async (chainType) => {
+        const gasEstimate = chainType === 'holesky' ? holeskyGasEstimate : suaveGasEstimate
+        const amount = depositAmounts[chainType]
+
+        try {
+            await sendTransaction({
+                gas: gasEstimate,
+                to: account?.address,
+                value: parseEther(amount)
+            })
+        } catch (error) {
+            console.error(`Error sending ${chainType} transaction:`, error)
+        }
+    }
+
+    const handleDepositAmountChange = (event, chainType) => {
         try {
             parseEther(event.target.value)
-            setDepositAmount(event.target.value)
-            refetch()
-        }
-        catch { }
+            setDepositAmounts(prev => ({ ...prev, [chainType]: event.target.value }))
+            if (chainType === 'holesky') refetchHoleskyGas()
+            else refetchSuaveGas()
+        } catch { }
     }
 
     useEffect(() => {
-        refetch()
-    }, [account?.address, refetch, depositAmount])
+        refetchHoleskyGas()
+        refetchSuaveGas()
+    }, [account?.address, refetchHoleskyGas, refetchSuaveGas])
 
-    return <div className="flex items-center pb-3">
-        {displayOnboarding ? <>
-
-        </> : <>
+    const renderDepositSection = (chainType, balance, chainSymbol) => (
+        <div className="mb-6">
             <div className="flex flex-col text-left px-4 my-2">
-                <label
-                    className="font-light mb-1"
-                    htmlFor="deposit-amount"
-                >Deposit Amount</label>
+                <label className="font-light mb-1" htmlFor={`deposit-amount-${chainType}`}>
+                    Deposit Amount ({chainType === 'holesky' ? 'Holesky' : 'Toliman'} ETH)
+                </label>
                 <div className="relative">
                     <input
                         className="border border-fuchsia-600 w-full px-4 py-3 rounded-sm text-white font-bold text-xl shadow-inner bg-black/20"
-                        id="deposit-amount"
+                        id={`deposit-amount-${chainType}`}
                         type="text"
-                        value={depositAmount}
-                        onChange={handleDepositAmountChange.bind(this)}
+                        value={depositAmounts[chainType]}
+                        onChange={(e) => handleDepositAmountChange(e, chainType)}
                     />
-                    <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-1.5" />
+                    <Image src="/eth_symbol.svg" alt="ETH Symbol" width="40" height="230" className="absolute right-1 top-1.5" />
                 </div>
                 <div className="flex justify-between mt-1">
                     <p className="text-xs text-left">Metamask:</p>
-                    <p> {walletBalance !== undefined ? `${walletBalance.formatted}` : `-`} {chain?.nativeCurrency.symbol}</p>
+                    <div>
+                        <p>{balance !== undefined ? `${balance.formatted}` : '-'} {chainSymbol}</p>
+                    </div>
                 </div>
             </div>
             <div className="my-2 text-center relative">
-                <button
-
-                    onClick={handleFundButtonClick}
-                    type="submit"
-                >
+                <button onClick={() => handleFundButtonClick(chainType)} type="submit">
                     <LottiePlayer src={FundButton} />
                 </button>
             </div>
-        </>
-        }
-    </div >
+        </div>
+    )
+
+    return (
+        <div className="flex items-center pb-3">
+            {!displayOnboarding && (
+                <>
+                    {renderDepositSection('holesky', holeskyBalance, chain?.nativeCurrency.symbol)}
+                    {renderDepositSection('suave', suaveBalance, suaveChain?.nativeCurrency.symbol)}
+                </>
+            )}
+        </div>
+    )
 }
 
 export default BurnerWallet

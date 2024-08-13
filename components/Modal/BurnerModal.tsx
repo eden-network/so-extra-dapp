@@ -16,7 +16,7 @@ const BurnerModal = ({
     showModal: boolean,
     toggleModal: () => void,
 }) => {
-    const { 
+    const {
         account,
         balance,
         suaveBalance,
@@ -28,7 +28,7 @@ const BurnerModal = ({
     const formattedSuaveBalance = suaveBalance ? formatUnits(suaveBalance.value, suaveBalance.decimals) : undefined
 
     const { l1Chain, suaveChain } = useCustomChains()
-    
+
     const l1FaucetUrl = getFaucetUrl(l1Chain)
     const suaveFaucetUrl = getFaucetUrl(suaveChain)
 
@@ -42,7 +42,7 @@ const BurnerModal = ({
                         <span>{formattedBalance !== undefined ? parseFloat(formattedBalance).toLocaleString() : '-'}</span>
                         <span>{l1Chain.nativeCurrency.symbol}</span>
                         <span>({l1Chain.nativeCurrency.name})</span>
-                        {l1FaucetUrl && 
+                        {l1FaucetUrl &&
                             <Link href={l1FaucetUrl} target="_blank">
                                 <div className="flex gap-2 bg-white/10 text-white/30 border border-white/30 hover:border-white px-3 py-0.5 rounded">
                                     <Image src={"/faucet.svg"} width={10} height={10} alt="faucet" />
@@ -54,7 +54,7 @@ const BurnerModal = ({
                         <span>{formattedSuaveBalance !== undefined ? parseFloat(formattedSuaveBalance).toLocaleString() : `-`}</span>
                         <span>{suaveChain.nativeCurrency.symbol}</span>
                         <span>({suaveChain.nativeCurrency.name})</span>
-                        {suaveFaucetUrl && 
+                        {suaveFaucetUrl &&
                             <Link href={suaveFaucetUrl} target="_blank">
                                 <div className="flex gap-2 bg-white/10 text-white/30 border border-white/30 hover:border-white px-3 py-0.5 rounded">
                                     <Image src={"/faucet.svg"} width={10} height={10} alt="faucet" />
@@ -62,6 +62,19 @@ const BurnerModal = ({
                                 </div>
                             </Link>}
                     </div>
+                    <p>To fund burner wallet with TEETH, you have to add <a target="_blank" className="underline" href="https://suave-alpha.flashbots.net/toliman">Toliman Testnet</a> to Metamask.</p>
+                    <li>
+                        Network name: Toliman
+                    </li>
+                    <li>
+                        Chain ID: 33626250
+                    </li>
+                    <li>
+                        RPC URL: https://rpc.toliman.suave.flashbots.net
+                    </li>
+                    <li>
+                        Currency Symbol: TEETH
+                    </li>
                     <BurnerWallet />
                 </div>
             </Modal>
