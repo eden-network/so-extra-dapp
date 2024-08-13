@@ -25,16 +25,18 @@ const BurnerWallet = () => {
         chainId: suaveChain.id
     })
 
-    const estimateGas = (chainType) => {
-        return useEstimateGas({
-            account: walletAddress,
-            to: account?.address,
-            value: parseEther(depositAmounts[chainType])
-        })
-    }
+    const { data: holeskyGasEstimate, refetch: refetchHoleskyGas } = useEstimateGas({
+        account: walletAddress,
+        to: account?.address,
+        value: parseEther(depositAmounts.holesky || "0")
+    })
 
-    const { data: holeskyGasEstimate, refetch: refetchHoleskyGas } = estimateGas('holesky')
-    const { data: suaveGasEstimate, refetch: refetchSuaveGas } = estimateGas('suave')
+    const { data: suaveGasEstimate, refetch: refetchSuaveGas } = useEstimateGas({
+        account: walletAddress,
+        to: account?.address,
+        value: parseEther(depositAmounts.suave || "0"),
+        chainId: suaveChain.id
+    })
 
     const { sendTransaction } = useSendTransaction({})
 
@@ -52,7 +54,8 @@ const BurnerWallet = () => {
             await sendTransaction({
                 gas: gasEstimate,
                 to: account?.address,
-                value: parseEther(amount)
+                value: parseEther(amount),
+                chainId: chainType === 'holesky' ? chain?.id : suaveChain.id
             })
         } catch (error) {
             console.error(`Error sending ${chainType} transaction:`, error)
