@@ -62,19 +62,38 @@ const BurnerModal = ({
                                 </div>
                             </Link>}
                     </div>
-                    <p>To fund burner wallet with TEETH, you have to add <a target="_blank" className="underline" href="https://suave-alpha.flashbots.net/toliman">Toliman Testnet</a> to Metamask.</p>
-                    <li>
-                        Network name: Toliman
-                    </li>
-                    <li>
-                        Chain ID: 33626250
-                    </li>
-                    <li>
-                        RPC URL: https://rpc.toliman.suave.flashbots.net
-                    </li>
-                    <li>
-                        Currency Symbol: TEETH
-                    </li>
+                    <div className="flex text-left pl-4">
+                        <div>
+                            <p className="pb-2">To fund burner wallet with ETH, you have to add <a target="_blank" className="underline" href="https://chainlist.org/chain/17000">Holesky</a> to Metamask.</p>
+                            <li>
+                                Network name: Holesky
+                            </li>
+                            <li>
+                                Chain ID: 17000
+                            </li>
+                            <li>
+                                RPC URL: https://ethereum-holesky-rpc.publicnode.com
+                            </li>
+                            <li>
+                                Currency Symbol: ETH
+                            </li>
+                        </div>
+                        <div className="pl-16">
+                            <p className="pb-2">To fund burner wallet with TEETH, you have to add <a target="_blank" className="underline" href="https://suave-alpha.flashbots.net/toliman">Toliman Testnet</a> to Metamask.</p>
+                            <li>
+                                Network name: Toliman
+                            </li>
+                            <li>
+                                Chain ID: 33626250
+                            </li>
+                            <li>
+                                RPC URL: https://rpc.toliman.suave.flashbots.net
+                            </li>
+                            <li>
+                                Currency Symbol: TEETH
+                            </li>
+                        </div>
+                    </div>
                     <BurnerWallet />
                 </div>
             </Modal>

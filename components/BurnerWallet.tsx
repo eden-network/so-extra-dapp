@@ -78,7 +78,7 @@ const BurnerWallet = () => {
     }, [account?.address, refetchHoleskyGas, refetchSuaveGas])
 
     const renderDepositSection = (chainType, balance, chainSymbol) => (
-        <div className="mb-6">
+        <div className="mb-6 w-1/2">
             <div className="flex flex-col text-left px-4 my-2">
                 <label className="font-light mb-1" htmlFor={`deposit-amount-${chainType}`}>
                     Deposit Amount ({chainType === 'holesky' ? 'Holesky' : 'Toliman'} ETH)
@@ -109,7 +109,7 @@ const BurnerWallet = () => {
     )
 
     return (
-        <div className="flex items-center pb-3">
+        <div className="flex pb-3 w-full">
             {!displayOnboarding && (
                 <>
                     {renderDepositSection('holesky', holeskyBalance, chain?.nativeCurrency.symbol)}
