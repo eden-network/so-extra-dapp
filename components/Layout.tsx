@@ -51,6 +51,15 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
     const [suaveTxHash, setSuaveTxHash] = useState<`0x${string}` | undefined>(undefined)
     const [signedTx, setSignedTx] = useState<`0x${string}` | undefined>(undefined)
 
+    const resetBidStates = () => {
+        setSuaveTxHash(undefined);
+        setSignedTx(undefined);
+        setSuaveTxReceipt(undefined);
+    };
+
+
+
+
     const [suaveTxReceipt, setSuaveTxReceipt] = useState<TransactionReceipt | undefined>(undefined)
 
     const router = useRouter();
@@ -155,8 +164,8 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                                         setSuaveTxHash={setSuaveTxHash}
                                         suaveTxReceipt={suaveTxReceipt}
                                         setSuaveTxReceipt={setSuaveTxReceipt}
+                                        resetBidStates={resetBidStates}
                                     /> : null}
-
                                 </div>
                                 {children}
                             </div>
