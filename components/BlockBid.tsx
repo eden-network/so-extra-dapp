@@ -131,8 +131,6 @@ const BlockBid = ({
     }, [warningMessage]);
 
     const handleButtonClick = async () => {
-        console.log("here");
-
         setErrorMessage(undefined)
         // if (walletClient === undefined || walletClient === null) {
         //     console.error(`walletClient not found`)
@@ -298,7 +296,7 @@ const BlockBid = ({
 
     useEffect(() => {
         setSignedTx(undefined);
-    }, [bidAmount, extraData]);
+    }, [bidAmount, extraData, walletAddress, burnerAccount]);
 
     return <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
         <div className="relative px-4 my-2">
