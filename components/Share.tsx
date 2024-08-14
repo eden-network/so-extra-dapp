@@ -27,7 +27,7 @@ const Share = ({
                     className="lg:flex gap-2 right-2 top-2 text-xs text-white/60 px-2 py-1 group-hover:text-fuchsia-500"
                     href={getTwitterUrl({
                         url: url,
-                        text: `I just build block ${blockNumber} with extra data:\n\n${extraData}\n\n`,
+                        text: `I just built block ${blockNumber} with extra data:\n\n${extraData}\n\n`,
                         hashtags: ['extra', 'data'],
                         related: 'eden network'
                     })}
