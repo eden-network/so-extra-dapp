@@ -10,7 +10,7 @@ Bid on writing your own message in the extra data field of eth blocks using conf
   * The auction can only be fulfilled by a PBS builder accepting blocks from SUAVE
 * Messages are public data. However the bids are confidential and kept private during the auction.
   * Bids expire after a set amount of time (default: 100 blocks)
-  * Bids are sent on SAUVE as a CCR (Confidential Compute Request)
+  * Bids are sent on SUAVE as a CCR (Confidential Compute Request)
   * Bids are made binding because they are in the form of a signed L1 transaction that transfers the value of the bid to the block producer
 * The winning bid is selected from all currently active bids and their message and payment are added to the block by a custom block builder on SUAVE
 * The SUAVE block is sent to L1 for inclusion in the PBS auction
