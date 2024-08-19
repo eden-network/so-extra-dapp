@@ -25,6 +25,13 @@ const gasPriceForBidAmount = (bidAmount: number): bigint => {
     return bidAmountBigInt / gasLimit
 }
 
+type MessageType = 'step' | 'pending' | 'warning' | 'congratulations' | null;
+
+interface Message {
+    type: MessageType;
+    text: string;
+}
+
 const BlockBid = ({
     useBurner,
     setUseBurner,
@@ -37,7 +44,6 @@ const BlockBid = ({
     suaveTxReceipt,
     setSuaveTxReceipt,
     resetBidStates
-
 }: {
     useBurner: boolean,
     setUseBurner: Dispatch<SetStateAction<boolean>>,
@@ -57,8 +63,7 @@ const BlockBid = ({
         balance: burnerBalance,
     } = useBurnerWallet()
 
-    const { l1Chain: chain } = useCustomChains()
-    // const { chain } = useAccount()
+    const { l1Chain: chain, suaveChain } = useCustomChains()
     const { suaveBurnerWallet, suaveProvider } = useSuave()
 
     const MAX_BYTES_LENGTH = 32
@@ -68,12 +73,8 @@ const BlockBid = ({
     const [gasPrice, setGasPrice] = useState<bigint>(gasPriceForBidAmount(bidAmount))
 
     const [errorMessage, setErrorMessage] = useState<string>()
-    const [warningMessage, setWarningMessage] = useState(false)
-
-    const [showCongratulations, setShowCongratulations] = useState(false);
+    const [showMessage, setShowMessage] = useState<Message | null>(null);
     const [showSignButton, setShowSignButton] = useState(true);
-
-
 
     useEffect(() => {
         setSignedTx(undefined)
@@ -102,9 +103,7 @@ const BlockBid = ({
             if (burnerAccount !== undefined) {
                 setUseBurner(true)
             }
-        }
-
-        else {
+        } else {
             setUseBurner(false)
         }
     }, [burnerAccount, walletAddress])
@@ -118,45 +117,18 @@ const BlockBid = ({
         gasPrice: gasPrice,
     })
 
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
-        if (warningMessage) {
-            timer = setTimeout(() => {
-                setWarningMessage(false);
-            }, 5000);
-        }
-        return () => {
-            if (timer) clearTimeout(timer);
-        };
-    }, [warningMessage]);
-
     const handleButtonClick = async () => {
-        setErrorMessage(undefined)
-        // if (walletClient === undefined || walletClient === null) {
-        //     console.error(`walletClient not found`)
-        //     return
-        // }
-        // console.log('gas', gasPrice);
-        try {
-            // create request with viem
-            // const request: TransactionRequest = await walletClient.prepareTransactionRequest({
-            //     chainId: chain?.id,
-            //     account: useBurner ? burnerAccount : walletAddress,
-            //     to: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress,
-            //     gasPrice: gasPrice,
-            // })
-            console.log("request", request)
+        setErrorMessage(undefined);
+        setShowMessage(null);
 
-            // augment request with chain id (required)
-            // const augmentedTx = { ...request/*, chainId: chain?.id */}
+        try {
+            console.log("request", request)
             const requestTyped = request as unknown as TransactionRequest
             console.log("requestTyped", requestTyped)
 
             // @ts-expect-error
             const serialized = serializeTransaction(requestTyped)
             console.log("serialized", serialized)
-
-            // ensure serialized tx is valid
 
             // @ts-expect-error
             const parsedTx: TransactionSerializedLegacy = parseTransaction(serialized)
@@ -167,10 +139,8 @@ const BlockBid = ({
                 if (useBurner) {
                     // @ts-expect-error
                     serializedSignedTx = await burnerAccount?.signTransaction(requestTyped)
-                }
-                else {
+                } else {
                     const serializedHash = keccak256(serialized)
-                    // sign with metamask (required advanced setting enabled)
                     const hexSignature = await (window as any).ethereum.request({ method: 'eth_sign', params: [walletAddress, serializedHash] })
                     const signature = hexToSignature(hexSignature)
                     // @ts-expect-error
@@ -178,43 +148,33 @@ const BlockBid = ({
                 }
                 setSignedTx(serializedSignedTx!)
                 setShowSignButton(false);
-                if (useBurner === true) {
-                    handleButtonClickForSignedTx()
-                }
-            }
-            catch (error: any) {
+                setShowMessage({ type: 'step', text: "Step 1 of 2 Completed. Now Click for Step 2: Send to Suave" });
+            } catch (error: any) {
                 throw error
             }
-        }
-        catch (error: any) {
+        } catch (error: any) {
             console.log(error.code)
             if (error.code === -32601) {
-                setWarningMessage(true);
+                setShowMessage({ type: 'warning', text: "eth_sign has been disabled. You must enable it in the advanced settings." });
             } else {
-                setWarningMessage(false);
+                setErrorMessage(error?.message)
             }
-            setErrorMessage(error?.message)
         }
     }
 
     const handleButtonClickForSignedTx = async () => {
-        // if (walletClient === undefined || walletClient === null) {
-        //     console.error(`walletClient not found`)
-        //     return
-        // }
+        setShowMessage({ type: 'pending', text: "Your transaction is now pending..." });
 
         const abiItem = parseAbiItem(
             'function buyAd(uint64 blockLimit, string memory extra)',
         )
 
-        // Public data
         const calldata = encodeFunctionData({
             abi: [abiItem],
             functionName: 'buyAd',
             args: [(currentL1Block || BigInt(0)) + BID_VALID_FOR_BLOCKS, extraData]
         })
 
-        // Confidential data
         const confidentialBytes = txToBundleBytes(signedTx as `0x${string}`) as `0x${string}`
 
         const ccr: TransactionRequestSuave = {
@@ -226,7 +186,7 @@ const BlockBid = ({
             nonce: await suaveProvider.getTransactionCount({ address: burnerAccount !== undefined && useBurner ? burnerAccount.address : walletAddress! }),
             to: suaveContractAddress,
             value: BigInt(0),
-            type: "0x43", // transaction type for Confidential Compute Request
+            type: "0x43",
             kettleAddress: executionNodes[suaveProvider.chain.id]
         }
         console.log(`suave ccr`, ccr)
@@ -246,29 +206,34 @@ const BlockBid = ({
         console.log("debug::ccr", ccr)
         console.log("debug::ccrRlp", ccrRlp)
 
-        const hash: Hash = await suaveProvider.sendRawTransaction({
-            //// BREAKS /////
-            serializedTransaction: ccrRlp
-        })
+        try {
+            const hash: Hash = await suaveProvider.sendRawTransaction({
+                serializedTransaction: ccrRlp
+            })
 
-        console.log(`suave hash`, hash)
-        setSuaveTxHash(hash)
+            console.log(`suave hash`, hash)
+            setSuaveTxHash(hash)
+            // @ts-expect-error
+            const receipt: TransactionReceipt = await suaveProvider.waitForTransactionReceipt({
+                hash: hash
+            })
+            console.log(`suave receipt`, receipt)
+            setSuaveTxReceipt(receipt)
 
-        // @ts-expect-error
-        const receipt: TransactionReceipt = await suaveProvider.waitForTransactionReceipt({
-            hash: hash
-        })
-        console.log(`suave receipt`, receipt)
-        setSuaveTxReceipt(receipt)
+            setShowMessage({ type: 'congratulations', text: "Your bid was successfully sent and is waiting to be mined on Holesky." });
+            setShowSignButton(true);
+            setSignedTx(undefined);
+            setSuaveTxReceipt(undefined);
+            resetBidStates();
 
-        setShowCongratulations(true);
-        setShowSignButton(true);
-        setSignedTx(undefined);
-        setSuaveTxReceipt(undefined);
-        resetBidStates();
-        setTimeout(() => {
-            setShowCongratulations(false);
-        }, 5000);
+            setTimeout(() => {
+                setShowMessage(null);
+            }, 5000);
+        } catch (error) {
+            console.error("Error in transaction:", error);
+            setErrorMessage("Transaction failed. Please try again.");
+            setShowMessage(null);
+        }
     }
 
     const { data: balance } = useBalance({
@@ -298,67 +263,84 @@ const BlockBid = ({
         setSignedTx(undefined);
     }, [bidAmount, extraData, walletAddress, burnerAccount]);
 
-    return <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
-        <div className="relative px-4 my-2">
-            <label
-                className="font-light text-sm"
-                htmlFor="extra-data"
-            >{'Extra data'}
-                <span className="text-white/70">{' '}&bull;{' '}Public Data</span>
-            </label>
-            <input
-                className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none mt-1"
-                id="extra-data"
-                type="text"
-                value={extraData}
-                onChange={handleExtraDataChange.bind(this)}
-            />
-            <p className="absolute right-7 bottom-1.5 text-sm text-center text-white/60">{
-                bytesLength} / {MAX_BYTES_LENGTH}<br /> bytes
-            </p>
-        </div>
-        <div className="px-4 flex">
-            <div className="flex flex-col w-1/2">
-                <label className="font-light text-sm" htmlFor="bid-amount">
-                    {'Bid Amount'}
-                    <span className="text-white/70">{' '}&bull;{' '}Confidential Data</span>
+    return (
+        <div className="flex flex-col py-4 border border-white/30 bg-white/5 backdrop-blur-lg">
+            <div className="relative px-4 my-2">
+                <label
+                    className="font-light text-sm"
+                    htmlFor="extra-data"
+                >{'Extra data'}
+                    <span className="text-white/70">{' '}&bull;{' '}Public Data</span>
                 </label>
-                <div className="flex relative">
-                    <input
-                        className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border mt-1 ${bidAmountError !== undefined ? `text-red-500` : `text-white`} w-full px-3 py-3 rounded-sm font-modelica-bold text-xl shadow-inner bg-black/20 border-fuchsia-500 font-modelica-medium focus-visible:outline-none`}
-                        id="bid-amount"
-                        type="number"
-                        value={bidAmount}
-                        onChange={handleBidAmountChange.bind(this)}
-                    />
-                    <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-2.5" />
+                <input
+                    className="border border-fuchsia-600 w-full px-3 py-3 rounded-sm text-white font-modelica-bold text-xl shadow-inner bg-black/20 font-modelica-medium focus-visible:outline-none mt-1"
+                    id="extra-data"
+                    type="text"
+                    value={extraData}
+                    onChange={handleExtraDataChange}
+                />
+                <p className="absolute right-7 bottom-1.5 text-sm text-center text-white/60">
+                    {bytesLength} / {MAX_BYTES_LENGTH}<br /> bytes
+                </p>
+            </div>
+            <div className="px-4 flex">
+                <div className="flex flex-col w-1/2">
+                    <label className="font-light text-sm" htmlFor="bid-amount">
+                        {'Bid Amount'}
+                        <span className="text-white/70">{' '}&bull;{' '}Confidential Data</span>
+                    </label>
+                    <div className="flex relative">
+                        <input
+                            className={`[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border mt-1 ${bidAmountError !== undefined ? `text-red-500` : `text-white`} w-full px-3 py-3 rounded-sm font-modelica-bold text-xl shadow-inner bg-black/20 border-fuchsia-500 font-modelica-medium focus-visible:outline-none`}
+                            id="bid-amount"
+                            type="number"
+                            value={bidAmount}
+                            onChange={handleBidAmountChange}
+                        />
+                        <Image src="/eth_symbol.svg" alt="So Extra" width="40" height="230" className="absolute right-1 top-2.5" />
+                    </div>
+                </div>
+                <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
+                    {!useBurner && !walletAddress &&
+                        <PostConnectButton />
+                    }
+
+                    {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
+                        <button
+                            onClick={signedTx ? handleButtonClickForSignedTx : handleButtonClick}
+                            disabled={bidAmountError !== undefined || suaveTxReceipt !== undefined}
+                            type="submit"
+                        >
+                            <LottiePlayer src={signedTx ? SubmitButton : SignButton} />
+                        </button>
+                    )}
                 </div>
             </div>
-            <div className="pl-2 text-center items-center flex gap-4 w-1/2 mt-auto">
-                {!useBurner && !walletAddress &&
-                    <PostConnectButton />
-                }
-
-                {(useBurner ? burnerAccount !== undefined : walletAddress !== undefined) && (
-                    <button
-                        onClick={signedTx ? handleButtonClickForSignedTx : handleButtonClick}
-                        disabled={bidAmountError !== undefined || suaveTxReceipt !== undefined}
-                        type="submit"
-                    >
-                        <LottiePlayer src={signedTx ? SubmitButton : SignButton} />
-                    </button>
-                )}
-            </div>
+            {showMessage && (
+                <div className={`text-center mt-4 ${showMessage.type === 'step' ? 'text-yellow-500' :
+                        showMessage.type === 'pending' ? 'text-yellow-500' :
+                            showMessage.type === 'warning' ? 'text-red-500' :
+                                showMessage.type === 'congratulations' ? 'text-green-500 font-bold' :
+                                    ''
+                    }`}>
+                    {showMessage.text}
+                    {showMessage.type === 'pending' && suaveTxHash && (
+                        <>
+                            {' '}
+                            <a
+                                href={`${suaveChain.blockExplorers?.default.url}/tx/${suaveTxHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-yellow-500 hover:text-yellow-700 underline"
+                            >
+                                View on Suave Explorer
+                            </a>
+                        </>
+                    )}
+                </div>
+            )}
         </div>
-        {warningMessage &&
-            <p className="text-center pt-4 text-red-500">eth_sign has been disabled. You must enable it in the advanced settings.</p>
-        }
-        {showCongratulations && (
-            <div className="text-center mt-4 text-green-500 font-bold">
-                Your bid was succesfully sent and is waiting to be mined on Holesky.
-            </div>
-        )}
-    </div>
+    )
 }
 
 export default BlockBid

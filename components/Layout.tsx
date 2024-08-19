@@ -81,7 +81,7 @@ export default function Layout({ pageProps, children }: { pageProps?: any, child
                 />
                 <meta
                     property="og:image"
-                    content="https://so-extra-dapp.vercel.app/logo.png"
+                    content="https://so-extra-dapp.vercel.app/logo-meta.png"
                 />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:site" content="so-extra" />
